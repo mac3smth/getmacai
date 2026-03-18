@@ -20,8 +20,8 @@
   <text x="72" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="120" fill="#ffffff" letter-spacing="-4">Mac</text>
 
   <!-- "AI" in electric blue with subtle glow -->
-  <text x="340" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="120" fill="#00d4ff" letter-spacing="-4" filter="url(#glow)">AI</text>
+  <text x="325" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="120" fill="#00d4ff" letter-spacing="-4" filter="url(#glow)">AI</text>
 
   <!-- Thin gradient accent line -->
-  <rect x="76" y="300" width="330" height="3" rx="1.5" fill="url(#lineGrad)"/>
+  <rect x="76" y="300" width="370" height="3" rx="1.5" fill="url(#lineGrad)"/>
 </svg>
