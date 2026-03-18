@@ -17,11 +17,11 @@
   <ellipse cx="340" cy="256" rx="120" ry="80" fill="#00d4ff" opacity="0.06"/>
 
   <!-- "Mac" in white bold -->
-  <text x="100" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="130" fill="#ffffff" letter-spacing="-5">Mac</text>
+  <text x="72" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="120" fill="#ffffff" letter-spacing="-4">Mac</text>
 
   <!-- "AI" in electric blue with subtle glow -->
-  <text x="318" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="130" fill="#00d4ff" letter-spacing="-5" filter="url(#glow)">AI</text>
+  <text x="310" y="280" font-family="'SF Pro Display', 'Inter', 'Helvetica Neue', Arial, sans-serif" font-weight="700" font-size="120" fill="#00d4ff" letter-spacing="-4" filter="url(#glow)">AI</text>
 
   <!-- Thin gradient accent line -->
-  <rect x="104" y="302" width="300" height="3" rx="1.5" fill="url(#lineGrad)"/>
+  <rect x="76" y="300" width="330" height="3" rx="1.5" fill="url(#lineGrad)"/>
 </svg>
