@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#0a0a0b"/>
+  <ellipse cx="340" cy="256" rx="120" ry="80" fill="#00d4ff" opacity="0.06"/>
+  <text x="72" y="280" font-family="'SF Pro Display','Inter','Helvetica Neue',Arial,sans-serif" font-weight="700" font-size="120" fill="#ffffff" letter-spacing="-4">Mac</text>
+  <text x="325" y="280" font-family="'SF Pro Display','Inter','Helvetica Neue',Arial,sans-serif" font-weight="700" font-size="120" fill="#00d4ff" letter-spacing="-4">AI</text>
+  <rect x="76" y="300" width="370" height="3" rx="1.5" fill="#00d4ff" opacity="0.6"/>
+</svg>
