@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scotroof Solutions — AI Growth Audit | Mac AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        :root {
+            --bg: #080808;
+            --card: #0f0f0f;
+            --card2: #141414;
+            --border: #1f1f1f;
+            --accent: #f97316;
+            --text: #f1f5f9;
+            --muted: #64748b;
+            --green: #22c55e;
+            --red: #ef4444;
+        }
+
+        body { background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 700;
+            letter-spacing: 0.07em; text-transform: uppercase;
+        }
+        .badge-red    { background: rgba(239,68,68,0.1);   color: #ef4444; border: 1px solid rgba(239,68,68,0.2); }
+        .badge-orange { background: rgba(249,115,22,0.1); color: #f97316; border: 1px solid rgba(249,115,22,0.2); }
+        .badge-green  { background: rgba(34,197,94,0.1);  color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+        .badge-blue   { background: rgba(59,130,246,0.1); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
+
+        /* ── Metric cards ── */
+        .metric-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 20px;
+        }
+
+        /* ── Chat widget ── */
+        .chat-widget {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6), 0 0 40px rgba(249,115,22,0.08);
+        }
+        .chat-header {
+            background: #111; border-bottom: 1px solid var(--border);
+            padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+        }
+        .chat-avatar {
+            width: 40px; height: 40px; flex-shrink: 0;
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 18px; position: relative;
+        }
+        .online-dot {
+            width: 10px; height: 10px; background: var(--green);
+            border-radius: 50%; position: absolute; bottom: 0; right: 0;
+            border: 2px solid #111; animation: blink 2s infinite;
+        }
+        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+        .messages-area {
+            padding: 16px; height: 300px; overflow-y: auto;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .messages-area::-webkit-scrollbar { width: 4px; }
+        .messages-area::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+
+        .msg {
+            max-width: 86%; padding: 10px 14px;
+            border-radius: 12px; font-size: 14px; line-height: 1.55;
+            animation: fadeUp 0.25s ease;
+        }
+        .msg-bot  { background: #1a1a1a; border: 1px solid var(--border); align-self: flex-start; border-bottom-left-radius: 3px; }
+        .msg-user { background: #f97316; color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(7px)} to{opacity:1;transform:translateY(0)} }
+
+        .typing {
+            display: flex; align-items: center; gap: 4px;
+            padding: 11px 14px; background: #1a1a1a;
+            border: 1px solid var(--border); border-radius: 12px;
+            border-bottom-left-radius: 3px; width: fit-content;
+        }
+        .typing span {
+            width: 7px; height: 7px; background: var(--muted);
+            border-radius: 50%; animation: bounce 1.2s infinite;
+        }
+        .typing span:nth-child(2){animation-delay:.2s}
+        .typing span:nth-child(3){animation-delay:.4s}
+        @keyframes bounce { 0%,60%,100%{transform:translateY(0);opacity:.4} 30%{transform:translateY(-6px);opacity:1} }
+
+        .quick-replies { display: flex; flex-wrap: wrap; gap: 7px; padding: 2px 16px 10px; }
+        .qr {
+            padding: 6px 13px; border: 1px solid var(--border);
+            border-radius: 20px; font-size: 12px; background: #1a1a1a;
+            cursor: pointer; color: var(--text); transition: all .15s;
+        }
+        .qr:hover { border-color: #f97316; color: #f97316; background: rgba(249,115,22,.05); }
+
+        .chat-footer {
+            border-top: 1px solid var(--border);
+            padding: 11px 14px; display: flex; gap: 8px; align-items: center;
+        }
+        .chat-input {
+            flex: 1; background: #1a1a1a; border: 1px solid var(--border);
+            border-radius: 8px; padding: 9px 13px; color: var(--text);
+            font-size: 14px; outline: none; transition: border-color .15s;
+        }
+        .chat-input:focus { border-color: rgba(249,115,22,.5); }
+        .chat-input::placeholder { color: var(--muted); }
+        .send-btn {
+            width: 37px; height: 37px; background: #f97316; border: none;
+            border-radius: 8px; cursor: pointer; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .15s;
+        }
+        .send-btn:hover { background: #ea580c; }
+
+        /* ── Competitor bars ── */
+        .bar-track { flex: 1; height: 6px; background: #1f1f1f; border-radius: 3px; margin: 0 12px; overflow: hidden; }
+        .bar-fill  { height: 100%; border-radius: 3px; width: 0; transition: width 1.4s ease; }
+
+        /* ── Revenue chart ── */
+        .rev-bar {
+            border-radius: 4px 4px 0 0; width: 100%; height: 0;
+            transition: height 1s ease;
+            background: linear-gradient(to top, rgba(249,115,22,.75), rgba(249,115,22,.25));
+        }
+
+        /* ── Service list ── */
+        .svc { display: flex; align-items: flex-start; gap: 14px; padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .svc:last-child { border: none; }
+        .svc-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+
+        /* ── CTA ── */
+        .cta-btn {
+            background: #f97316; color: #fff; border: none;
+            padding: 15px 36px; border-radius: 10px; font-size: 16px;
+            font-weight: 700; cursor: pointer; transition: background .15s;
+            animation: pulse-cta 2.2s infinite;
+        }
+        .cta-btn:hover { background: #ea580c; }
+        @keyframes pulse-cta {
+            0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,.35)}
+            50%{box-shadow:0 0 0 14px rgba(249,115,22,0)}
+        }
+
+        hr.divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+
+        @media(max-width: 640px) {
+            .two-col { flex-direction: column !important; }
+            .metric-grid { grid-template-columns: 1fr 1fr !important; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Confidential bar -->
+<div style="background:rgba(249,115,22,.06);border-bottom:1px solid rgba(249,115,22,.12);padding:8px 24px;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--muted);">
+    <span>🔒 Confidential — Prepared exclusively for Scotroof Solutions</span>
+    <span style="color:var(--muted);">Mac AI · getmacai.app</span>
+</div>
+
+<div style="max-width:900px;margin:0 auto;padding:48px 20px 96px;">
+
+    <!-- ═══ HEADER ═══ -->
+    <div style="margin-bottom:48px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+            <span class="badge badge-orange">AI Growth Audit</span>
+            <span style="font-size:12px;color:var(--muted);">Prepared May 2026</span>
+        </div>
+        <h1 style="font-size:clamp(30px,6vw,54px);font-weight:900;margin:0 0 10px;line-height:1.05;">
+            Scotroof Solutions<br>
+            <span style="color:var(--muted);font-weight:400;font-size:.55em;">× Mac AI</span>
+        </h1>
+        <p style="color:var(--muted);font-size:15px;max-width:520px;line-height:1.65;margin:0;">
+            We analysed your online presence, lead flow, and local competitors.
+            Here's where the gaps are — and exactly what we'd build to close them.
+        </p>
+    </div>
+
+    <!-- ═══ AUDIT SCORE ═══ -->
+    <div class="card" style="display:flex;gap:32px;align-items:center;flex-wrap:wrap;margin-bottom:20px;">
+        <!-- Ring -->
+        <div style="text-align:center;min-width:130px;">
+            <div style="position:relative;width:110px;height:110px;margin:0 auto 10px;">
+                <svg width="110" height="110" viewBox="0 0 110 110">
+                    <circle cx="55" cy="55" r="45" fill="none" stroke="#1f1f1f" stroke-width="9"/>
+                    <circle cx="55" cy="55" r="45" fill="none" stroke="#f97316" stroke-width="9"
+                        stroke-dasharray="283" stroke-dashoffset="175" stroke-linecap="round"
+                        style="transform:rotate(-90deg);transform-origin:55px 55px;"/>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
+                    <div style="font-size:24px;font-weight:900;color:#f97316;">38</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;">/100</div>
+                </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.07em;">Audit Score</div>
+        </div>
+
+        <!-- Issues -->
+        <div style="flex:1;min-width:220px;">
+            <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700;margin-bottom:14px;">Issues Found</div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+                <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><span style="color:#ef4444;font-size:8px;flex-shrink:0;">⬤</span> No live chat or AI receptionist — 31 missed calls last month</div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><span style="color:#ef4444;font-size:8px;flex-shrink:0;">⬤</span> 12 Google reviews — competitors averaging 74</div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><span style="color:#f97316;font-size:8px;flex-shrink:0;">⬤</span> 4.2 hour average lead response time</div>
+                <div style="display:flex;align-items:center;gap:10px;font-size:14px;"><span style="color:#f97316;font-size:8px;flex-shrink:0;">⬤</span> No performance dashboard or automated follow-up</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ OPPORTUNITY METRICS ═══ -->
+    <div class="metric-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:52px;">
+        <div class="metric-card" style="border-color:rgba(239,68,68,.3);">
+            <div style="font-size:30px;font-weight:900;color:#ef4444;margin-bottom:4px;">31</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4;">Missed calls<br>last month</div>
+            <span class="badge badge-red">Revenue lost</span>
+        </div>
+        <div class="metric-card" style="border-color:rgba(239,68,68,.3);">
+            <div style="font-size:30px;font-weight:900;color:#ef4444;margin-bottom:4px;">4.2h</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4;">Avg lead<br>response time</div>
+            <span class="badge badge-red">Should be &lt;2 min</span>
+        </div>
+        <div class="metric-card" style="border-color:rgba(249,115,22,.3);">
+            <div style="font-size:30px;font-weight:900;color:#f97316;margin-bottom:4px;">12</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4;">Google<br>reviews</div>
+            <span class="badge badge-orange">Avg comp: 74</span>
+        </div>
+        <div class="metric-card" style="border-color:rgba(249,115,22,.3);">
+            <div style="font-size:30px;font-weight:900;color:#f97316;margin-bottom:4px;">£0</div>
+            <div style="font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.4;">Automated<br>follow-ups</div>
+            <span class="badge badge-orange">Not set up</span>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ═══ REVIEW GAP ═══ -->
+    <div style="margin-bottom:48px;">
+        <h2 style="font-size:22px;font-weight:800;margin:0 0 6px;">Review Gap — Glasgow Roofers</h2>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 22px;">You're ranked 4th locally by review count. Position #1 gets roughly 3× the clicks.</p>
+
+        <div class="card">
+            <div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(31,31,31,.7);">
+                <div style="font-size:13px;font-weight:600;min-width:170px;">Glasgow Roofing Pros</div>
+                <div class="bar-track"><div class="bar-fill" id="rb1" style="background:linear-gradient(90deg,#22c55e,#16a34a);"></div></div>
+                <div style="font-size:13px;font-weight:700;min-width:55px;text-align:right;">89 ⭐</div>
+            </div>
+            <div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(31,31,31,.7);">
+                <div style="font-size:13px;font-weight:600;min-width:170px;">SkyHigh Roofers</div>
+                <div class="bar-track"><div class="bar-fill" id="rb2" style="background:linear-gradient(90deg,#3b82f6,#2563eb);"></div></div>
+                <div style="font-size:13px;font-weight:700;min-width:55px;text-align:right;">67 ⭐</div>
+            </div>
+            <div style="display:flex;align-items:center;padding:10px 0;border-bottom:1px solid rgba(31,31,31,.7);">
+                <div style="font-size:13px;font-weight:600;min-width:170px;">Clyde Roofing Ltd</div>
+                <div class="bar-track"><div class="bar-fill" id="rb3" style="background:linear-gradient(90deg,#8b5cf6,#7c3aed);"></div></div>
+                <div style="font-size:13px;font-weight:700;min-width:55px;text-align:right;">41 ⭐</div>
+            </div>
+            <div style="display:flex;align-items:center;padding:11px 8px;background:rgba(249,115,22,.04);border:1px solid rgba(249,115,22,.2);border-radius:7px;margin-top:6px;">
+                <div style="font-size:13px;font-weight:700;min-width:170px;color:#f97316;">Scotroof Solutions 👈</div>
+                <div class="bar-track"><div class="bar-fill" id="rb4" style="background:#f97316;"></div></div>
+                <div style="font-size:13px;font-weight:700;min-width:55px;text-align:right;color:#f97316;">12 ⭐</div>
+            </div>
+        </div>
+
+        <p style="color:var(--muted);font-size:13px;margin-top:12px;line-height:1.6;">
+            💡 <strong style="color:var(--text);">Review Automation</strong> — after every completed job, we trigger an automated SMS to the customer asking for a Google review.
+            Most clients add 40–60 reviews in the first 90 days.
+        </p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ═══ AI RECEPTIONIST DEMO ═══ -->
+    <div style="margin-bottom:48px;">
+        <span class="badge badge-green" style="margin-bottom:12px;display:inline-flex;">Live Demo</span>
+        <h2 style="font-size:22px;font-weight:800;margin:8px 0 6px;">Your AI Receptionist</h2>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 26px;max-width:540px;">This is live — talk to the AI we'd deploy for Scotroof Solutions. Handles enquiries, captures leads, and books surveys 24/7.</p>
+
+        <div class="two-col" style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap;">
+
+            <!-- Chat widget -->
+            <div class="chat-widget" style="flex:1;min-width:280px;max-width:420px;">
+                <div class="chat-header">
+                    <div class="chat-avatar">🏠<div class="online-dot"></div></div>
+                    <div>
+                        <div style="font-weight:700;font-size:14px;">Scotroof AI</div>
+                        <div style="font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;">
+                            <span>●</span> Online — replies instantly
+                        </div>
+                    </div>
+                    <div style="margin-left:auto;text-align:right;font-size:11px;color:var(--muted);">
+                        Powered by<br><strong style="color:var(--text);">Mac AI</strong>
+                    </div>
+                </div>
+
+                <div class="messages-area" id="msgs"></div>
+
+                <div class="quick-replies" id="qrs"></div>
+
+                <div class="chat-footer">
+                    <input class="chat-input" id="inp" placeholder="Type a message…" autocomplete="off"/>
+                    <button class="send-btn" onclick="send()">
+                        <svg width="15" height="15" fill="none" stroke="white" stroke-width="2.5" viewBox="0 0 24 24">
+                            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Capabilities -->
+            <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:14px;padding-top:4px;">
+                <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:700;">What it handles</div>
+
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                    <div class="svc-icon" style="background:rgba(34,197,94,.1);">📋</div>
+                    <div><div style="font-weight:700;font-size:14px;margin-bottom:3px;">Quote requests</div><div style="font-size:13px;color:var(--muted);">Captures name, address, job type. Pings you on WhatsApp immediately.</div></div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                    <div class="svc-icon" style="background:rgba(239,68,68,.1);">🚨</div>
+                    <div><div style="font-weight:700;font-size:14px;margin-bottom:3px;">Emergency leaks</div><div style="font-size:13px;color:var(--muted);">Triages urgency, flags same-day jobs, texts you instantly.</div></div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                    <div class="svc-icon" style="background:rgba(249,115,22,.1);">📅</div>
+                    <div><div style="font-weight:700;font-size:14px;margin-bottom:3px;">Survey bookings</div><div style="font-size:13px;color:var(--muted);">Confirms availability, books the slot, sends customer a confirmation.</div></div>
+                </div>
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                    <div class="svc-icon" style="background:rgba(59,130,246,.1);">🌙</div>
+                    <div><div style="font-weight:700;font-size:14px;margin-bottom:3px;">24/7 out of hours</div><div style="font-size:13px;color:var(--muted);">Responds to leads at 11pm so you don't lose them by morning.</div></div>
+                </div>
+
+                <div style="background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15);border-radius:10px;padding:14px;margin-top:4px;">
+                    <div style="font-size:12px;color:#f97316;font-weight:700;margin-bottom:5px;">Average result for similar businesses</div>
+                    <div style="font-size:26px;font-weight:900;line-height:1;">+31%</div>
+                    <div style="font-size:12px;color:var(--muted);margin-top:3px;">more leads captured from the same traffic</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ═══ DASHBOARD PREVIEW ═══ -->
+    <div style="margin-bottom:48px;">
+        <span class="badge badge-blue" style="margin-bottom:12px;display:inline-flex;">What We'd Build</span>
+        <h2 style="font-size:22px;font-weight:800;margin:8px 0 6px;">Business Dashboard</h2>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 24px;">Every job, lead, and review in one place. Live data, no manual updates.</p>
+
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px;">
+                <div>
+                    <div style="font-size:17px;font-weight:800;">Scotroof Solutions</div>
+                    <div style="font-size:12px;color:var(--muted);">May 2026 · Performance Overview</div>
+                </div>
+                <span class="badge badge-green">● Live</span>
+            </div>
+
+            <!-- KPI row -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:24px;">
+                <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Monthly Revenue</div>
+                    <div style="font-size:22px;font-weight:800;">£18,400</div>
+                    <div style="font-size:11px;color:var(--green);">↑ 12% vs last month</div>
+                </div>
+                <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Jobs Booked</div>
+                    <div style="font-size:22px;font-weight:800;">23</div>
+                    <div style="font-size:11px;color:var(--green);">↑ 8 vs last month</div>
+                </div>
+                <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">New Leads</div>
+                    <div style="font-size:22px;font-weight:800;">47</div>
+                    <div style="font-size:11px;color:var(--muted);">31 from AI chat</div>
+                </div>
+                <div style="background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:14px;">
+                    <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;">Google Reviews</div>
+                    <div style="font-size:22px;font-weight:800;">54</div>
+                    <div style="font-size:11px;color:var(--green);">↑ 42 since Mac AI</div>
+                </div>
+            </div>
+
+            <!-- Chart -->
+            <div>
+                <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px;">Revenue by Month (£)</div>
+                <div style="display:flex;align-items:flex-end;gap:8px;height:90px;">
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;">
+                        <div class="rev-bar" id="cb1"></div><div style="font-size:10px;color:var(--muted);">Dec</div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;">
+                        <div class="rev-bar" id="cb2"></div><div style="font-size:10px;color:var(--muted);">Jan</div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;">
+                        <div class="rev-bar" id="cb3"></div><div style="font-size:10px;color:var(--muted);">Feb</div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;">
+                        <div class="rev-bar" id="cb4"></div><div style="font-size:10px;color:var(--muted);">Mar</div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;">
+                        <div class="rev-bar" id="cb5"></div><div style="font-size:10px;color:var(--muted);">Apr</div>
+                    </div>
+                    <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;">
+                        <div class="rev-bar" id="cb6" style="background:linear-gradient(to top,#f97316,rgba(249,115,22,.4));"></div>
+                        <div style="font-size:10px;color:#f97316;font-weight:700;">May</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ═══ SERVICES ═══ -->
+    <div style="margin-bottom:48px;">
+        <h2 style="font-size:22px;font-weight:800;margin:0 0 6px;">What We'd Deploy</h2>
+        <p style="color:var(--muted);font-size:14px;margin:0 0 22px;">Everything live within 30 days. Flat monthly fee, no contracts.</p>
+
+        <div class="card">
+            <div class="svc">
+                <div class="svc-icon" style="background:rgba(34,197,94,.1);">⚡</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:15px;margin-bottom:4px;">Speed to Lead Agent</div>
+                    <div style="font-size:13px;color:var(--muted);">Every web enquiry gets an AI response in under 2 minutes — 24 hours a day. No more leads going cold overnight.</div>
+                </div>
+                <span class="badge badge-green" style="white-space:nowrap;margin-left:12px;">Included</span>
+            </div>
+            <div class="svc">
+                <div class="svc-icon" style="background:rgba(249,115,22,.1);">⭐</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:15px;margin-bottom:4px;">Review Automation</div>
+                    <div style="font-size:13px;color:var(--muted);">Auto-SMS after every job. Most clients collect 40–60 new Google reviews in the first 90 days.</div>
+                </div>
+                <span class="badge badge-green" style="white-space:nowrap;margin-left:12px;">Included</span>
+            </div>
+            <div class="svc">
+                <div class="svc-icon" style="background:rgba(59,130,246,.1);">📊</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:15px;margin-bottom:4px;">Business Dashboard</div>
+                    <div style="font-size:13px;color:var(--muted);">Revenue, leads, jobs, and reviews in one live view. Know your numbers without lifting a finger.</div>
+                </div>
+                <span class="badge badge-green" style="white-space:nowrap;margin-left:12px;">Included</span>
+            </div>
+            <div class="svc">
+                <div class="svc-icon" style="background:rgba(139,92,246,.1);">🤖</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:15px;margin-bottom:4px;">AI Chat Receptionist</div>
+                    <div style="font-size:13px;color:var(--muted);">Live on your website 24/7. Books surveys, handles FAQs, captures leads while you're on a roof.</div>
+                </div>
+                <span class="badge badge-green" style="white-space:nowrap;margin-left:12px;">Included</span>
+            </div>
+            <div class="svc">
+                <div class="svc-icon" style="background:rgba(236,72,153,.1);">🔄</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;font-size:15px;margin-bottom:4px;">Workflow Automation</div>
+                    <div style="font-size:13px;color:var(--muted);">Job confirmations, invoice reminders, follow-ups — all automated. Save 5+ hours a week.</div>
+                </div>
+                <span class="badge badge-orange" style="white-space:nowrap;margin-left:12px;">Add-on</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ CTA ═══ -->
+    <div style="text-align:center;padding:48px 24px;border:1px solid var(--border);border-radius:16px;background:linear-gradient(135deg,rgba(249,115,22,.05),transparent);">
+        <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:700;margin-bottom:8px;">Next Step</div>
+        <h2 style="font-size:26px;font-weight:900;margin:0 0 12px;">Ready to see this live?</h2>
+        <p style="color:var(--muted);font-size:14px;max-width:380px;margin:0 auto 28px;line-height:1.65;">
+            We can have the AI receptionist and review automation live within 7 days.
+            No contracts. Flat monthly fee.
+        </p>
+        <button class="cta-btn" onclick="window.open('https://getmacai.app','_blank')">
+            Book a Call with Mac →
+        </button>
+        <div style="margin-top:14px;font-size:13px;color:var(--muted);">
+            or email <a href="mailto:mac@getmacai.app" style="color:#f97316;text-decoration:none;">mac@getmacai.app</a>
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// CHAT LOGIC
+// ═══════════════════════════════════════════
+
+const msgsEl  = document.getElementById('msgs');
+const inpEl   = document.getElementById('inp');
+const qrsEl   = document.getElementById('qrs');
+
+let state = 'init';
+let name  = '';
+
+const INIT_QRS = ['Get a free quote','Emergency repair','Areas you cover?','What services?'];
+
+function addMsg(html, bot) {
+    const d = document.createElement('div');
+    d.className = 'msg ' + (bot ? 'msg-bot' : 'msg-user');
+    d.innerHTML  = html;
+    msgsEl.appendChild(d);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+function showTyping() {
+    const t = document.createElement('div');
+    t.className = 'typing'; t.id = 'typ';
+    t.innerHTML = '<span></span><span></span><span></span>';
+    msgsEl.appendChild(t);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+}
+
+function removeTyping() {
+    const t = document.getElementById('typ');
+    if (t) t.remove();
+}
+
+function setQRs(arr) {
+    qrsEl.innerHTML = '';
+    (arr || []).forEach(r => {
+        const b = document.createElement('button');
+        b.className = 'qr'; b.textContent = r;
+        b.onclick = () => handleMsg(r);
+        qrsEl.appendChild(b);
+    });
+}
+
+function botSay(html, delay, qrs) {
+    showTyping();
+    setTimeout(() => {
+        removeTyping();
+        addMsg(html, true);
+        if (qrs !== undefined) setQRs(qrs);
+    }, delay || 950);
+}
+
+function handleMsg(text) {
+    setQRs([]);
+    addMsg(text, false);
+    const low = text.toLowerCase();
+
+    if (state === 'name') {
+        name = text.split(' ')[0];
+        state = 'address';
+        botSay(`Thanks ${name}! What's the address of the property — just the postcode is fine to start.`, 900); return;
+    }
+    if (state === 'address') {
+        state = 'phone';
+        botSay(`Got it. Last thing — best phone number to reach you on?`, 900); return;
+    }
+    if (state === 'phone') {
+        state = 'done';
+        botSay(`All logged, ${name}! One of the team will call you within the hour to confirm. 🏠<br><br><span style="color:#22c55e;font-weight:600;">✓ Lead captured — sent to Derek's WhatsApp</span>`, 900, ['Ask something else','That\'s everything, cheers!']); return;
+    }
+
+    if (/quote|estimate|how much|price|cost/.test(low)) {
+        state = 'name'; botSay(`Happy to arrange a free quote! To get started, what's your name?`, 950);
+    } else if (/emergency|leak|urgent|storm|damage/.test(low)) {
+        state = 'name'; botSay(`Roof emergencies are our priority — we aim to get someone out same day. What's your name?`, 900);
+    } else if (/area|cover|where|location|come to|travel/.test(low)) {
+        botSay(`We cover Glasgow and surrounding areas — Paisley, East Kilbride, Rutherglen, Bearsden, and Milngavie. Is your property in one of those?`, 950, ['Yes, get a quote','What services do you offer?']);
+    } else if (/service|what do you|flat|tile|gutter|slate|fascia|soffit/.test(low)) {
+        botSay(`We handle the full range — new roofs, re-roofing, flat roofs, slates and tiles, lead flashing, gutters, fascias and soffits. What's the issue you're dealing with?`, 1000, ['Get a free quote','Emergency repair']);
+    } else if (/hour|open|available|weekend|time/.test(low)) {
+        botSay(`The team works Monday–Saturday, 7am–6pm. I'm here 24/7 to log your enquiry so nothing gets missed. Want me to get a quote request in now?`, 950, ['Get a free quote','That\'s everything, cheers!']);
+    } else if (/thanks|thank|great|perfect|cheers|everything/.test(low)) {
+        state = 'init'; botSay(`No bother at all! Give us a shout if anything else comes up. 🏠`, 700);
+    } else if (/yes|yeah|i\'m in/.test(low)) {
+        state = 'name'; botSay(`Brilliant — what's your name to get started?`, 700);
+    } else {
+        state = 'name'; botSay(`Thanks for getting in touch! Let me get that sorted. What's your name?`, 900);
+    }
+}
+
+function send() {
+    const v = inpEl.value.trim(); if (!v) return;
+    inpEl.value = ''; handleMsg(v);
+}
+inpEl.addEventListener('keydown', e => { if (e.key === 'Enter') send(); });
+
+// Boot the chat
+setTimeout(() => {
+    addMsg(`Hey there 👋 I'm the AI assistant for <strong>Scotroof Solutions</strong>. I can help with quotes, emergencies, or booking a survey. How can I help today?`, true);
+    setTimeout(() => setQRs(INIT_QRS), 500);
+}, 700);
+
+
+// ═══════════════════════════════════════════
+// REVIEW BAR ANIMATIONS
+// ═══════════════════════════════════════════
+
+function animateBars() {
+    setTimeout(() => { document.getElementById('rb1').style.width = '100%'; }, 200);
+    setTimeout(() => { document.getElementById('rb2').style.width = '75%'; },  400);
+    setTimeout(() => { document.getElementById('rb3').style.width = '46%'; },  600);
+    setTimeout(() => { document.getElementById('rb4').style.width = '13%'; },  800);
+}
+
+// ═══════════════════════════════════════════
+// REVENUE CHART ANIMATIONS
+// ═══════════════════════════════════════════
+
+const chartPct = [44, 52, 36, 68, 74, 88];
+function animateChart() {
+    ['cb1','cb2','cb3','cb4','cb5','cb6'].forEach((id, i) => {
+        setTimeout(() => {
+            const el = document.getElementById(id);
+            if (el) el.style.height = chartPct[i] + '%';
+        }, 100 * i);
+    });
+}
+
+// Trigger on load
+setTimeout(animateBars, 300);
+setTimeout(animateChart, 500);
+</script>
+</body>
+</html>
