@@ -202,37 +202,87 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 }
 .svc-card.open .svc-body { max-height: 80px; opacity: 1; margin-top: 8px; }
 
-/* ─── Pipeline flow ─── */
-.pipe-wrap {
-  display: flex; align-items: center; gap: 0; width: 100%;
+/* ─── Pipeline: step tracker ─── */
+.step-track {
+  display: flex; align-items: center; width: 100%; margin-bottom: 20px;
 }
-.pipe-step {
-  flex: 1; text-align: center; position: relative;
-}
-.pipe-circle {
-  width: 48px; height: 48px; border-radius: 50%;
-  background: var(--card); border: 2px solid var(--border);
+.step-node {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border); background: var(--card);
   display: flex; align-items: center; justify-content: center;
-  font-size: 18px; margin: 0 auto 8px; transition: all .3s;
+  font-size: 13px; font-weight: 800; color: var(--muted);
+  transition: all .3s; cursor: pointer; position: relative;
 }
-.pipe-step.lit .pipe-circle {
-  background: rgba(0,212,255,.15); border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(0,212,255,.3);
+.step-node.yours-idle { border-color: rgba(0,212,255,.25); color: rgba(0,212,255,.5); }
+.step-node.done {
+  background: rgba(0,212,255,.1); border-color: rgba(0,212,255,.5); color: var(--accent);
 }
-.pipe-step.yours .pipe-circle { background: rgba(0,212,255,.2); border-color: var(--accent); }
-.pipe-step.lit .pipe-label { color: var(--text); }
-.pipe-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-.pipe-yours-tag {
-  font-size: 10px; font-weight: 700; color: var(--accent);
-  text-transform: uppercase; letter-spacing: .06em; margin-top: 4px;
-  opacity: 0; transition: opacity .3s;
+.step-node.active {
+  background: rgba(0,212,255,.18); border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(0,212,255,.12), 0 0 24px rgba(0,212,255,.35);
+  font-size: 20px; color: white; width: 44px; height: 44px;
 }
-.pipe-step.yours .pipe-yours-tag { opacity: 1; }
-.pipe-arrow {
-  width: 32px; height: 2px; background: var(--border); flex-shrink: 0; position: relative; top: -16px;
-  transition: background .3s;
+.step-node .node-label {
+  position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%);
+  font-size: 9px; font-weight: 700; color: var(--muted); white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .06em;
 }
-.pipe-arrow.lit { background: var(--accent); }
+.step-node.active .node-label { color: var(--accent); }
+.step-conn {
+  flex: 1; height: 2px; background: var(--border); transition: background .35s;
+}
+.step-conn.lit { background: linear-gradient(90deg, var(--accent), rgba(0,212,255,.4)); }
+
+/* ─── Pipeline: detail card ─── */
+.pipe-card {
+  display: flex; background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; overflow: hidden; width: 100%;
+  animation: cardIn .35s cubic-bezier(.4,0,.2,1);
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.pipe-icon-col {
+  width: 150px; flex-shrink: 0; padding: 28px 18px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-right: 1px solid var(--border); background: rgba(0,0,0,.25); gap: 12px;
+}
+.pipe-big-icon {
+  font-size: 50px; line-height: 1;
+  filter: drop-shadow(0 0 16px rgba(0,212,255,.4));
+}
+.pipe-step-label {
+  font-size: 10px; font-weight: 800; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.pipe-owner {
+  padding: 5px 11px; border-radius: 20px;
+  font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .07em; text-align: center;
+}
+.owner-yours { background: rgba(0,212,255,.12); color: var(--accent); border: 1px solid rgba(0,212,255,.25); }
+.owner-mac   { background: rgba(139,92,246,.12); color: #a78bfa;      border: 1px solid rgba(139,92,246,.25); }
+.owner-both  { background: rgba(34,197,94,.12);  color: var(--green); border: 1px solid rgba(34,197,94,.25); }
+
+.pipe-body {
+  flex: 1; padding: 26px 30px;
+  display: flex; flex-direction: column; justify-content: space-between;
+}
+.pipe-body-title { font-size: 26px; font-weight: 900; margin-bottom: 8px; line-height: 1.1; }
+.pipe-body-desc  { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 16px; }
+.pipe-actions    { display: flex; flex-direction: column; gap: 6px; margin-bottom: 18px; }
+.pipe-action     { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; font-weight: 500; line-height: 1.4; }
+.pipe-dot        { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; margin-top: 5px; }
+.pipe-chips      { display: flex; gap: 8px; flex-wrap: wrap; }
+.pipe-chip {
+  padding: 4px 11px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+  background: rgba(0,212,255,.07); color: var(--accent); border: 1px solid rgba(0,212,255,.15);
+}
+.pipe-hint {
+  text-align: center; font-size: 12px; color: var(--muted); margin-top: 12px;
+  font-weight: 500;
+}
 
 /* ─── Call sheet ─── */
 .outcome-card {
@@ -483,58 +533,35 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 <!-- SLIDE 4: THE SYSTEM                  -->
 <!-- ════════════════════════════════════ -->
 <div class="slide" id="s4" data-label="The System" data-maxstep="7">
-  <div style="width:100%;max-width:860px;">
-    <div class="eyebrow step" data-step="0">The System</div>
-    <h2 class="section-title step" data-step="0" style="margin-bottom:32px;">One pipeline.<br><span class="accent">Start to recurring revenue.</span></h2>
+  <div style="width:100%;max-width:900px;">
 
-    <div class="pipe-wrap step" data-step="0">
-      <div class="pipe-step yours" id="pp1">
-        <div class="pipe-circle">📋</div>
-        <div class="pipe-label">Lead List</div>
-        <div class="pipe-yours-tag">Your job</div>
-      </div>
-      <div class="pipe-arrow" id="pa1"></div>
-      <div class="pipe-step yours" id="pp2">
-        <div class="pipe-circle">📞</div>
-        <div class="pipe-label">Cold Call</div>
-        <div class="pipe-yours-tag">Your job</div>
-      </div>
-      <div class="pipe-arrow" id="pa2"></div>
-      <div class="pipe-step" id="pp3">
-        <div class="pipe-circle">🎯</div>
-        <div class="pipe-label">Audit Call</div>
-        <div class="pipe-yours-tag"></div>
-      </div>
-      <div class="pipe-arrow" id="pa3"></div>
-      <div class="pipe-step" id="pp4">
-        <div class="pipe-circle">🖥️</div>
-        <div class="pipe-label">Demo</div>
-        <div class="pipe-yours-tag"></div>
-      </div>
-      <div class="pipe-arrow" id="pa4"></div>
-      <div class="pipe-step" id="pp5">
-        <div class="pipe-circle">🤝</div>
-        <div class="pipe-label">Proposal</div>
-        <div class="pipe-yours-tag"></div>
-      </div>
-      <div class="pipe-arrow" id="pa5"></div>
-      <div class="pipe-step" id="pp6">
-        <div class="pipe-circle">⚙️</div>
-        <div class="pipe-label">Build</div>
-        <div class="pipe-yours-tag"></div>
-      </div>
-      <div class="pipe-arrow" id="pa6"></div>
-      <div class="pipe-step" id="pp7">
-        <div class="pipe-circle">💰</div>
-        <div class="pipe-label">Recurring</div>
-        <div class="pipe-yours-tag"></div>
-      </div>
+    <div class="step" style="margin-bottom:16px;">
+      <div class="eyebrow">The System</div>
+      <h2 class="section-title" style="margin-top:8px;">One pipeline.<br><span class="accent">Start to recurring revenue.</span></h2>
     </div>
 
-    <!-- Step detail boxes -->
-    <div id="pipe-detail" style="margin-top:28px;min-height:80px;">
-      <div class="card" id="pd0" style="display:none;"></div>
+    <!-- Step tracker -->
+    <div class="step-track step" id="stepTrack">
+      <div class="step-node yours-idle" id="sn1" onclick="jumpPipe(1)">1<div class="node-label">Lead List</div></div>
+      <div class="step-conn" id="sc1"></div>
+      <div class="step-node yours-idle" id="sn2" onclick="jumpPipe(2)">2<div class="node-label">Cold Call</div></div>
+      <div class="step-conn" id="sc2"></div>
+      <div class="step-node" id="sn3" onclick="jumpPipe(3)">3<div class="node-label">Audit Call</div></div>
+      <div class="step-conn" id="sc3"></div>
+      <div class="step-node" id="sn4" onclick="jumpPipe(4)">4<div class="node-label">Demo</div></div>
+      <div class="step-conn" id="sc4"></div>
+      <div class="step-node" id="sn5" onclick="jumpPipe(5)">5<div class="node-label">Proposal</div></div>
+      <div class="step-conn" id="sc5"></div>
+      <div class="step-node" id="sn6" onclick="jumpPipe(6)">6<div class="node-label">Build</div></div>
+      <div class="step-conn" id="sc6"></div>
+      <div class="step-node" id="sn7" onclick="jumpPipe(7)">7<div class="node-label">Recurring</div></div>
     </div>
+
+    <!-- Detail card -->
+    <div id="pipe-detail" class="step"></div>
+
+    <div class="pipe-hint step" id="pipeHint">Press → to step through each stage · or click any step above</div>
+
   </div>
 </div>
 
@@ -1120,8 +1147,7 @@ function goTo(n, direction) {
 
 function next() {
   const si = cur;
-  const maxStep = getMaxStep(si);
-  if (si === 3) { // pipeline slide — step through
+  if (si === 3) {
     const cs = getSlideStep(si);
     if (cs < 7) { lightPipe(cs + 1); setSlideStep(si, cs + 1); return; }
   }
@@ -1129,9 +1155,9 @@ function next() {
 }
 
 function prev() {
-  if (cur === 3 && getSlideStep(3) > 0) {
+  if (cur === 3) {
     const cs = getSlideStep(3);
-    lightPipe(cs - 1); setSlideStep(3, cs - 1); return;
+    if (cs > 0) { lightPipe(cs - 1); setSlideStep(3, cs - 1); return; }
   }
   goTo(cur - 1);
 }
@@ -1180,36 +1206,146 @@ function togglePrice(el)   { el.classList.toggle('open'); }
 
 const pipeDetails = [
   null,
-  { icon: '📋', title: 'Lead List', text: 'Google Maps scrape of Scottish service businesses — roofers, joiners, landscapers, electricians. 200 prospects loaded into the sheet. Fresh batch added weekly.' },
-  { icon: '📞', title: 'Cold Call', text: 'Your job. 100–150 dials a day. One goal: book a 20-minute call with Mac. Use the script. Log every outcome on the sheet.' },
-  { icon: '🎯', title: 'Audit Call', text: 'Mac runs this. He\'s already built a personalised demo for their business. Shows them the audit page, asks pain-point questions, uncovers what they need.' },
-  { icon: '🖥️', title: 'The Demo', text: 'Live on the call — Mac pulls up the prospect\'s personalised page. Working AI chat, competitor review gap, dashboard preview. Most prospects have never seen anything like it.' },
-  { icon: '🤝', title: 'Proposal', text: 'Based on what came up on the call, Mac sends a one-page written proposal within 24 hours. Starter, Growth, or Full Stack — whatever fits.' },
-  { icon: '⚙️', title: 'Build', text: 'Mac builds the AI system — chat agent, review automation, dashboard, whatever was agreed. Usually live within 7 days.' },
-  { icon: '💰', title: 'Recurring Revenue', text: 'Monthly flat fee hits the account. Client is live and running. Every upsell conversation from here adds to that number.' },
+  {
+    icon: '📋', step: 'Step 01', title: 'Lead List', owner: 'yours', ownerLabel: 'Your Job',
+    desc: 'Google Maps scrape of Scottish service businesses — roofers, joiners, landscapers, electricians, pressure washers. Every prospect has a phone number, website, and review count logged before a single dial happens.',
+    actions: [
+      '200 prospects loaded into the call sheet on day one',
+      'Sorted by lowest review count — they need us most and are easiest to hook',
+      'Fresh batch of 200 added each week as the list gets worked through'
+    ],
+    chips: ['200 prospects/batch', 'Weekly refresh', 'Scottish trades only']
+  },
+  {
+    icon: '📞', step: 'Step 02', title: 'Cold Call', owner: 'yours', ownerLabel: 'Your Job',
+    desc: '100–150 dials a day. One objective — book a 20-minute audit call with Mac. You don\'t sell the service. You sell the meeting. Short, sharp, use the script. Every outcome gets logged.',
+    actions: [
+      'Follow the 5-step script: hook, gap, pitch, ask, close — nothing more',
+      'Log every call: Answered / Not Interested / No Answer — sheet stays clean',
+      'Pass interested leads to Mac immediately with website URL and one pain point they mentioned'
+    ],
+    chips: ['100–150 dials/day', '2–3 interested/day', '£150–400 per close']
+  },
+  {
+    icon: '🎯', step: 'Step 03', title: 'Audit Call', owner: 'mac', ownerLabel: "Mac's Job",
+    desc: 'Mac\'s done the research before this call starts. He knows their review score, their website weak spots, and what their competitors are doing. He opens with "I\'ve actually built something to show you." — 20 to 30 minutes.',
+    actions: [
+      'Opens with the personalised demo page — built the night before the call',
+      'Asks about lead flow, missed calls, biggest time-waster in the week',
+      'Listens for the pain. The demo does most of the heavy lifting.'
+    ],
+    chips: ['20–30 min call', 'Demo pre-built', '~40% close rate']
+  },
+  {
+    icon: '🖥️', step: 'Step 04', title: 'The Demo', owner: 'mac', ownerLabel: "Mac's Job",
+    desc: 'The secret weapon. A personalised audit page built specifically for their business — live AI chat acting as their receptionist, competitor review gap, business dashboard preview. They\'ve never seen anything like it. Ever.',
+    actions: [
+      'Custom page shows their exact business name, review score, and competitor gap',
+      'Live AI chat they can talk to right there on the call — it answers as their business',
+      '"Wait — you actually built this for me already?" — happens every single time'
+    ],
+    chips: ['Built in 2 hours', 'Personalised per prospect', 'Closes the sceptics']
+  },
+  {
+    icon: '🤝', step: 'Step 05', title: 'Proposal', owner: 'mac', ownerLabel: "Mac's Job",
+    desc: 'Same-day written proposal based on exactly what came up on the call. Starter, Growth, or Full Stack — whichever fits what they said. One-time build fee upfront, flat monthly management fee ongoing. Clear and simple.',
+    actions: [
+      'Proposal sent within 24 hours of the audit call, while the demo is still fresh',
+      'One follow-up if no response within 48 hours — then move on',
+      'Build fee + monthly management clearly broken out — no hidden costs, no contracts'
+    ],
+    chips: ['£600–1,500 build', '+ £200–400/mo', 'Sent same day']
+  },
+  {
+    icon: '⚙️', step: 'Step 06', title: 'Build & Launch', owner: 'mac', ownerLabel: "Mac's Job",
+    desc: 'Mac builds the full AI system using Claude Code, n8n, and Vercel. Chat agent, review automation, speed-to-lead, dashboard — everything agreed in the proposal. Client gets a walkthrough before anything goes live.',
+    actions: [
+      'Full build completed and tested in 3 to 7 days',
+      'Client walkthrough before launch — they sign off, it goes live',
+      'System runs entirely in the background — they don\'t need to touch a thing'
+    ],
+    chips: ['Live in 7 days', 'No tech skills needed', 'Fully managed']
+  },
+  {
+    icon: '💰', step: 'Step 07', title: 'Recurring Revenue', owner: 'both', ownerLabel: 'Both Win',
+    desc: 'Monthly management fee hits the account. The AI is running, reviews are growing, leads are being captured. Every client added compounds the base. Upsell conversations open up naturally from month two onwards.',
+    actions: [
+      'Monthly fee arrives automatically — direct debit, no chasing',
+      'Upsell into Google Ads, Meta Ads, and voice agent as trust builds month by month',
+      'Happy clients refer others in the same trade — the network effect kicks in'
+    ],
+    chips: ['£200–400/mo per client', 'Compounds monthly', 'Upsell from month 2']
+  },
 ];
 
 function lightPipe(step) {
+  // Update step nodes
   for (let i = 1; i <= 7; i++) {
-    const pp = document.getElementById('pp' + i);
-    const pa = document.getElementById('pa' + i);
-    if (pp) { pp.classList.toggle('lit', i <= step); }
-    if (pa) { pa.classList.toggle('lit', i < step); }
+    const sn = document.getElementById('sn' + i);
+    const sc = document.getElementById('sc' + i);
+    if (!sn) continue;
+    sn.classList.remove('active', 'done', 'yours-idle');
+    if (i === step) {
+      sn.classList.add('active');
+      sn.innerHTML = pipeDetails[i] ? pipeDetails[i].icon : i;
+      sn.innerHTML += `<div class="node-label">${['','Lead List','Cold Call','Audit Call','Demo','Proposal','Build','Recurring'][i]}</div>`;
+    } else if (i < step) {
+      sn.classList.add('done');
+      sn.innerHTML = '✓';
+      sn.innerHTML += `<div class="node-label">${['','Lead List','Cold Call','Audit Call','Demo','Proposal','Build','Recurring'][i]}</div>`;
+    } else {
+      if (i <= 2) sn.classList.add('yours-idle');
+      sn.innerHTML = i;
+      sn.innerHTML += `<div class="node-label">${['','Lead List','Cold Call','Audit Call','Demo','Proposal','Build','Recurring'][i]}</div>`;
+    }
+    if (sc) sc.classList.toggle('lit', i < step);
   }
+
+  // Render detail card
   const det = document.getElementById('pipe-detail');
   if (step > 0 && pipeDetails[step]) {
     const d = pipeDetails[step];
+    const ownerClass = d.owner === 'yours' ? 'owner-yours' : d.owner === 'mac' ? 'owner-mac' : 'owner-both';
+    const leftGlow = d.owner === 'yours' ? 'rgba(0,212,255,.06)' : d.owner === 'mac' ? 'rgba(139,92,246,.06)' : 'rgba(34,197,94,.06)';
     det.innerHTML = `
-      <div class="card" style="display:flex;gap:14px;align-items:flex-start;animation:fadeUp .3s ease;">
-        <div style="font-size:28px;flex-shrink:0;">${d.icon}</div>
-        <div>
-          <div style="font-weight:800;font-size:15px;color:var(--accent);margin-bottom:6px;">${d.title}</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.6;">${d.text}</div>
+      <div class="pipe-card">
+        <div class="pipe-icon-col" style="background:${leftGlow};">
+          <div class="pipe-big-icon">${d.icon}</div>
+          <div class="pipe-step-label">${d.step}</div>
+          <div class="pipe-owner ${ownerClass}">${d.ownerLabel}</div>
+        </div>
+        <div class="pipe-body">
+          <div>
+            <div class="pipe-body-title">${d.title}</div>
+            <div class="pipe-body-desc">${d.desc}</div>
+            <div class="pipe-actions">
+              ${d.actions.map(a => `<div class="pipe-action"><div class="pipe-dot"></div><span>${a}</span></div>`).join('')}
+            </div>
+          </div>
+          <div class="pipe-chips">
+            ${d.chips.map(c => `<span class="pipe-chip">${c}</span>`).join('')}
+          </div>
         </div>
       </div>`;
   } else {
     det.innerHTML = '';
   }
+
+  // Update hint
+  const hint = document.getElementById('pipeHint');
+  if (hint) {
+    hint.textContent = step === 0
+      ? 'Press → to step through each stage · or click any step above'
+      : step < 7
+        ? `Step ${step} of 7 — press → for next stage`
+        : 'Step 7 of 7 — press → to continue';
+  }
+}
+
+function jumpPipe(step) {
+  if (cur !== 3) return;
+  lightPipe(step);
+  setSlideStep(3, step);
 }
 
 // ═══════════════════════════════════════════════
