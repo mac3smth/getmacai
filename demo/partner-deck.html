@@ -312,20 +312,36 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 
 /* ─── Last slide ─── */
 #s14 {
-  background: radial-gradient(ellipse 80% 60% at 40% 50%, rgba(0,212,255,.07) 0%, transparent 70%), var(--bg);
-  text-align: center;
+  background: radial-gradient(ellipse 80% 60% at 40% 50%, rgba(0,212,255,.06) 0%, transparent 70%), var(--bg);
+  align-items: flex-start; padding-top: 52px;
 }
-.next-steps { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 520px; margin-top: 24px; }
 .ns-item {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px;
-  font-size: 14px; font-weight: 600; text-align: left;
+  display: flex; align-items: center; gap: 12px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 15px;
+  font-size: 13px; font-weight: 600; text-align: left; transition: all .2s;
 }
+.ns-item:hover { border-color: rgba(0,212,255,.3); background: rgba(0,212,255,.03); }
 .ns-num {
-  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(0,212,255,.15); border: 1px solid rgba(0,212,255,.3);
-  color: var(--accent); font-weight: 800; font-size: 13px;
+  width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(0,212,255,.12); border: 1px solid rgba(0,212,255,.3);
+  color: var(--accent); font-weight: 800; font-size: 12px;
   display: flex; align-items: center; justify-content: center;
+}
+.readiness-chip {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 9px 13px; font-size: 12px; font-weight: 600;
+}
+.readiness-chip .tick { color: var(--green); font-size: 13px; flex-shrink: 0; }
+.week-day {
+  background: var(--card2); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px;
+}
+.week-day .day-label { font-size: 10px; font-weight:700; color:var(--accent); text-transform:uppercase; letter-spacing:.07em; margin-bottom:3px; }
+.week-day .day-task  { font-size: 12px; font-weight: 700; margin-bottom: 2px; }
+.week-day .day-note  { font-size: 11px; color: var(--muted); line-height:1.4; }
+@keyframes launch-pulse {
+  0%,100%{box-shadow:0 0 0 0 rgba(0,212,255,.35)}
+  50%{box-shadow:0 0 0 18px rgba(0,212,255,0)}
 }
 
 /* hint text bottom left */
@@ -535,7 +551,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div style="display:flex;flex-direction:column;gap:10px;">
           <div class="card card-sm" style="display:flex;gap:12px;align-items:flex-start;">
             <span style="font-size:20px;">📋</span>
-            <div><div style="font-weight:700;font-size:14px;margin-bottom:2px;">Work the lead list</div><div style="font-size:12px;color:var(--muted);">Call 30–50 businesses per day from the sheet. Scottish service trades only.</div></div>
+            <div><div style="font-weight:700;font-size:14px;margin-bottom:2px;">Work the lead list</div><div style="font-size:12px;color:var(--muted);">Target 100–150 dials per day from the sheet. Scottish service trades only.</div></div>
           </div>
           <div class="card card-sm" style="display:flex;gap:12px;align-items:flex-start;">
             <span style="font-size:20px;">📞</span>
@@ -605,7 +621,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
       </div>
     </div>
     <div class="step" style="margin-top:20px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.6;">
-      <strong style="color:var(--accent);">Goal:</strong> 30–50 dials a day → 2–3 interested per week → 1 close every 2 weeks → 5 clients in 10 weeks = <strong>£1,500/mo recurring.</strong>
+      <strong style="color:var(--accent);">Goal:</strong> 100–150 dials a day → 2–3 interested per day → 1–2 closes per week → £5–10k in builds month 1 + recurring stacking every month after.
     </div>
   </div>
 </div>
@@ -768,28 +784,42 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 <div class="slide" id="s11" data-label="Pricing">
   <div style="width:100%;max-width:860px;">
     <div class="eyebrow step">The Offer</div>
-    <h2 class="section-title step" style="margin-bottom:8px;">Three tiers.<br><span class="accent">Flat monthly fee. No contracts.</span></h2>
-    <p class="lead step" style="font-size:14px;margin-bottom:24px;">Tap each card to see what's included.</p>
+    <h2 class="section-title step" style="margin-bottom:6px;">One-time build + monthly management.<br><span class="accent">They own it. We run it.</span></h2>
+    <p class="lead step" style="font-size:13px;margin-bottom:20px;">Build fee charged upfront — they're paying for something tangible. Management fee keeps the relationship and the cash flowing. Tap each card to expand.</p>
     <div class="g3 step" style="gap:20px;align-items:stretch;">
       <div class="price-card" onclick="togglePrice(this)">
         <div class="price-name">Starter</div>
-        <div class="price-tag">£299<span style="font-size:18px;color:var(--muted);font-weight:400;">/mo</span></div>
+        <div style="margin:10px 0 4px;">
+          <div class="price-tag" style="font-size:28px;">£600–800</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">one-time build</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+          <span style="font-size:16px;font-weight:800;color:var(--accent);">+ £200</span>
+          <span style="font-size:12px;color:var(--muted);">/ month management</span>
+        </div>
         <div class="price-period">Best for: trades new to AI</div>
         <div class="price-items">
           <div class="price-item">AI Chat Receptionist</div>
-          <div class="price-item">Review Automation (SMS)</div>
+          <div class="price-item">Review Automation (SMS after every job)</div>
           <div class="price-item">Speed to Lead (2-min response)</div>
-          <div class="price-item">Monthly report</div>
+          <div class="price-item">Monthly performance report</div>
         </div>
       </div>
       <div class="price-card featured" onclick="togglePrice(this)">
         <div class="featured-badge">Most Popular</div>
         <div class="price-name">Growth</div>
-        <div class="price-tag" style="color:var(--accent);">£499<span style="font-size:18px;color:var(--muted);font-weight:400;">/mo</span></div>
+        <div style="margin:10px 0 4px;">
+          <div class="price-tag" style="font-size:28px;color:var(--accent);">£1,000–1,200</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">one-time build</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+          <span style="font-size:16px;font-weight:800;color:var(--accent);">+ £300</span>
+          <span style="font-size:12px;color:var(--muted);">/ month management</span>
+        </div>
         <div class="price-period">Best for: established businesses</div>
         <div class="price-items">
           <div class="price-item">Everything in Starter</div>
-          <div class="price-item">Business Dashboard (live)</div>
+          <div class="price-item">Live Business Dashboard</div>
           <div class="price-item">Workflow Automation</div>
           <div class="price-item">Calendar Integration</div>
           <div class="price-item">Priority support</div>
@@ -797,19 +827,28 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
       </div>
       <div class="price-card" onclick="togglePrice(this)">
         <div class="price-name">Full Stack</div>
-        <div class="price-tag">£799<span style="font-size:18px;color:var(--muted);font-weight:400;">/mo</span></div>
+        <div style="margin:10px 0 4px;">
+          <div class="price-tag" style="font-size:28px;">£1,500+</div>
+          <div style="font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;">one-time build</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+          <span style="font-size:16px;font-weight:800;color:var(--accent);">+ £400</span>
+          <span style="font-size:12px;color:var(--muted);">/ month management</span>
+        </div>
         <div class="price-period">Best for: growth-focused</div>
         <div class="price-items">
           <div class="price-item">Everything in Growth</div>
           <div class="price-item">Voice Agent (after-hours calls)</div>
           <div class="price-item">Google Ads management</div>
           <div class="price-item">Meta Ads management</div>
-          <div class="price-item">Website build (if needed)</div>
+          <div class="price-item">Website build included</div>
         </div>
       </div>
     </div>
-    <div class="step" style="margin-top:20px;font-size:13px;color:var(--muted);text-align:center;">
-      Website build offered free when it helps land the deal — they stay for recurring services anyway.
+    <div class="step" style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <span style="background:var(--card);border:1px solid var(--border);padding:7px 14px;border-radius:20px;font-size:12px;color:var(--muted);">Website thrown in free to land the deal if their site is bad</span>
+      <span style="background:var(--card);border:1px solid var(--border);padding:7px 14px;border-radius:20px;font-size:12px;color:var(--muted);">No contracts — stays because it works</span>
+      <span style="background:var(--card);border:1px solid var(--border);padding:7px 14px;border-radius:20px;font-size:12px;color:var(--muted);">Upsell from Starter → Growth within 60 days</span>
     </div>
   </div>
 </div>
@@ -944,19 +983,87 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 <!-- SLIDE 14: LET'S GO                  -->
 <!-- ════════════════════════════════════ -->
 <div class="slide" id="s14" data-label="Let's Go">
-  <div style="text-align:center;max-width:640px;">
-    <div class="eyebrow step" style="margin-bottom:20px;">We're ready</div>
-    <h1 class="big step" style="margin-bottom:12px;">The system is built.<br><span class="accent">Now we execute.</span></h1>
-    <p class="lead step" style="margin:0 auto 32px;">One caller. One builder. Scottish service businesses that need exactly what we do. The only variable left is volume of dials.</p>
-    <div class="next-steps step">
-      <div class="ns-item"><div class="ns-num">1</div>Get the lead list built — 200 Scottish trade businesses</div>
-      <div class="ns-item"><div class="ns-num">2</div>Set up the call sheet tracker (Google Sheets)</div>
-      <div class="ns-item"><div class="ns-num">3</div>First dials — Day 1. Target: 30 calls, 1 booked</div>
-      <div class="ns-item"><div class="ns-num">4</div>First audit call — Mac builds demo night before</div>
-      <div class="ns-item"><div class="ns-num">5</div>First close — money in. Repeat.</div>
+  <div style="width:100%;max-width:900px;">
+
+    <!-- Header -->
+    <div class="step" style="margin-bottom:22px;">
+      <div class="eyebrow" style="margin-bottom:10px;">We're Ready</div>
+      <h1 class="big" style="line-height:1.05;">The system is built.<br><span class="accent">Scotland is untapped. Let's move.</span></h1>
     </div>
-    <div class="step" style="margin-top:28px;font-size:13px;color:var(--muted);">
-      getmacai.app · mac@getmacai.app
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+
+      <!-- Left: Readiness checklist -->
+      <div class="step">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Where we're at right now</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div class="readiness-chip"><span class="tick">✓</span> 2 paying clients live (Nico + SP Rapid)</div>
+          <div class="readiness-chip"><span class="tick">✓</span> Roofer demo page built and live</div>
+          <div class="readiness-chip"><span class="tick">✓</span> Partner deck ready (you're looking at it)</div>
+          <div class="readiness-chip"><span class="tick">✓</span> Pricing, commission and offer locked in</div>
+          <div class="readiness-chip"><span class="tick">✓</span> Scotland = massively under-tapped market</div>
+          <div class="readiness-chip" style="border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.04);">
+            <span style="color:var(--accent);font-size:13px;flex-shrink:0;">→</span> Lead list being built now
+          </div>
+        </div>
+        <!-- Revenue target callout -->
+        <div style="background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:10px;padding:16px;">
+          <div style="font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Month 1 target</div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <div>
+              <div style="font-size:22px;font-weight:900;">£5–10k</div>
+              <div style="font-size:11px;color:var(--muted);">one-time builds</div>
+            </div>
+            <div style="width:1px;background:var(--border);"></div>
+            <div>
+              <div style="font-size:22px;font-weight:900;">£1–2k</div>
+              <div style="font-size:11px;color:var(--muted);">recurring started</div>
+            </div>
+            <div style="width:1px;background:var(--border);"></div>
+            <div>
+              <div style="font-size:22px;font-weight:900;">8–12</div>
+              <div style="font-size:11px;color:var(--muted);">clients onboarded</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Week 1 plan -->
+      <div class="step">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;">Week 1 — day by day</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">
+          <div class="week-day">
+            <div class="day-label">Day 1</div>
+            <div class="day-task">Lead list loaded. First 100 dials.</div>
+            <div class="day-note">Goal: 2–3 interested, 1 audit call booked. Log everything.</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Day 2</div>
+            <div class="day-task">Mac builds demo overnight. Audit call goes live.</div>
+            <div class="day-note">Prospect sees their personalised page for the first time. "Wait — you built this for me?"</div>
+          </div>
+          <div class="week-day">
+            <div class="day-label">Day 3–4</div>
+            <div class="day-task">Keep dialling. Follow up on booked calls.</div>
+            <div class="day-note">No-shows get rebooked. Interested but undecided get a proposal same day.</div>
+          </div>
+          <div class="week-day" style="border-color:rgba(0,212,255,.3);background:rgba(0,212,255,.04);">
+            <div class="day-label" style="color:var(--green);">Week 2</div>
+            <div class="day-task" style="color:var(--text);">First close. Build fee hits the account.</div>
+            <div class="day-note">System live within 7 days. Client on recurring. Repeat.</div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <button onclick="window.open('mailto:mac@getmacai.app')"
+          style="width:100%;background:var(--accent);color:#000;border:none;padding:14px;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.02em;animation:launch-pulse 2s infinite;">
+          Let's start Monday →
+        </button>
+        <div style="text-align:center;margin-top:10px;font-size:12px;color:var(--muted);">
+          getmacai.app · mac@getmacai.app
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1074,7 +1181,7 @@ function togglePrice(el)   { el.classList.toggle('open'); }
 const pipeDetails = [
   null,
   { icon: '📋', title: 'Lead List', text: 'Google Maps scrape of Scottish service businesses — roofers, joiners, landscapers, electricians. 200 prospects loaded into the sheet. Fresh batch added weekly.' },
-  { icon: '📞', title: 'Cold Call', text: 'Your job. 30–50 dials a day. One goal: book a 20-minute call with Mac. Use the script. Log every outcome on the sheet.' },
+  { icon: '📞', title: 'Cold Call', text: 'Your job. 100–150 dials a day. One goal: book a 20-minute call with Mac. Use the script. Log every outcome on the sheet.' },
   { icon: '🎯', title: 'Audit Call', text: 'Mac runs this. He\'s already built a personalised demo for their business. Shows them the audit page, asks pain-point questions, uncovers what they need.' },
   { icon: '🖥️', title: 'The Demo', text: 'Live on the call — Mac pulls up the prospect\'s personalised page. Working AI chat, competitor review gap, dashboard preview. Most prospects have never seen anything like it.' },
   { icon: '🤝', title: 'Proposal', text: 'Based on what came up on the call, Mac sends a one-page written proposal within 24 hours. Starter, Growth, or Full Stack — whatever fits.' },
