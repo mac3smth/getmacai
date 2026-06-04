@@ -13,7 +13,7 @@
   --card:    #0f0f0f;
   --card2:   #141414;
   --border:  #1f1f1f;
-  --accent:  #f97316;
+  --accent:  #00d4ff;
   --text:    #f1f5f9;
   --muted:   #64748b;
   --green:   #22c55e;
@@ -123,7 +123,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   padding: 4px 10px; border-radius: 20px;
   font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
 }
-.badge-orange { background: rgba(249,115,22,.1); color: #f97316; border: 1px solid rgba(249,115,22,.2); }
+.badge-orange { background: rgba(0,212,255,.1); color: #00d4ff; border: 1px solid rgba(0,212,255,.2); }
 .badge-green  { background: rgba(34,197,94,.1);  color: #22c55e; border: 1px solid rgba(34,197,94,.2); }
 .badge-red    { background: rgba(239,68,68,.1);  color: #ef4444; border: 1px solid rgba(239,68,68,.2); }
 .badge-blue   { background: rgba(59,130,246,.1); color: #60a5fa; border: 1px solid rgba(59,130,246,.2); }
@@ -141,19 +141,19 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 
 /* ─── Slide 1: Cover ─── */
 #s1 {
-  background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(249,115,22,.07) 0%, transparent 70%), var(--bg);
+  background: radial-gradient(ellipse 80% 60% at 60% 50%, rgba(0,212,255,.07) 0%, transparent 70%), var(--bg);
   text-align: center; gap: 20px;
 }
 .cover-glow {
   font-size: clamp(72px,12vw,120px); font-weight: 900;
   letter-spacing: -.04em; line-height: 1;
-  color: #f97316;
-  text-shadow: 0 0 80px rgba(249,115,22,.45), 0 0 160px rgba(249,115,22,.2);
+  color: #00d4ff;
+  text-shadow: 0 0 80px rgba(0,212,255,.45), 0 0 160px rgba(0,212,255,.2);
   animation: pulse-glow 3s ease-in-out infinite;
 }
 @keyframes pulse-glow {
-  0%,100% { text-shadow: 0 0 80px rgba(249,115,22,.45), 0 0 160px rgba(249,115,22,.2); }
-  50%      { text-shadow: 0 0 100px rgba(249,115,22,.65), 0 0 200px rgba(249,115,22,.3); }
+  0%,100% { text-shadow: 0 0 80px rgba(0,212,255,.45), 0 0 160px rgba(0,212,255,.2); }
+  50%      { text-shadow: 0 0 100px rgba(0,212,255,.65), 0 0 200px rgba(0,212,255,.3); }
 }
 .cover-flow {
   display: flex; align-items: center; gap: 10px;
@@ -169,7 +169,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   background: var(--card); border: 1px solid var(--border); border-radius: 12px;
   padding: 24px; cursor: pointer; transition: all .2s; position: relative;
 }
-.stat-card:hover { border-color: rgba(249,115,22,.4); transform: translateY(-2px); }
+.stat-card:hover { border-color: rgba(0,212,255,.4); transform: translateY(-2px); }
 .stat-card .stat-num { font-size: 52px; font-weight: 900; line-height: 1; }
 .stat-card .stat-label { font-size: 13px; color: var(--muted); margin-top: 6px; }
 .stat-card .stat-detail {
@@ -178,7 +178,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   opacity: 0; font-size: 13px; color: var(--text); line-height: 1.6;
 }
 .stat-card.open .stat-detail { max-height: 120px; opacity: 1; margin-top: 12px; }
-.stat-card.open { border-color: rgba(249,115,22,.4); background: rgba(249,115,22,.04); }
+.stat-card.open { border-color: rgba(0,212,255,.4); background: rgba(0,212,255,.04); }
 .click-hint {
   position: absolute; top: 14px; right: 14px;
   font-size: 10px; color: var(--muted); font-weight: 600;
@@ -190,8 +190,8 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   background: var(--card); border: 1px solid var(--border); border-radius: 10px;
   padding: 16px; cursor: pointer; transition: all .2s;
 }
-.svc-card:hover { border-color: rgba(249,115,22,.3); }
-.svc-card.open  { border-color: rgba(249,115,22,.5); background: rgba(249,115,22,.05); }
+.svc-card:hover { border-color: rgba(0,212,255,.3); }
+.svc-card.open  { border-color: rgba(0,212,255,.5); background: rgba(0,212,255,.05); }
 .svc-icon  { font-size: 22px; margin-bottom: 8px; }
 .svc-name  { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
 .svc-price { font-size: 12px; color: var(--accent); font-weight: 700; }
@@ -216,10 +216,10 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   font-size: 18px; margin: 0 auto 8px; transition: all .3s;
 }
 .pipe-step.lit .pipe-circle {
-  background: rgba(249,115,22,.15); border-color: var(--accent);
-  box-shadow: 0 0 20px rgba(249,115,22,.3);
+  background: rgba(0,212,255,.15); border-color: var(--accent);
+  box-shadow: 0 0 20px rgba(0,212,255,.3);
 }
-.pipe-step.yours .pipe-circle { background: rgba(249,115,22,.2); border-color: var(--accent); }
+.pipe-step.yours .pipe-circle { background: rgba(0,212,255,.2); border-color: var(--accent); }
 .pipe-step.lit .pipe-label { color: var(--text); }
 .pipe-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 .pipe-yours-tag {
@@ -258,7 +258,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 }
 .script-num {
   width: 32px; height: 32px; border-radius: 50%;
-  background: rgba(249,115,22,.15); border: 1px solid rgba(249,115,22,.3);
+  background: rgba(0,212,255,.15); border: 1px solid rgba(0,212,255,.3);
   color: var(--accent); font-weight: 800; font-size: 14px;
   display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
@@ -270,7 +270,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   background: var(--card); border: 1px solid var(--border); border-radius: 12px;
   padding: 24px; cursor: pointer; transition: all .25s; position: relative;
 }
-.price-card.featured { border-color: rgba(249,115,22,.5); background: rgba(249,115,22,.04); }
+.price-card.featured { border-color: rgba(0,212,255,.5); background: rgba(0,212,255,.04); }
 .price-card:hover { transform: translateY(-3px); }
 .price-tag { font-size: 38px; font-weight: 900; margin: 10px 0 4px; }
 .price-period { font-size: 13px; color: var(--muted); }
@@ -312,7 +312,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 
 /* ─── Last slide ─── */
 #s14 {
-  background: radial-gradient(ellipse 80% 60% at 40% 50%, rgba(249,115,22,.07) 0%, transparent 70%), var(--bg);
+  background: radial-gradient(ellipse 80% 60% at 40% 50%, rgba(0,212,255,.07) 0%, transparent 70%), var(--bg);
   text-align: center;
 }
 .next-steps { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 520px; margin-top: 24px; }
@@ -323,7 +323,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 }
 .ns-num {
   width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
-  background: rgba(249,115,22,.15); border: 1px solid rgba(249,115,22,.3);
+  background: rgba(0,212,255,.15); border: 1px solid rgba(0,212,255,.3);
   color: var(--accent); font-weight: 800; font-size: 13px;
   display: flex; align-items: center; justify-content: center;
 }
@@ -388,13 +388,13 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
       </div>
       <div class="stat-card step" onclick="toggleCard(this)">
         <div class="click-hint">tap to expand</div>
-        <div class="stat-num" style="color:#f97316;">4.2h</div>
+        <div class="stat-num" style="color:#00d4ff;">4.2h</div>
         <div class="stat-label">avg response to web enquiry</div>
         <div class="stat-detail">Studies show 78% of customers go with the first business to respond. At 4 hours, they've already booked with a competitor. Our AI responds in under 2 minutes.</div>
       </div>
       <div class="stat-card step" onclick="toggleCard(this)">
         <div class="click-hint">tap to expand</div>
-        <div class="stat-num" style="color:#f97316;">12</div>
+        <div class="stat-num" style="color:#00d4ff;">12</div>
         <div class="stat-label">reviews (top competitor: 89)</div>
         <div class="stat-detail">Google ranks by review volume and recency. A business with 12 reviews is invisible next to one with 89. We automate review requests after every job — most clients add 40+ in 90 days.</div>
       </div>
@@ -604,7 +604,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="outcome-detail">Get a date and time booked with Mac. Log: business name, owner, website, one pain point they mentioned. Mac builds the demo before the call.</div>
       </div>
     </div>
-    <div class="step" style="margin-top:20px;background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.15);border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.6;">
+    <div class="step" style="margin-top:20px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:10px;padding:14px 18px;font-size:13px;line-height:1.6;">
       <strong style="color:var(--accent);">Goal:</strong> 30–50 dials a day → 2–3 interested per week → 1 close every 2 weeks → 5 clients in 10 weeks = <strong>£1,500/mo recurring.</strong>
     </div>
   </div>
@@ -667,7 +667,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
     <p class="lead step" style="font-size:14px;margin-bottom:28px;">Log these in the sheet as soon as you book it. Mac builds the demo from this.</p>
     <div class="g2 step" style="gap:14px;">
       <div class="card" style="display:flex;gap:16px;align-items:center;">
-        <div style="width:44px;height:44px;background:rgba(249,115,22,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏢</div>
+        <div style="width:44px;height:44px;background:rgba(0,212,255,.1);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🏢</div>
         <div>
           <div style="font-weight:700;font-size:15px;margin-bottom:3px;">Business name + type</div>
           <div style="font-size:13px;color:var(--muted);">e.g. "Scotroof Solutions — roofer, Glasgow"</div>
@@ -710,17 +710,17 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
     <h2 class="section-title step" style="margin-bottom:8px;">The audit call.<br><span class="accent">Show up prepared. Let the demo do the selling.</span></h2>
     <p class="lead step" style="font-size:14px;margin-bottom:24px;">Three phases. Total time: 20–30 minutes.</p>
     <div class="g3 step" style="gap:16px;">
-      <div class="card" style="border-color:rgba(249,115,22,.25);">
+      <div class="card" style="border-color:rgba(0,212,255,.25);">
         <div style="font-size:28px;margin-bottom:10px;">🔍</div>
         <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Phase 1: Research (pre-call)</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.6;">Pull their Google reviews, check the website, find competitor review counts. Build the personalised demo page.</div>
       </div>
-      <div class="card" style="border-color:rgba(249,115,22,.25);">
+      <div class="card" style="border-color:rgba(0,212,255,.25);">
         <div style="font-size:28px;margin-bottom:10px;">🖥️</div>
         <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Phase 2: The Demo (on the call)</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.6;">"Before we got on I had a look at your business — I've actually built something." Pull up the URL. Let them explore the AI chat. Ask: how are you currently getting clients? Biggest bottleneck?</div>
       </div>
-      <div class="card" style="border-color:rgba(249,115,22,.25);">
+      <div class="card" style="border-color:rgba(0,212,255,.25);">
         <div style="font-size:28px;margin-bottom:10px;">🤝</div>
         <div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;">Phase 3: The Ask (close)</div>
         <div style="font-size:13px;color:var(--muted);line-height:1.6;">Based on what they said, pitch the relevant plan. Send a written proposal within 24 hours. Follow up once. Close or move on.</div>
@@ -746,7 +746,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
     <div class="eyebrow step">The Secret Weapon</div>
     <h2 class="section-title step" style="margin-bottom:12px;">The demo page.<br><span class="accent">Built for them. Before the call even starts.</span></h2>
     <p class="lead step" style="margin:0 auto 28px;font-size:15px;">Every prospect gets a personalised audit page. Live AI chat acting as their receptionist. Business dashboard. Competitor review gap. The full picture.</p>
-    <div class="step" style="background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.2);border-radius:16px;padding:28px 32px;display:inline-block;max-width:600px;">
+    <div class="step" style="background:rgba(0,212,255,.06);border:1px solid rgba(0,212,255,.2);border-radius:16px;padding:28px 32px;display:inline-block;max-width:600px;">
       <div style="font-size:13px;color:var(--muted);margin-bottom:8px;">Example — built for a roofer in Glasgow</div>
       <div style="font-size:22px;font-weight:900;margin-bottom:8px;">Scotroof Solutions × Mac AI</div>
       <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">Audit Score: 38/100 · 31 missed calls · 12 reviews vs competitor's 89</div>
@@ -841,7 +841,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="mrr-bar-wrap"><div class="mrr-bar" data-pct="75"></div></div>
         <div class="mrr-amount">£5,980<span style="font-size:13px;color:var(--muted);">/mo</span></div>
       </div>
-      <div class="mrr-row step" style="border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.04);">
+      <div class="mrr-row step" style="border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.04);">
         <div class="mrr-clients" style="font-size:22px;">20+</div>
         <div class="mrr-label">clients on Growth/Full Stack mix</div>
         <div class="mrr-bar-wrap"><div class="mrr-bar" data-pct="100" style="background:var(--accent);"></div></div>
@@ -868,7 +868,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="comm-num">£40</div>
         <div class="comm-label">per booked show call<br>(prospect actually turns up)</div>
       </div>
-      <div class="comm-card" style="border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.04);">
+      <div class="comm-card" style="border-color:rgba(0,212,255,.4);background:rgba(0,212,255,.04);">
         <div style="font-size:28px;margin-bottom:8px;">🤝</div>
         <div class="comm-num" style="color:var(--accent);">£100</div>
         <div class="comm-label">bonus per closed deal<br>(any tier)</div>
@@ -887,7 +887,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
           <div style="font-size:22px;font-weight:900;">£160</div>
           <div style="font-size:12px;color:var(--muted);">4 show calls · 0 closes</div>
         </div>
-        <div style="background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.3);border-radius:10px;padding:16px;text-align:center;">
+        <div style="background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.3);border-radius:10px;padding:16px;text-align:center;">
           <div style="font-size:11px;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Good Month</div>
           <div style="font-size:22px;font-weight:900;color:var(--accent);">£520</div>
           <div style="font-size:12px;color:var(--muted);">8 show calls · 2 closes</div>
