@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mac AI — CRM</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#080808;--card:#0f0f0f;--card2:#141414;--border:#1f1f1f;
+  --accent:#00d4ff;--text:#f1f5f9;--muted:#64748b;
+  --green:#22c55e;--red:#ef4444;--orange:#f97316;--purple:#a78bfa;
+}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+.hidden{display:none!important;}
+
+/* ── NAV ── */
+#topbar{
+  height:52px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;background:var(--card);flex-shrink:0;
+}
+.logo{font-size:14px;font-weight:900;color:var(--accent);letter-spacing:.05em;}
+.logo span{color:var(--text);font-weight:400;}
+.nav-tabs{display:flex;gap:2px;}
+.tab{
+  padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;
+  cursor:pointer;color:var(--muted);transition:all .15s;border:none;background:none;
+}
+.tab:hover{color:var(--text);background:rgba(255,255,255,.05);}
+.tab.active{color:var(--text);background:rgba(0,212,255,.1);color:var(--accent);}
+.topbar-right{font-size:12px;color:var(--muted);}
+
+/* ── LAYOUT ── */
+#app{display:flex;flex-direction:column;height:100vh;}
+.view{flex:1;overflow-y:auto;padding:28px 24px;}
+.view::-webkit-scrollbar{width:5px;}
+.view::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:3px;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.card-sm{padding:14px 16px;border-radius:10px;}
+
+/* ── BADGE ── */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.badge-blue  {background:rgba(0,212,255,.1);  color:var(--accent); border:1px solid rgba(0,212,255,.2);}
+.badge-green {background:rgba(34,197,94,.1);  color:var(--green);  border:1px solid rgba(34,197,94,.2);}
+.badge-red   {background:rgba(239,68,68,.1);  color:var(--red);    border:1px solid rgba(239,68,68,.2);}
+.badge-orange{background:rgba(247,179,22,.1); color:var(--orange); border:1px solid rgba(247,179,22,.2);}
+.badge-muted {background:rgba(100,116,139,.1);color:var(--muted);  border:1px solid rgba(100,116,139,.2);}
+
+/* ── BTN ── */
+.btn{
+  padding:10px 20px;border-radius:8px;font-size:14px;font-weight:700;
+  cursor:pointer;border:none;transition:all .15s;
+}
+.btn-primary{background:var(--accent);color:#000;}
+.btn-primary:hover{filter:brightness(1.1);}
+.btn-ghost{background:var(--card);border:1px solid var(--border);color:var(--text);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent);}
+.btn-green{background:rgba(34,197,94,.15);color:var(--green);border:1px solid rgba(34,197,94,.3);}
+.btn-green:hover{background:rgba(34,197,94,.25);}
+.btn-red{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.btn-red:hover{background:rgba(239,68,68,.2);}
+
+/* ════════════════════════════════════════════════
+   DASHBOARD VIEW
+════════════════════════════════════════════════ */
+#view-dashboard .metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.metric-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;
+}
+.metric-val{font-size:34px;font-weight:900;line-height:1;margin-bottom:4px;}
+.metric-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
+.metric-sub{font-size:11px;color:var(--muted);}
+
+.progress-bar-wrap{background:#1f1f1f;border-radius:4px;height:8px;overflow:hidden;}
+.progress-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .6s ease;}
+
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
+.status-card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;
+  display:flex;align-items:center;gap:14px;
+}
+.status-icon{font-size:24px;flex-shrink:0;}
+.status-num{font-size:26px;font-weight:900;}
+.status-lbl{font-size:12px;color:var(--muted);}
+
+/* ════════════════════════════════════════════════
+   DIALLER VIEW
+════════════════════════════════════════════════ */
+#view-dialler{padding:0;display:flex;flex-direction:column;overflow:hidden;}
+
+.dialler-top{
+  padding:14px 24px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;background:var(--card);flex-shrink:0;
+}
+.dial-progress-text{font-size:13px;font-weight:700;white-space:nowrap;}
+.dial-progress-wrap{flex:1;background:#1f1f1f;border-radius:4px;height:6px;overflow:hidden;}
+.dial-progress-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .4s ease;}
+.dial-counter{font-size:12px;color:var(--muted);white-space:nowrap;}
+.dial-shortcut-hint{font-size:11px;color:var(--muted);flex-shrink:0;}
+
+.dialler-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:24px;}
+
+.lead-card{
+  width:100%;max-width:640px;background:var(--card);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+.lead-card-header{
+  padding:20px 24px 16px;border-bottom:1px solid var(--border);
+}
+.lead-biz-name{font-size:22px;font-weight:900;margin-bottom:6px;}
+.lead-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+
+.lead-card-body{padding:20px 24px;}
+
+.phone-display{
+  font-size:32px;font-weight:900;color:var(--accent);letter-spacing:.02em;
+  text-decoration:none;display:block;margin:14px 0 4px;
+  transition:opacity .15s;
+}
+.phone-display:hover{opacity:.8;}
+.phone-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+
+.lead-detail-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:8px;}
+.lead-detail-row a{color:var(--text);text-decoration:none;}
+.lead-detail-row a:hover{color:var(--accent);}
+
+.notes-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px;}
+.notes-input{
+  width:100%;background:#141414;border:1px solid var(--border);border-radius:8px;
+  padding:10px 12px;color:var(--text);font-size:13px;font-family:inherit;resize:none;
+  outline:none;transition:border-color .15s;min-height:72px;
+}
+.notes-input:focus{border-color:rgba(0,212,255,.4);}
+.notes-input::placeholder{color:#3a3a3a;}
+
+.lead-card-footer{padding:16px 24px;border-top:1px solid var(--border);}
+
+/* Outcome buttons */
+.outcome-row-top{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.outcome-btn{
+  padding:13px 10px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;
+  border:2px solid transparent;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-no-answer{
+  background:rgba(100,116,139,.08);color:var(--muted);border-color:rgba(100,116,139,.2);
+}
+.btn-no-answer:hover{background:rgba(100,116,139,.15);color:var(--text);border-color:rgba(100,116,139,.4);}
+.btn-not-interested{
+  background:rgba(239,68,68,.08);color:var(--red);border-color:rgba(239,68,68,.2);
+}
+.btn-not-interested:hover{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.4);}
+.btn-interested{
+  width:100%;padding:16px;border-radius:10px;font-size:16px;font-weight:800;
+  cursor:pointer;border:2px solid rgba(34,197,94,.3);
+  background:rgba(34,197,94,.1);color:var(--green);
+  transition:all .15s;display:flex;align-items:center;justify-content:center;gap:10px;
+}
+.btn-interested:hover{background:rgba(34,197,94,.18);border-color:rgba(34,197,94,.5);transform:translateY(-1px);}
+
+/* Keyboard hints */
+.key-hints{display:flex;gap:12px;justify-content:center;margin-top:10px;}
+.key-hint{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
+.key{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;}
+
+/* Outcome flash */
+.outcome-flash{
+  position:fixed;inset:0;pointer-events:none;opacity:0;z-index:999;
+  transition:opacity .1s;
+}
+.flash-green{background:rgba(34,197,94,.12);}
+.flash-red{background:rgba(239,68,68,.12);}
+.flash-blue{background:rgba(0,212,255,.08);}
+.outcome-flash.show{opacity:1;}
+
+/* Empty dialler */
+.dialler-empty{
+  text-align:center;padding:60px 24px;max-width:480px;margin:0 auto;
+}
+
+/* ════════════════════════════════════════════════
+   PIPELINE VIEW
+════════════════════════════════════════════════ */
+.pipeline-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.filter-tab{
+  padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;
+  cursor:pointer;background:var(--card);border:1px solid var(--border);color:var(--muted);transition:all .15s;
+}
+.filter-tab.active{background:rgba(0,212,255,.1);border-color:rgba(0,212,255,.3);color:var(--accent);}
+.filter-tab:hover:not(.active){color:var(--text);}
+
+.leads-table{width:100%;border-collapse:collapse;}
+.leads-table th{
+  text-align:left;font-size:11px;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.06em;padding:10px 12px;
+  border-bottom:1px solid var(--border);white-space:nowrap;
+}
+.leads-table td{
+  padding:12px 12px;font-size:13px;border-bottom:1px solid rgba(31,31,31,.6);
+  vertical-align:middle;
+}
+.leads-table tr:hover td{background:rgba(255,255,255,.02);}
+.leads-table tr:last-child td{border-bottom:none;}
+.td-name{font-weight:700;max-width:180px;}
+.td-phone a{color:var(--text);text-decoration:none;font-weight:600;}
+.td-phone a:hover{color:var(--accent);}
+.td-notes{color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.attempts-badge{
+  font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
+  background:#1a1a1a;border:1px solid var(--border);color:var(--muted);
+}
+
+/* Interested action row */
+.interested-action{display:flex;gap:8px;align-items:center;}
+.book-btn{
+  padding:5px 12px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;
+  background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.25);transition:all .15s;
+}
+.book-btn:hover{background:rgba(34,197,94,.2);}
+.book-btn.booked{background:rgba(34,197,94,.08);color:var(--muted);border-color:var(--border);cursor:default;}
+
+/* ════════════════════════════════════════════════
+   IMPORT VIEW
+════════════════════════════════════════════════ */
+.import-zone{
+  border:2px dashed var(--border);border-radius:12px;padding:48px;
+  text-align:center;cursor:pointer;transition:all .2s;
+  background:var(--card);
+}
+.import-zone:hover,.import-zone.drag{border-color:var(--accent);background:rgba(0,212,255,.04);}
+.import-zone input{display:none;}
+
+.col-map{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;}
+.col-map-row{display:flex;flex-direction:column;gap:4px;}
+.col-map-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+.col-map-select{
+  background:#141414;border:1px solid var(--border);border-radius:7px;
+  padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;
+}
+.col-map-select:focus{border-color:rgba(0,212,255,.4);}
+
+.preview-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+.preview-table th{padding:7px 10px;border-bottom:1px solid var(--border);text-align:left;color:var(--muted);font-weight:600;}
+.preview-table td{padding:7px 10px;border-bottom:1px solid rgba(31,31,31,.5);}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1a1a1a;border:1px solid var(--border);border-radius:10px;
+  padding:10px 20px;font-size:13px;font-weight:600;color:var(--text);
+  opacity:0;transition:all .25s;z-index:1000;pointer-events:none;white-space:nowrap;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── SECTION HEADERS ── */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.section-title-text{font-size:18px;font-weight:800;}
+.section-sub{font-size:13px;color:var(--muted);margin-top:2px;}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:48px 24px;color:var(--muted);}
+.empty-state .empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-state p{font-size:14px;line-height:1.6;}
+
+/* ── GRID HELPERS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.row{display:flex;gap:12px;align-items:center;}
+.spacer{flex:1;}
+
+select option{background:#141414;}
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<!-- TOP BAR -->
+<div id="topbar">
+  <div class="logo">MAC AI <span>CRM</span></div>
+  <div class="nav-tabs">
+    <button class="tab active" onclick="switchView('dashboard')" id="tab-dashboard">Dashboard</button>
+    <button class="tab" onclick="switchView('dialler')" id="tab-dialler">📞 Dialler</button>
+    <button class="tab" onclick="switchView('pipeline')" id="tab-pipeline">Pipeline</button>
+    <button class="tab" onclick="switchView('import')" id="tab-import">Import Leads</button>
+  </div>
+  <div class="topbar-right" id="queue-count">— leads in queue</div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARD
+══════════════════════════════════════════════ -->
+<div id="view-dashboard" class="view">
+
+  <div class="section-header" style="margin-bottom:22px;">
+    <div>
+      <div class="section-title-text">Today's Performance</div>
+      <div class="section-sub" id="dash-date"></div>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost" onclick="resetDay()" style="font-size:12px;padding:7px 14px;">Reset Day</button>
+      <button class="btn btn-primary" onclick="switchView('dialler')" style="display:flex;align-items:center;gap:6px;">
+        📞 Start Dialling
+      </button>
+    </div>
+  </div>
+
+  <!-- Metrics -->
+  <div class="metric-grid" id="dash-metrics">
+    <div class="metric-card" style="border-color:rgba(0,212,255,.2);">
+      <div class="metric-label">Dialled Today</div>
+      <div class="metric-val accent" id="m-dialled" style="color:var(--accent);">0</div>
+      <div class="metric-sub" id="m-goal-progress">0 / 100 daily goal</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Pickup Rate</div>
+      <div class="metric-val" id="m-pickup">0%</div>
+      <div class="metric-sub" id="m-pickup-sub">0 answered</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Interest Rate</div>
+      <div class="metric-val" id="m-interest">0%</div>
+      <div class="metric-sub" id="m-interest-sub">of pickups → interested</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(34,197,94,.2);">
+      <div class="metric-label">Lead-to-Book</div>
+      <div class="metric-val" style="color:var(--green);" id="m-book">0%</div>
+      <div class="metric-sub" id="m-book-sub">0 audit calls booked</div>
+    </div>
+  </div>
+
+  <!-- Daily goal progress -->
+  <div class="card" style="margin-bottom:22px;">
+    <div class="row" style="margin-bottom:10px;">
+      <div style="font-size:14px;font-weight:700;">Daily Goal</div>
+      <div class="spacer"></div>
+      <div style="font-size:13px;color:var(--muted);" id="goal-label">0 / 100 dials</div>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="goal-bar" style="width:0%;"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--muted);">
+      <span>0</span><span>25</span><span>50</span><span>75</span><span>100</span>
+    </div>
+  </div>
+
+  <!-- Status breakdown -->
+  <div class="status-grid" style="margin-bottom:22px;">
+    <div class="status-card" style="border-color:rgba(34,197,94,.2);">
+      <div class="status-icon">✅</div>
+      <div>
+        <div class="status-num" id="s-interested" style="color:var(--green);">0</div>
+        <div class="status-lbl">Interested (total)</div>
+      </div>
+    </div>
+    <div class="status-card" style="border-color:rgba(239,68,68,.2);">
+      <div class="status-icon">❌</div>
+      <div>
+        <div class="status-num" id="s-not-interested" style="color:var(--red);">0</div>
+        <div class="status-lbl">Not Interested</div>
+      </div>
+    </div>
+    <div class="status-card">
+      <div class="status-icon">📵</div>
+      <div>
+        <div class="status-num" id="s-no-answer">0</div>
+        <div class="status-lbl">No Answer (in queue)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script coaching tip -->
+  <div id="coaching-tip" class="card" style="border-color:rgba(247,179,22,.2);display:none;">
+    <div class="row" style="gap:12px;">
+      <div style="font-size:22px;">💡</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--orange);margin-bottom:4px;">Script Tip</div>
+        <div style="font-size:13px;color:var(--text);line-height:1.6;" id="coaching-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- All-time summary -->
+  <div class="g2" style="margin-top:22px;">
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">All-Time Totals</div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="alltime-stats"></div>
+    </div>
+    <div class="card">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;">Queue Status</div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="queue-stats"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     DIALLER
+══════════════════════════════════════════════ -->
+<div id="view-dialler" class="hidden" style="display:none;flex:1;flex-direction:column;overflow:hidden;">
+
+  <div class="dialler-top">
+    <div class="dial-progress-text" id="dial-prog-text">Lead 0 of 0</div>
+    <div class="dial-progress-wrap">
+      <div class="dial-progress-fill" id="dial-prog-bar" style="width:0%;"></div>
+    </div>
+    <div class="dial-counter" id="dial-counter">0 dialled today</div>
+    <div class="dial-shortcut-hint">Space = No Answer &nbsp;·&nbsp; I = Interested &nbsp;·&nbsp; N = Not Interested</div>
+  </div>
+
+  <div class="dialler-body" id="dialler-body"></div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     PIPELINE
+══════════════════════════════════════════════ -->
+<div id="view-pipeline" class="view hidden">
+
+  <div class="section-header">
+    <div>
+      <div class="section-title-text">Lead Pipeline</div>
+      <div class="section-sub" id="pipeline-sub">All leads</div>
+    </div>
+    <div class="row">
+      <button class="btn btn-ghost" onclick="refreshQueue()" style="font-size:12px;padding:7px 14px;">🔄 Refresh Queue</button>
+      <button class="btn btn-ghost" onclick="exportCSV()" style="font-size:12px;padding:7px 14px;">⬇ Export</button>
+      <button class="btn btn-ghost" onclick="clearAll()" style="font-size:12px;padding:7px 14px;color:var(--red);">🗑 Clear All</button>
+    </div>
+  </div>
+
+  <div class="pipeline-filters" id="pipeline-filters">
+    <button class="filter-tab active" onclick="filterPipeline('all')" data-filter="all">All</button>
+    <button class="filter-tab" onclick="filterPipeline('queued')" data-filter="queued">Queued</button>
+    <button class="filter-tab" onclick="filterPipeline('no_answer')" data-filter="no_answer">No Answer</button>
+    <button class="filter-tab" onclick="filterPipeline('interested')" data-filter="interested">✅ Interested</button>
+    <button class="filter-tab" onclick="filterPipeline('booked')" data-filter="booked">📅 Booked</button>
+    <button class="filter-tab" onclick="filterPipeline('not_interested')" data-filter="not_interested">❌ Not Interested</button>
+    <button class="filter-tab" onclick="filterPipeline('archived')" data-filter="archived">Archived</button>
+    <div class="spacer"></div>
+    <input id="search-input" placeholder="Search business…" oninput="renderPipeline()"
+      style="background:#141414;border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-size:13px;outline:none;width:180px;">
+  </div>
+
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table class="leads-table" id="pipeline-table">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Category</th>
+          <th>Phone</th>
+          <th>Reviews</th>
+          <th>Attempts</th>
+          <th>Status</th>
+          <th>Notes</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="pipeline-body"></tbody>
+    </table>
+    <div id="pipeline-empty" class="empty-state hidden">
+      <div class="empty-icon">🔍</div>
+      <p>No leads match this filter.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════
+     IMPORT
+══════════════════════════════════════════════ -->
+<div id="view-import" class="view hidden">
+
+  <div class="section-header">
+    <div>
+      <div class="section-title-text">Import Lead List</div>
+      <div class="section-sub">Upload a CSV — map columns and load into the CRM</div>
+    </div>
+    <button class="btn btn-ghost" onclick="loadSampleData()" style="font-size:13px;">Load Sample Data</button>
+  </div>
+
+  <!-- Drop zone -->
+  <div class="import-zone" id="drop-zone" onclick="document.getElementById('csv-file').click()">
+    <input type="file" id="csv-file" accept=".csv" onchange="handleCSV(this.files[0])">
+    <div style="font-size:36px;margin-bottom:12px;">📂</div>
+    <div style="font-weight:700;font-size:16px;margin-bottom:6px;">Drop CSV here or click to upload</div>
+    <div style="font-size:13px;color:var(--muted);">Columns: Business Name, Phone, Website, Category, Location, Reviews, Owner Name</div>
+  </div>
+
+  <!-- Column mapping -->
+  <div id="import-mapping" class="hidden" style="margin-top:22px;">
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:16px;">Map CSV Columns</div>
+      <div class="col-map" id="col-map-grid"></div>
+      <div style="margin-top:18px;display:flex;gap:10px;align-items:center;">
+        <button class="btn btn-primary" onclick="confirmImport()">Import Leads</button>
+        <span style="font-size:13px;color:var(--muted);" id="import-preview-count"></span>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;">Preview (first 5 rows)</div>
+      <div class="card" style="padding:0;overflow:auto;">
+        <table class="preview-table" id="preview-table"></table>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</div><!-- /app -->
+
+<!-- Outcome flash overlay -->
+<div class="outcome-flash" id="outcome-flash"></div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+
+const STORE = 'macai_crm_v2';
+
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORE)) || defaults(); }
+  catch { return defaults(); }
+}
+
+function defaults() {
+  return { leads: [], diallerIdx: 0, settings: { maxAttempts: 5, dailyGoal: 100 } };
+}
+
+function save(d) { localStorage.setItem(STORE, JSON.stringify(d)); }
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+
+const today = () => new Date().toDateString();
+
+function todayDialled(leads) {
+  return leads.filter(l => l.calledDates?.includes(today()));
+}
+
+function getMetrics(leads) {
+  const dialled   = todayDialled(leads);
+  const answered  = dialled.filter(l => ['interested','not_interested','booked'].includes(l.status));
+  const interested= dialled.filter(l => ['interested','booked'].includes(l.status));
+  const booked    = dialled.filter(l => l.status === 'booked');
+  const noAnswer  = leads.filter(l => l.status === 'no_answer');
+  const allInt    = leads.filter(l => ['interested','booked'].includes(l.status));
+  const allBooked = leads.filter(l => l.status === 'booked');
+  const allNI     = leads.filter(l => l.status === 'not_interested');
+  return {
+    dialled: dialled.length,
+    answered: answered.length,
+    pickupRate: dialled.length ? Math.round(answered.length / dialled.length * 100) : 0,
+    interested: interested.length,
+    interestRate: answered.length ? Math.round(interested.length / answered.length * 100) : 0,
+    booked: booked.length,
+    bookRate: allInt.length ? Math.round(allBooked.length / allInt.length * 100) : 0,
+    noAnswerCount: noAnswer.length,
+    allInterested: allInt.length,
+    allBooked: allBooked.length,
+    allNI: allNI.length,
+  };
+}
+
+function getQueue(leads) {
+  return leads.filter(l => l.status === 'queued' || l.status === 'no_answer');
+}
+
+// ══════════════════════════════════════════════
+// VIEWS
+// ══════════════════════════════════════════════
+
+let currentView = 'dashboard';
+let pipeFilter  = 'all';
+
+function switchView(name) {
+  ['dashboard','dialler','pipeline','import'].forEach(v => {
+    const el = document.getElementById('view-' + v);
+    const tab = document.getElementById('tab-' + v);
+    if (v === name) {
+      el.style.display = v === 'dialler' ? 'flex' : 'block';
+      el.classList.remove('hidden');
+      if (tab) tab.classList.add('active');
+    } else {
+      el.style.display = 'none';
+      el.classList.add('hidden');
+      if (tab) tab.classList.remove('active');
+    }
+  });
+  currentView = name;
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'dialler')   renderDialler();
+  if (name === 'pipeline')  renderPipeline();
+}
+
+// ══════════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════════
+
+function renderDashboard() {
+  const d = load();
+  const m = getMetrics(d.leads);
+  const q = getQueue(d.leads);
+
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('queue-count').textContent = q.length + ' in queue';
+
+  document.getElementById('m-dialled').textContent   = m.dialled;
+  document.getElementById('m-goal-progress').textContent = m.dialled + ' / ' + d.settings.dailyGoal + ' daily goal';
+  document.getElementById('m-pickup').textContent    = m.pickupRate + '%';
+  document.getElementById('m-pickup-sub').textContent= m.answered + ' answered';
+  document.getElementById('m-interest').textContent  = m.interestRate + '%';
+  document.getElementById('m-interest-sub').textContent = 'of pickups → interested';
+  document.getElementById('m-book').textContent      = m.bookRate + '%';
+  document.getElementById('m-book-sub').textContent  = m.allBooked + ' audit calls booked';
+  document.getElementById('s-interested').textContent  = m.allInterested;
+  document.getElementById('s-not-interested').textContent = m.allNI;
+  document.getElementById('s-no-answer').textContent = m.noAnswerCount;
+
+  const pct = Math.min(100, Math.round(m.dialled / d.settings.dailyGoal * 100));
+  document.getElementById('goal-bar').style.width   = pct + '%';
+  document.getElementById('goal-label').textContent = m.dialled + ' / ' + d.settings.dailyGoal + ' dials';
+
+  // Script coaching tip
+  const tip = document.getElementById('coaching-tip');
+  const tipText = document.getElementById('coaching-text');
+  if (m.dialled >= 10) {
+    tip.style.display = 'flex';
+    if (m.pickupRate < 20) {
+      tipText.textContent = 'Pickup rate is low (' + m.pickupRate + '%). Try calling between 8–10am or 1–3pm — trades are often between jobs. Avoid Mondays.';
+    } else if (m.interestRate < 15) {
+      tipText.textContent = 'Getting pickups but low interest (' + m.interestRate + '%). The hook might need work — focus on the pain point earlier: "Most roofers we speak to are losing 20–30 leads a month from missed calls..."';
+    } else if (m.bookRate < 30) {
+      tipText.textContent = 'Good interest rate but low bookings (' + m.bookRate + '%). Make sure you\'re offering two specific times: "Does Tuesday morning or Wednesday afternoon work better for you?"';
+    } else {
+      tip.style.display = 'none';
+    }
+  } else {
+    tip.style.display = 'none';
+  }
+
+  // All-time stats
+  const at = document.getElementById('alltime-stats');
+  const totalCalled = d.leads.filter(l => l.calledDates?.length > 0).length;
+  const totalAnswered = d.leads.filter(l => ['interested','not_interested','booked'].includes(l.status)).length;
+  at.innerHTML = [
+    ['Total leads loaded', d.leads.length],
+    ['Total called', totalCalled],
+    ['Total answered', totalAnswered],
+    ['Total interested', m.allInterested],
+    ['Total booked', m.allBooked],
+  ].map(([k,v]) => `<div style="display:flex;justify-content:space-between;font-size:13px;">
+    <span style="color:var(--muted);">${k}</span><span style="font-weight:700;">${v}</span>
+  </div>`).join('');
+
+  const qs = document.getElementById('queue-stats');
+  const queued = d.leads.filter(l => l.status === 'queued').length;
+  const na = d.leads.filter(l => l.status === 'no_answer').length;
+  qs.innerHTML = [
+    ['Fresh (not yet called)', queued],
+    ['No Answer (cycling)', na],
+    ['Interested', m.allInterested],
+    ['Booked', m.allBooked],
+    ['Archived / Done', d.leads.filter(l => l.status === 'archived' || l.status === 'not_interested').length],
+  ].map(([k,v]) => `<div style="display:flex;justify-content:space-between;font-size:13px;">
+    <span style="color:var(--muted);">${k}</span><span style="font-weight:700;">${v}</span>
+  </div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// DIALLER
+// ══════════════════════════════════════════════
+
+function renderDialler() {
+  const d = load();
+  const queue = getQueue(d.leads);
+  const body = document.getElementById('dialler-body');
+
+  updateDiallerProgress(d);
+
+  if (queue.length === 0) {
+    body.innerHTML = `
+      <div class="dialler-empty">
+        <div style="font-size:52px;margin-bottom:16px;">🎉</div>
+        <div style="font-size:22px;font-weight:900;margin-bottom:8px;">Queue complete!</div>
+        <div style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.6;">
+          All leads have been contacted. Click Refresh Queue to cycle no-answer leads and add new ones.
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="refreshQueue();switchView('dialler');">🔄 Refresh Queue</button>
+          <button class="btn btn-ghost" onclick="switchView('import')">📂 Import New Leads</button>
+          <button class="btn btn-ghost" onclick="switchView('dashboard')">📊 View Dashboard</button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  // Clamp diallerIdx
+  if (d.diallerIdx >= queue.length) d.diallerIdx = 0;
+  const lead = queue[d.diallerIdx];
+  save(d);
+
+  const statusHtml = {
+    queued:    '<span class="badge badge-muted">New</span>',
+    no_answer: `<span class="badge badge-blue">No Answer ×${lead.attempts || 0}</span>`,
+  }[lead.status] || '';
+
+  body.innerHTML = `
+    <div class="lead-card">
+      <div class="lead-card-header">
+        <div class="lead-biz-name">${esc(lead.businessName)}</div>
+        <div class="lead-meta">
+          ${lead.category ? `<span class="badge badge-muted">${esc(lead.category)}</span>` : ''}
+          ${lead.location ? `<span style="font-size:12px;color:var(--muted);">📍 ${esc(lead.location)}</span>` : ''}
+          ${lead.reviewCount != null ? `<span style="font-size:12px;color:var(--muted);">⭐ ${lead.reviewCount} reviews</span>` : ''}
+          ${statusHtml}
+        </div>
+      </div>
+
+      <div class="lead-card-body">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;">Phone Number</div>
+        <a class="phone-display" href="tel:${esc(lead.phone)}">${esc(lead.phone)}</a>
+        <div class="phone-label">Tap to call · or copy and dial</div>
+
+        ${lead.website ? `<div class="lead-detail-row">🌐 <a href="${esc(lead.website.startsWith('http') ? lead.website : 'https://'+lead.website)}" target="_blank">${esc(lead.website)}</a></div>` : ''}
+        ${lead.ownerName ? `<div class="lead-detail-row">👤 ${esc(lead.ownerName)}</div>` : ''}
+
+        <div class="notes-label">Notes</div>
+        <textarea class="notes-input" id="notes-field" placeholder="Add notes about this call…" onchange="saveNotes('${lead.id}', this.value)">${esc(lead.notes || '')}</textarea>
+      </div>
+
+      <div class="lead-card-footer">
+        <div class="outcome-row-top">
+          <button class="outcome-btn btn-no-answer" onclick="logOutcome('no_answer')">
+            📵 No Answer <span style="font-size:11px;opacity:.6;">[Space]</span>
+          </button>
+          <button class="outcome-btn btn-not-interested" onclick="logOutcome('not_interested')">
+            ❌ Not Interested <span style="font-size:11px;opacity:.6;">[N]</span>
+          </button>
+        </div>
+        <button class="btn-interested" onclick="logOutcome('interested')">
+          ✅ Interested — Book Audit Call <span style="font-size:13px;opacity:.7;">[I]</span>
+        </button>
+        <div class="key-hints" style="margin-top:10px;">
+          <div class="key-hint"><span class="key">Space</span> No Answer</div>
+          <div class="key-hint"><span class="key">I</span> Interested</div>
+          <div class="key-hint"><span class="key">N</span> Not Interested</div>
+          <div class="key-hint" style="margin-left:12px;">
+            <span style="color:var(--muted);">${d.diallerIdx + 1} of ${queue.length} in queue</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function updateDiallerProgress(d) {
+  const queue = getQueue(d.leads);
+  const todayCount = todayDialled(d.leads).length;
+  const pct = queue.length ? Math.round((d.diallerIdx) / queue.length * 100) : 100;
+  document.getElementById('dial-prog-text').textContent = `Lead ${Math.min(d.diallerIdx + 1, queue.length)} of ${queue.length}`;
+  document.getElementById('dial-prog-bar').style.width = pct + '%';
+  document.getElementById('dial-counter').textContent = todayCount + ' dialled today';
+}
+
+function saveNotes(id, notes) {
+  const d = load();
+  const lead = d.leads.find(l => l.id === id);
+  if (lead) { lead.notes = notes; save(d); }
+}
+
+function logOutcome(outcome) {
+  const notesField = document.getElementById('notes-field');
+  const d = load();
+  const queue = getQueue(d.leads);
+  if (!queue.length) return;
+
+  const lead = queue[d.diallerIdx];
+  if (!lead) return;
+
+  // Save notes
+  if (notesField) lead.notes = notesField.value;
+
+  // Record call date
+  if (!lead.calledDates) lead.calledDates = [];
+  if (!lead.calledDates.includes(today())) lead.calledDates.push(today());
+  lead.attempts = (lead.attempts || 0) + 1;
+  lead.lastCalledDate = new Date().toISOString();
+
+  // Update status
+  if (outcome === 'no_answer') {
+    lead.status = lead.attempts >= d.settings.maxAttempts ? 'archived' : 'no_answer';
+  } else {
+    lead.status = outcome;
+  }
+
+  // Flash
+  flash(outcome);
+
+  // Advance dialler — stay at same index (next lead slides in), clamp if needed
+  const newQueue = getQueue(d.leads);
+  if (d.diallerIdx >= newQueue.length) d.diallerIdx = Math.max(0, newQueue.length - 1);
+
+  save(d);
+  showToast(outcome === 'no_answer' ? '📵 Logged — moving on' : outcome === 'interested' ? '✅ Interested! Moving to pipeline' : '❌ Logged — next lead');
+  setTimeout(() => renderDialler(), 380);
+}
+
+function flash(outcome) {
+  const el = document.getElementById('outcome-flash');
+  el.className = 'outcome-flash ' + (outcome === 'interested' ? 'flash-green' : outcome === 'not_interested' ? 'flash-red' : 'flash-blue');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 350);
+}
+
+// ══════════════════════════════════════════════
+// PIPELINE
+// ══════════════════════════════════════════════
+
+function filterPipeline(f) {
+  pipeFilter = f;
+  document.querySelectorAll('.filter-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.filter === f);
+  });
+  renderPipeline();
+}
+
+function renderPipeline() {
+  const d = load();
+  const search = (document.getElementById('search-input')?.value || '').toLowerCase();
+  let leads = d.leads;
+
+  if (pipeFilter !== 'all') leads = leads.filter(l => l.status === pipeFilter);
+  if (search) leads = leads.filter(l => (l.businessName + l.phone + l.category + l.location + l.notes).toLowerCase().includes(search));
+
+  document.getElementById('pipeline-sub').textContent = leads.length + ' leads · filter: ' + pipeFilter;
+
+  const tbody = document.getElementById('pipeline-body');
+  const empty = document.getElementById('pipeline-empty');
+
+  if (!leads.length) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const statusBadge = {
+    queued:         '<span class="badge badge-muted">Queued</span>',
+    no_answer:      '<span class="badge badge-blue">No Answer</span>',
+    interested:     '<span class="badge badge-green">Interested</span>',
+    not_interested: '<span class="badge badge-red">Not Interested</span>',
+    booked:         '<span class="badge" style="background:rgba(167,139,250,.1);color:#a78bfa;border:1px solid rgba(167,139,250,.2);">Booked</span>',
+    archived:       '<span class="badge badge-muted">Archived</span>',
+  };
+
+  tbody.innerHTML = leads.map(l => `
+    <tr>
+      <td class="td-name">${esc(l.businessName)}<br><span style="font-size:11px;color:var(--muted);font-weight:400;">${esc(l.location||'')}</span></td>
+      <td><span class="badge badge-muted" style="font-size:10px;">${esc(l.category||'—')}</span></td>
+      <td class="td-phone"><a href="tel:${esc(l.phone)}">${esc(l.phone)}</a></td>
+      <td style="color:var(--muted);">${l.reviewCount != null ? '⭐ '+l.reviewCount : '—'}</td>
+      <td><span class="attempts-badge">${l.attempts||0}×</span></td>
+      <td>${statusBadge[l.status]||''}</td>
+      <td class="td-notes">${esc(l.notes||'—')}</td>
+      <td>
+        <div class="interested-action">
+          ${l.status === 'interested' ? `<button class="book-btn" onclick="markBooked('${l.id}')">Book Audit</button>` : ''}
+          ${l.status === 'booked' ? `<button class="book-btn booked" disabled>✓ Booked</button>` : ''}
+          <button onclick="deleteLead('${l.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function markBooked(id) {
+  const d = load();
+  const l = d.leads.find(l => l.id === id);
+  if (l) { l.status = 'booked'; save(d); renderPipeline(); renderDashboard(); showToast('📅 Audit call booked!'); }
+}
+
+function deleteLead(id) {
+  const d = load();
+  d.leads = d.leads.filter(l => l.id !== id);
+  save(d); renderPipeline();
+}
+
+// ══════════════════════════════════════════════
+// SMART REFRESH
+// ══════════════════════════════════════════════
+
+function refreshQueue() {
+  const d = load();
+  // Reset no_answer leads to queued if under maxAttempts (they cycle again)
+  d.leads.forEach(l => {
+    if (l.status === 'no_answer' && (l.attempts||0) < d.settings.maxAttempts) {
+      // Keep as no_answer — they stay in queue
+    }
+  });
+  d.diallerIdx = 0;
+  save(d);
+  showToast('Queue refreshed — ' + getQueue(d.leads).length + ' leads ready');
+  if (currentView === 'dialler') renderDialler();
+  if (currentView === 'dashboard') renderDashboard();
+  if (currentView === 'pipeline') renderPipeline();
+}
+
+function resetDay() {
+  if (!confirm('Reset today\'s session stats? Lead statuses are kept.')) return;
+  const d = load();
+  const todayStr = today();
+  d.leads.forEach(l => {
+    if (l.calledDates) l.calledDates = l.calledDates.filter(dt => dt !== todayStr);
+  });
+  d.diallerIdx = 0;
+  save(d); renderDashboard();
+  showToast('Day reset — ready to start fresh');
+}
+
+function clearAll() {
+  if (!confirm('Delete ALL leads? This cannot be undone.')) return;
+  const d = load(); d.leads = []; d.diallerIdx = 0; save(d);
+  renderDashboard(); renderPipeline();
+  showToast('All leads cleared');
+}
+
+// ══════════════════════════════════════════════
+// CSV IMPORT
+// ══════════════════════════════════════════════
+
+let csvRows = [], csvHeaders = [];
+
+function handleCSV(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const text = e.target.result;
+    const lines = text.split('\n').filter(l => l.trim());
+    csvHeaders = parseCSVLine(lines[0]);
+    csvRows = lines.slice(1).map(parseCSVLine);
+    showMapping();
+  };
+  reader.readAsText(file);
+}
+
+function parseCSVLine(line) {
+  const result = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') { inQ = !inQ; }
+    else if (c === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+    else { cur += c; }
+  }
+  result.push(cur.trim());
+  return result;
+}
+
+const fieldMap = [
+  { key:'businessName', label:'Business Name', patterns:['business','company','name','organisation'] },
+  { key:'phone',        label:'Phone',          patterns:['phone','tel','mobile','number','contact'] },
+  { key:'website',      label:'Website',        patterns:['website','url','web','site'] },
+  { key:'ownerName',    label:'Owner Name',     patterns:['owner','contact person','first name','person'] },
+  { key:'category',     label:'Category',       patterns:['category','type','niche','industry','trade'] },
+  { key:'location',     label:'Location / Area',patterns:['location','area','city','town','place'] },
+  { key:'reviewCount',  label:'Review Count',   patterns:['review','rating','google','star'] },
+];
+
+function autoMatch(header) {
+  const h = header.toLowerCase().replace(/\s/g,'');
+  for (const f of fieldMap) {
+    if (f.patterns.some(p => h.includes(p))) return f.key;
+  }
+  return '';
+}
+
+function showMapping() {
+  document.getElementById('import-mapping').classList.remove('hidden');
+  document.getElementById('import-preview-count').textContent = csvRows.length + ' rows detected';
+
+  const opts = ['<option value="">— skip —</option>', ...csvHeaders.map((h,i) => `<option value="${i}">${h}</option>`)].join('');
+  const grid = document.getElementById('col-map-grid');
+  grid.innerHTML = fieldMap.map(f => {
+    const autoIdx = csvHeaders.findIndex((h,i) => autoMatch(h) === f.key);
+    const selectOpts = ['<option value="">— skip —</option>', ...csvHeaders.map((h,i) => `<option value="${i}" ${autoIdx===i?'selected':''}>${h}</option>`)].join('');
+    return `<div class="col-map-row">
+      <label class="col-map-label">${f.label}</label>
+      <select class="col-map-select" id="map-${f.key}">${selectOpts}</select>
+    </div>`;
+  }).join('');
+
+  // Preview
+  const prev = document.getElementById('preview-table');
+  prev.innerHTML = `<thead><tr>${csvHeaders.map(h=>`<th>${esc(h)}</th>`).join('')}</tr></thead>
+    <tbody>${csvRows.slice(0,5).map(r=>`<tr>${r.map(c=>`<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+}
+
+function confirmImport() {
+  const mapping = {};
+  fieldMap.forEach(f => {
+    const sel = document.getElementById('map-' + f.key);
+    if (sel && sel.value !== '') mapping[f.key] = parseInt(sel.value);
+  });
+
+  const d = load();
+  let added = 0;
+  csvRows.forEach(row => {
+    const lead = {
+      id: uid(), status: 'queued', attempts: 0,
+      calledDates: [], notes: '', addedDate: new Date().toISOString(),
+    };
+    fieldMap.forEach(f => {
+      if (mapping[f.key] !== undefined) {
+        const val = (row[mapping[f.key]] || '').trim();
+        lead[f.key] = f.key === 'reviewCount' ? (parseInt(val)||null) : val;
+      }
+    });
+    if (lead.businessName || lead.phone) { d.leads.push(lead); added++; }
+  });
+
+  d.diallerIdx = 0;
+  save(d);
+  showToast('✅ ' + added + ' leads imported');
+  csvRows = []; csvHeaders = [];
+  document.getElementById('import-mapping').classList.add('hidden');
+  document.getElementById('csv-file').value = '';
+  switchView('dashboard');
+}
+
+// ══════════════════════════════════════════════
+// SAMPLE DATA
+// ══════════════════════════════════════════════
+
+function loadSampleData() {
+  if (!confirm('Load 15 sample Scottish trade leads? This adds to your existing list.')) return;
+  const sample = [
+    { businessName:'Scotroof Solutions',       phone:'0141 334 7891', website:'scotroofsolutions.co.uk',  category:'Roofer',         location:'Glasgow',    reviewCount:12 },
+    { businessName:'Highland Joiners',          phone:'0131 445 2233', website:'highlandjoiners.co.uk',   category:'Joiner',         location:'Edinburgh',  reviewCount:8  },
+    { businessName:'Clyde Landscaping Co',      phone:'0141 889 4455', website:'clydelandscaping.co.uk',  category:'Landscaper',     location:'Paisley',    reviewCount:23 },
+    { businessName:'Alba Electrical Services',  phone:'01786 223344',  website:'albaelectrical.co.uk',    category:'Electrician',    location:'Stirling',   reviewCount:6  },
+    { businessName:'Scotts Plumbing & Heating', phone:'0141 552 6677', website:'scottsplumbing.co.uk',    category:'Plumber',        location:'Glasgow',    reviewCount:31 },
+    { businessName:'Edinburgh Painters',        phone:'0131 667 8899', website:'edinburghpainters.co.uk', category:'Painter',        location:'Edinburgh',  reviewCount:14 },
+    { businessName:'West Coast Roofers',        phone:'01292 334455',  website:'westcoastroofers.co.uk',  category:'Roofer',         location:'Ayr',        reviewCount:7  },
+    { businessName:'Forth Valley Joiners',      phone:'01324 556677',  website:'forthvalleyjoiners.co.uk',category:'Joiner',         location:'Falkirk',    reviewCount:19 },
+    { businessName:'Capital Pressure Wash',     phone:'0131 778 9900', website:'capitalpressurewash.co.uk',category:'Pressure Wash', location:'Edinburgh',  reviewCount:3  },
+    { businessName:'Speyside Groundworks',      phone:'01738 445566',  website:'speysidegroundworks.co.uk',category:'Groundwork',    location:'Perth',      reviewCount:11 },
+    { businessName:'Caledonian Fencing Ltd',    phone:'0141 663 7744', website:'caledonianfencing.co.uk',  category:'Fencing',       location:'Glasgow',    reviewCount:5  },
+    { businessName:'Loch Lomond Landscaping',   phone:'01389 778899',  website:'lochlomondlandscaping.co.uk',category:'Landscaper',  location:'Balloch',    reviewCount:9  },
+    { businessName:'Argyll Builders Ltd',       phone:'01631 556644',  website:'argyllbuilders.co.uk',    category:'Builder',        location:'Oban',       reviewCount:16 },
+    { businessName:'Borders Roofing Co',        phone:'01721 778833',  website:'bordersroofing.co.uk',    category:'Roofer',         location:'Peebles',    reviewCount:4  },
+    { businessName:'Tay Valley Electricians',   phone:'01382 445522',  website:'tayvalleyelectric.co.uk', category:'Electrician',    location:'Dundee',     reviewCount:22 },
+  ];
+  const d = load();
+  sample.forEach(s => d.leads.push({ id:uid(), status:'queued', attempts:0, calledDates:[], notes:'', addedDate:new Date().toISOString(), ...s }));
+  d.diallerIdx = 0;
+  save(d);
+  showToast('✅ 15 sample leads loaded');
+  switchView('dashboard');
+}
+
+// ══════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════
+
+function exportCSV() {
+  const d = load();
+  const headers = ['Business Name','Phone','Website','Category','Location','Reviews','Status','Attempts','Notes'];
+  const rows = d.leads.map(l => [
+    l.businessName, l.phone, l.website, l.category, l.location,
+    l.reviewCount, l.status, l.attempts, l.notes
+  ].map(v => `"${(v||'').toString().replace(/"/g,'""')}"`));
+  const csv = [headers, ...rows].map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+  a.download = 'macai-leads-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  showToast('Exported ' + d.leads.length + ' leads');
+}
+
+// ══════════════════════════════════════════════
+// DRAG & DROP
+// ══════════════════════════════════════════════
+
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag'); handleCSV(e.dataTransfer.files[0]); });
+
+// ══════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ══════════════════════════════════════════════
+
+document.addEventListener('keydown', e => {
+  if (currentView !== 'dialler') return;
+  const tag = document.activeElement?.tagName?.toLowerCase();
+  if (tag === 'textarea' || tag === 'input') return;
+  if (e.key === ' ')              { e.preventDefault(); logOutcome('no_answer'); }
+  if (e.key === 'i' || e.key === 'I') logOutcome('interested');
+  if (e.key === 'n' || e.key === 'N') logOutcome('not_interested');
+});
+
+// ══════════════════════════════════════════════
+// TOAST
+// ══════════════════════════════════════════════
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+
+renderDashboard();
+</script>
+</body>
+</html>
