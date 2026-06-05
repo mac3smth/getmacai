@@ -476,12 +476,12 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
     <div class="eyebrow step">What We Sell</div>
     <h2 class="section-title step" style="margin-bottom:8px;">Everything a local business<br><span class="accent">needs to dominate their area.</span></h2>
     <p class="lead step" style="margin-bottom:24px;font-size:14px;">Tap each service to see what it does.</p>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" class="step">
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;" class="step">
       <div class="svc-card" onclick="toggleSvc(this)">
-        <div class="svc-icon">⚡</div>
-        <div class="svc-name">Speed to Lead</div>
-        <div class="svc-price">Core service</div>
-        <div class="svc-body">AI responds to every web enquiry in under 2 minutes, 24/7. Sends lead summary straight to the owner's phone.</div>
+        <div class="svc-icon">📵</div>
+        <div class="svc-name">Missed Call Text-Back</div>
+        <div class="svc-price">Core — leads with this</div>
+        <div class="svc-body">Every missed call gets a text within 30 seconds. They keep their existing number. Easiest sell — every tradesperson immediately gets the pain.</div>
       </div>
       <div class="svc-card" onclick="toggleSvc(this)">
         <div class="svc-icon">⭐</div>
@@ -490,28 +490,40 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="svc-body">Auto-SMS after every completed job asking for a Google review. Most clients hit 40–60 new reviews in 90 days.</div>
       </div>
       <div class="svc-card" onclick="toggleSvc(this)">
+        <div class="svc-icon">📋</div>
+        <div class="svc-name">Quote Follow-Up</div>
+        <div class="svc-price">Core service</div>
+        <div class="svc-body">Automated 3-step follow-up after every quote — day 1, day 3, day 7. Recovers jobs lost to silence. Easy pain to identify on the audit call.</div>
+      </div>
+      <div class="svc-card" onclick="toggleSvc(this)">
+        <div class="svc-icon">📍</div>
+        <div class="svc-name">GBP Management</div>
+        <div class="svc-price">Core service</div>
+        <div class="svc-body">Weekly posts, photo updates, review responses. Active profiles rank higher in local search. Already doing this for clients — easy to systemise.</div>
+      </div>
+      <div class="svc-card" onclick="toggleSvc(this)">
+        <div class="svc-icon">⚡</div>
+        <div class="svc-name">Speed to Lead</div>
+        <div class="svc-price">Core service</div>
+        <div class="svc-body">AI responds to every web enquiry in under 2 minutes, 24/7. Sends lead summary straight to the owner's phone.</div>
+      </div>
+      <div class="svc-card" onclick="toggleSvc(this)">
         <div class="svc-icon">🤖</div>
         <div class="svc-name">AI Chat Agent</div>
         <div class="svc-price">Core service</div>
         <div class="svc-body">24/7 chat widget on their website. Books jobs, handles FAQs, captures leads while they're out on the tools.</div>
       </div>
       <div class="svc-card" onclick="toggleSvc(this)">
-        <div class="svc-icon">📊</div>
-        <div class="svc-name">Dashboard</div>
-        <div class="svc-price">Core service</div>
-        <div class="svc-body">Live business dashboard — revenue, leads, jobs, reviews. Built custom for their business. No manual updating.</div>
+        <div class="svc-icon">🔄</div>
+        <div class="svc-name">Workflow Auto.</div>
+        <div class="svc-price">Add-on</div>
+        <div class="svc-body">Job confirmations, invoice reminders, follow-up sequences — all automated. Saves 5+ hours a week.</div>
       </div>
       <div class="svc-card" onclick="toggleSvc(this)">
         <div class="svc-icon">📞</div>
         <div class="svc-name">Voice Agent</div>
         <div class="svc-price">Add-on</div>
         <div class="svc-body">AI answers the phone after hours. Sounds human. Books jobs and takes messages. Never misses a call again.</div>
-      </div>
-      <div class="svc-card" onclick="toggleSvc(this)">
-        <div class="svc-icon">🔄</div>
-        <div class="svc-name">Workflow Auto.</div>
-        <div class="svc-price">Add-on</div>
-        <div class="svc-body">Job confirmations, invoice reminders, follow-up sequences — all automated. Saves 5+ hours a week.</div>
       </div>
       <div class="svc-card" onclick="toggleSvc(this)">
         <div class="svc-icon">🌐</div>
@@ -524,6 +536,12 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="svc-name">Ads Management</div>
         <div class="svc-price">Add-on</div>
         <div class="svc-body">Google Ads and Meta Ads managed for them. Straightforward upsell once they trust us with the AI stack.</div>
+      </div>
+      <div class="svc-card" onclick="toggleSvc(this)">
+        <div class="svc-icon">📊</div>
+        <div class="svc-name">Dashboard</div>
+        <div class="svc-price">Add-on</div>
+        <div class="svc-body">Live business dashboard — revenue, leads, jobs, reviews. Built custom for their business. Great differentiator on the demo call.</div>
       </div>
     </div>
   </div>
@@ -826,10 +844,11 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         </div>
         <div class="price-period">Best for: trades new to AI</div>
         <div class="price-items">
-          <div class="price-item">AI Chat Receptionist</div>
+          <div class="price-item">Missed Call Text-Back (30-sec auto-text)</div>
           <div class="price-item">Review Automation (SMS after every job)</div>
-          <div class="price-item">Speed to Lead (2-min response)</div>
-          <div class="price-item">Monthly performance report</div>
+          <div class="price-item">Quote Follow-Up Sequence (3-step)</div>
+          <div class="price-item">Google Business Profile Management</div>
+          <div class="price-item">Speed to Lead (2-min web response)</div>
         </div>
       </div>
       <div class="price-card featured" onclick="togglePrice(this)">
@@ -846,10 +865,10 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="price-period">Best for: established businesses</div>
         <div class="price-items">
           <div class="price-item">Everything in Starter</div>
+          <div class="price-item">AI Chat Agent (24/7 website widget)</div>
           <div class="price-item">Live Business Dashboard</div>
           <div class="price-item">Workflow Automation</div>
           <div class="price-item">Calendar Integration</div>
-          <div class="price-item">Priority support</div>
         </div>
       </div>
       <div class="price-card" onclick="togglePrice(this)">
@@ -865,7 +884,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
         <div class="price-period">Best for: growth-focused</div>
         <div class="price-items">
           <div class="price-item">Everything in Growth</div>
-          <div class="price-item">Voice Agent (after-hours calls)</div>
+          <div class="price-item">Voice Agent (AI answers after hours)</div>
           <div class="price-item">Google Ads management</div>
           <div class="price-item">Meta Ads management</div>
           <div class="price-item">Website build included</div>
