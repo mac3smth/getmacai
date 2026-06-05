@@ -208,7 +208,25 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .td-name{font-weight:700;max-width:180px;}
 .td-phone a{color:var(--text);text-decoration:none;font-weight:600;}
 .td-phone a:hover{color:var(--accent);}
-.td-notes{color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.td-notes{color:var(--muted);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;}
+.td-notes:hover{color:var(--accent);text-decoration:underline;}
+
+/* ── NOTE MODAL ── */
+#note-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+#note-modal.open{opacity:1;pointer-events:all;}
+.note-modal-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:28px;max-width:520px;width:100%;
+  transform:translateY(12px);transition:transform .2s;
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+#note-modal.open .note-modal-card{transform:translateY(0);}
+.note-modal-biz{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+.note-modal-text{font-size:14px;line-height:1.75;color:var(--text);white-space:pre-wrap;}
 .attempts-badge{
   font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
   background:#1a1a1a;border:1px solid var(--border);color:var(--muted);
@@ -518,6 +536,18 @@ select option{background:#141414;}
 
 <!-- Toast -->
 <div id="toast"></div>
+
+<!-- Note modal -->
+<div id="note-modal" onclick="closeNote(event)">
+  <div class="note-modal-card">
+    <div class="note-modal-biz" id="note-modal-biz"></div>
+    <div class="note-modal-text" id="note-modal-text"></div>
+    <button onclick="document.getElementById('note-modal').classList.remove('open')"
+      style="margin-top:20px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 20px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;width:100%;">
+      Close
+    </button>
+  </div>
+</div>
 
 <script>
 // ══════════════════════════════════════════════
@@ -868,7 +898,7 @@ function renderPipeline() {
       <td style="color:var(--muted);">${l.reviewCount != null ? '⭐ '+l.reviewCount : '—'}</td>
       <td><span class="attempts-badge">${l.attempts||0}×</span></td>
       <td>${statusBadge[l.status]||''}</td>
-      <td class="td-notes">${esc(l.notes||'—')}</td>
+      <td class="td-notes" onclick="showNote('${esc(l.businessName)}','${(l.notes||'').replace(/'/g,"&#39;").replace(/\n/g,'\\n')}')">${esc(l.notes||'—')}</td>
       <td>
         <div class="interested-action">
           ${l.status === 'interested' ? `<button class="book-btn" onclick="markBooked('${l.id}')">Book Audit</button>` : ''}
@@ -1119,6 +1149,22 @@ function showToast(msg) {
 // ══════════════════════════════════════════════
 // UTILS
 // ══════════════════════════════════════════════
+
+function showNote(biz, notes) {
+  if (!notes || notes === '—') return;
+  document.getElementById('note-modal-biz').textContent = biz;
+  document.getElementById('note-modal-text').textContent = notes.replace(/\\n/g, '\n');
+  document.getElementById('note-modal').classList.add('open');
+}
+
+function closeNote(e) {
+  if (e.target === document.getElementById('note-modal'))
+    document.getElementById('note-modal').classList.remove('open');
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('note-modal').classList.remove('open');
+});
 
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
