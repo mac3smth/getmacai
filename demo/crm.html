@@ -303,6 +303,7 @@ select option{background:#141414;}
     <button class="tab active" onclick="switchView('dashboard')" id="tab-dashboard">Dashboard</button>
     <button class="tab" onclick="switchView('dialler')" id="tab-dialler">📞 Dialler</button>
     <button class="tab" onclick="switchView('pipeline')" id="tab-pipeline">Pipeline</button>
+    <button class="tab" onclick="switchView('audit')" id="tab-audit">📅 Audit Calls</button>
     <button class="tab" onclick="switchView('import')" id="tab-import">Import Leads</button>
   </div>
   <div class="topbar-right" id="queue-count">— leads in queue</div>
@@ -529,6 +530,89 @@ select option{background:#141414;}
 
 </div>
 
+<!-- ══════════════════════════════════════════════
+     AUDIT CALLS
+══════════════════════════════════════════════ -->
+<div id="view-audit" class="view hidden">
+
+  <div class="section-header">
+    <div>
+      <div class="section-title-text">Audit Calls</div>
+      <div class="section-sub">Every booked call — from pitch to close</div>
+    </div>
+    <button class="btn btn-primary" onclick="openAuditModal()">+ Log Audit Call</button>
+  </div>
+
+  <!-- Metrics -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:22px;" id="audit-metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">Calls Booked</div>
+      <div class="metric-val" id="am-booked" style="color:var(--accent);">0</div>
+      <div class="metric-sub">total logged</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Show Rate</div>
+      <div class="metric-val" id="am-show">0%</div>
+      <div class="metric-sub" id="am-show-sub">0 showed up</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Close Rate</div>
+      <div class="metric-val" id="am-close" style="color:var(--green);">0%</div>
+      <div class="metric-sub" id="am-close-sub">of shows → closed</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(34,197,94,.2);">
+      <div class="metric-label">Build Revenue</div>
+      <div class="metric-val" id="am-build" style="color:var(--green);font-size:24px;">£0</div>
+      <div class="metric-sub">one-time fees</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(0,212,255,.2);">
+      <div class="metric-label">MRR Added</div>
+      <div class="metric-val" id="am-mrr" style="color:var(--accent);font-size:24px;">£0</div>
+      <div class="metric-sub">/month recurring</div>
+    </div>
+    <div class="metric-card" style="border-color:rgba(167,139,250,.2);">
+      <div class="metric-label">Commission Owed</div>
+      <div class="metric-val" id="am-comm" style="color:#a78bfa;font-size:24px;">£0</div>
+      <div class="metric-sub" id="am-comm-sub">to dialler</div>
+    </div>
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;">
+    <button class="filter-tab active" onclick="filterAudit('all')"       data-afilter="all">All</button>
+    <button class="filter-tab" onclick="filterAudit('scheduled')"        data-afilter="scheduled">📅 Scheduled</button>
+    <button class="filter-tab" onclick="filterAudit('showed')"           data-afilter="showed">✅ Showed</button>
+    <button class="filter-tab" onclick="filterAudit('closed')"           data-afilter="closed">💰 Closed</button>
+    <button class="filter-tab" onclick="filterAudit('no_show')"          data-afilter="no_show">👻 No Show</button>
+    <button class="filter-tab" onclick="filterAudit('lost')"             data-afilter="lost">❌ Lost</button>
+  </div>
+
+  <!-- Table -->
+  <div class="card" style="padding:0;overflow:hidden;">
+    <table class="leads-table" id="audit-table">
+      <thead>
+        <tr>
+          <th>Business</th>
+          <th>Call Date</th>
+          <th>Status</th>
+          <th>Package Pitched</th>
+          <th>Build Fee</th>
+          <th>Monthly</th>
+          <th>Commission</th>
+          <th>Notes</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="audit-body"></tbody>
+    </table>
+    <div id="audit-empty" class="empty-state hidden">
+      <div class="empty-icon">📅</div>
+      <p>No audit calls logged yet.<br>Book a call from the Pipeline or click "+ Log Audit Call".</p>
+    </div>
+  </div>
+
+</div>
+
 </div><!-- /app -->
 
 <!-- Outcome flash overlay -->
@@ -536,6 +620,103 @@ select option{background:#141414;}
 
 <!-- Toast -->
 <div id="toast"></div>
+
+<!-- Audit call modal -->
+<div id="audit-modal" onclick="closeAuditModal(event)"
+  style="position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:600;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s;">
+  <div onclick="event.stopPropagation()"
+    style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:560px;width:100%;max-height:90vh;overflow-y:auto;transform:translateY(12px);transition:transform .2s;box-shadow:0 30px 80px rgba(0,0,0,.6);"
+    id="audit-modal-card">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+      <div style="font-size:17px;font-weight:900;" id="audit-modal-title">Log Audit Call</div>
+      <button onclick="closeAuditModal()" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px;">×</button>
+    </div>
+
+    <input type="hidden" id="af-id">
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Business Name</label>
+        <input id="af-biz" placeholder="e.g. Scotroof Solutions"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Call Date</label>
+        <input type="date" id="af-date"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Status</label>
+        <select id="af-status" onchange="auditStatusChange()"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          <option value="scheduled">📅 Scheduled</option>
+          <option value="showed">✅ Showed Up</option>
+          <option value="no_show">👻 No Show</option>
+          <option value="closed">💰 Closed</option>
+          <option value="lost">❌ Lost</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Package Pitched</label>
+        <select id="af-package"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          <option value="">— Not yet pitched —</option>
+          <option value="starter">Starter</option>
+          <option value="growth">Growth</option>
+          <option value="full_stack">Full Stack</option>
+          <option value="custom">Custom</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Closed fields (show only when closed) -->
+    <div id="af-closed-fields" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px;">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Build Fee (£)</label>
+        <input type="number" id="af-build" placeholder="e.g. 800"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Monthly Fee (£)</label>
+        <input type="number" id="af-monthly" placeholder="e.g. 300"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Commission (£)</label>
+        <input type="number" id="af-commission" placeholder="e.g. 200"
+          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+      </div>
+    </div>
+
+    <!-- Lost reason -->
+    <div id="af-lost-field" style="display:none;margin-bottom:14px;">
+      <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Reason Lost</label>
+      <input id="af-lost-reason" placeholder="e.g. Too expensive, going with another agency…"
+        style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Follow-up Date</label>
+      <input type="date" id="af-followup"
+        style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+    </div>
+
+    <div style="margin-bottom:20px;">
+      <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Call Notes</label>
+      <textarea id="af-notes" rows="4" placeholder="How did the call go? What did they say? Any objections? Next steps…"
+        style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;resize:vertical;"></textarea>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="saveAuditCall()" style="flex:1;">Save Call</button>
+      <button onclick="closeAuditModal()" class="btn btn-ghost">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- Note modal -->
 <div id="note-modal" onclick="closeNote(event)">
@@ -554,7 +735,7 @@ select option{background:#141414;}
 // DATA
 // ══════════════════════════════════════════════
 
-const STORE = 'macai_crm_v2';
+const STORE = 'macai_crm_v3';
 
 function load() {
   try { return JSON.parse(localStorage.getItem(STORE)) || defaults(); }
@@ -562,7 +743,7 @@ function load() {
 }
 
 function defaults() {
-  return { leads: [], diallerIdx: 0, settings: { maxAttempts: 5, dailyGoal: 100 } };
+  return { leads: [], auditCalls: [], diallerIdx: 0, settings: { maxAttempts: 5, dailyGoal: 100 } };
 }
 
 function save(d) { localStorage.setItem(STORE, JSON.stringify(d)); }
@@ -611,7 +792,7 @@ let currentView = 'dashboard';
 let pipeFilter  = 'all';
 
 function switchView(name) {
-  ['dashboard','dialler','pipeline','import'].forEach(v => {
+  ['dashboard','dialler','pipeline','audit','import'].forEach(v => {
     const el = document.getElementById('view-' + v);
     const tab = document.getElementById('tab-' + v);
     if (v === name) {
@@ -628,6 +809,7 @@ function switchView(name) {
   if (name === 'dashboard') renderDashboard();
   if (name === 'dialler')   renderDialler();
   if (name === 'pipeline')  renderPipeline();
+  if (name === 'audit')     renderAudit();
 }
 
 // ══════════════════════════════════════════════
@@ -912,7 +1094,7 @@ function renderPipeline() {
 function markBooked(id) {
   const d = load();
   const l = d.leads.find(l => l.id === id);
-  if (l) { l.status = 'booked'; save(d); renderPipeline(); renderDashboard(); showToast('📅 Audit call booked!'); }
+  if (l) { l.status = 'booked'; save(d); renderPipeline(); renderDashboard(); showToast('📅 Moving to Audit Calls…'); openAuditModal(l.businessName); }
 }
 
 function deleteLead(id) {
@@ -1163,11 +1345,193 @@ function closeNote(e) {
 }
 
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') document.getElementById('note-modal').classList.remove('open');
+  if (e.key === 'Escape') {
+    document.getElementById('note-modal').classList.remove('open');
+    closeAuditModal();
+  }
 });
 
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════════
+// AUDIT CALLS
+// ══════════════════════════════════════════════
+
+let auditFilter = 'all';
+
+function getAuditMetrics(calls) {
+  const showed  = calls.filter(c => ['showed','closed','lost'].includes(c.status));
+  const closed  = calls.filter(c => c.status === 'closed');
+  const buildRev = closed.reduce((s,c) => s + (Number(c.buildFee)||0), 0);
+  const mrrRev   = closed.reduce((s,c) => s + (Number(c.monthlyFee)||0), 0);
+  const commOwed = closed.reduce((s,c) => s + (Number(c.commission)||0), 0);
+  return {
+    total:     calls.length,
+    showed:    showed.length,
+    showRate:  calls.length   ? Math.round(showed.length  / calls.length   * 100) : 0,
+    closed:    closed.length,
+    closeRate: showed.length  ? Math.round(closed.length  / showed.length  * 100) : 0,
+    buildRev, mrrRev, commOwed,
+  };
+}
+
+function renderAudit() {
+  const d = load();
+  if (!d.auditCalls) d.auditCalls = [];
+  const m = getAuditMetrics(d.auditCalls);
+
+  document.getElementById('am-booked').textContent   = m.total;
+  document.getElementById('am-show').textContent     = m.showRate + '%';
+  document.getElementById('am-show-sub').textContent = m.showed + ' showed up';
+  document.getElementById('am-close').textContent    = m.closeRate + '%';
+  document.getElementById('am-close-sub').textContent= m.closed + ' of ' + m.showed + ' shows';
+  document.getElementById('am-build').textContent    = '£' + m.buildRev.toLocaleString();
+  document.getElementById('am-mrr').textContent      = '£' + m.mrrRev.toLocaleString();
+  document.getElementById('am-comm').textContent     = '£' + m.commOwed.toLocaleString();
+  document.getElementById('am-comm-sub').textContent = m.closed + ' closes × avg commission';
+
+  let calls = [...d.auditCalls].sort((a,b) => new Date(b.callDate) - new Date(a.callDate));
+  if (auditFilter !== 'all') calls = calls.filter(c => c.status === auditFilter);
+
+  const tbody = document.getElementById('audit-body');
+  const empty = document.getElementById('audit-empty');
+
+  if (!calls.length) { tbody.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+
+  const statusBadge = {
+    scheduled: '<span class="badge badge-blue">📅 Scheduled</span>',
+    showed:    '<span class="badge badge-orange">✅ Showed</span>',
+    no_show:   '<span class="badge badge-muted">👻 No Show</span>',
+    closed:    '<span class="badge badge-green">💰 Closed</span>',
+    lost:      '<span class="badge badge-red">❌ Lost</span>',
+  };
+  const pkgLabel = { starter:'Starter', growth:'Growth', full_stack:'Full Stack', custom:'Custom', '':'—' };
+
+  tbody.innerHTML = calls.map(c => `
+    <tr>
+      <td style="font-weight:700;">${esc(c.businessName)}</td>
+      <td style="color:var(--muted);white-space:nowrap;">${c.callDate ? new Date(c.callDate).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—'}</td>
+      <td>${statusBadge[c.status]||''}</td>
+      <td><span class="badge badge-muted">${pkgLabel[c.package||'']||'—'}</span></td>
+      <td style="font-weight:700;color:var(--green);">${c.buildFee ? '£'+Number(c.buildFee).toLocaleString() : '—'}</td>
+      <td style="color:var(--accent);">${c.monthlyFee ? '£'+Number(c.monthlyFee).toLocaleString()+'/mo' : '—'}</td>
+      <td style="color:#a78bfa;">${c.commission ? '£'+Number(c.commission).toLocaleString() : '—'}</td>
+      <td class="td-notes" onclick="showNote('${esc(c.businessName)}','${(c.notes||c.lostReason||'').replace(/'/g,"&#39;").replace(/\n/g,'\\n')}')">${esc((c.notes||c.lostReason||'—').slice(0,50))}${(c.notes||'').length > 50 ? '…' : ''}</td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          ${c.status === 'showed' ? `<button class="book-btn" onclick="quickClose('${c.id}')">Mark Closed</button>` : ''}
+          <button onclick="editAuditCall('${c.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" title="Edit">✏️</button>
+          <button onclick="deleteAuditCall('${c.id}')" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:14px;" title="Delete">🗑</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterAudit(f) {
+  auditFilter = f;
+  document.querySelectorAll('[data-afilter]').forEach(t => t.classList.toggle('active', t.dataset.afilter === f));
+  renderAudit();
+}
+
+function openAuditModal(prefillBiz) {
+  const modal = document.getElementById('audit-modal');
+  document.getElementById('af-id').value        = '';
+  document.getElementById('af-biz').value       = prefillBiz || '';
+  document.getElementById('af-date').value      = new Date().toISOString().slice(0,10);
+  document.getElementById('af-status').value    = 'scheduled';
+  document.getElementById('af-package').value   = '';
+  document.getElementById('af-build').value     = '';
+  document.getElementById('af-monthly').value   = '';
+  document.getElementById('af-commission').value= '';
+  document.getElementById('af-lost-reason').value='';
+  document.getElementById('af-followup').value  = '';
+  document.getElementById('af-notes').value     = '';
+  document.getElementById('audit-modal-title').textContent = 'Log Audit Call';
+  auditStatusChange();
+  modal.style.opacity = '1'; modal.style.pointerEvents = 'all';
+  document.getElementById('audit-modal-card').style.transform = 'translateY(0)';
+  switchView('audit');
+}
+
+function editAuditCall(id) {
+  const d = load();
+  const c = (d.auditCalls||[]).find(c => c.id === id);
+  if (!c) return;
+  document.getElementById('af-id').value         = c.id;
+  document.getElementById('af-biz').value        = c.businessName||'';
+  document.getElementById('af-date').value       = c.callDate||'';
+  document.getElementById('af-status').value     = c.status||'scheduled';
+  document.getElementById('af-package').value    = c.package||'';
+  document.getElementById('af-build').value      = c.buildFee||'';
+  document.getElementById('af-monthly').value    = c.monthlyFee||'';
+  document.getElementById('af-commission').value = c.commission||'';
+  document.getElementById('af-lost-reason').value= c.lostReason||'';
+  document.getElementById('af-followup').value   = c.followUpDate||'';
+  document.getElementById('af-notes').value      = c.notes||'';
+  document.getElementById('audit-modal-title').textContent = 'Edit Audit Call';
+  auditStatusChange();
+  const modal = document.getElementById('audit-modal');
+  modal.style.opacity = '1'; modal.style.pointerEvents = 'all';
+  document.getElementById('audit-modal-card').style.transform = 'translateY(0)';
+}
+
+function auditStatusChange() {
+  const status = document.getElementById('af-status').value;
+  const closedFields = document.getElementById('af-closed-fields');
+  const lostField    = document.getElementById('af-lost-field');
+  closedFields.style.display = status === 'closed' ? 'grid' : 'none';
+  lostField.style.display    = status === 'lost'   ? 'block' : 'none';
+}
+
+function saveAuditCall() {
+  const d = load();
+  if (!d.auditCalls) d.auditCalls = [];
+  const id = document.getElementById('af-id').value;
+  const status = document.getElementById('af-status').value;
+  const call = {
+    id:           id || uid(),
+    businessName: document.getElementById('af-biz').value.trim(),
+    callDate:     document.getElementById('af-date').value,
+    status,
+    package:      document.getElementById('af-package').value,
+    buildFee:     status === 'closed' ? Number(document.getElementById('af-build').value)||0   : null,
+    monthlyFee:   status === 'closed' ? Number(document.getElementById('af-monthly').value)||0  : null,
+    commission:   status === 'closed' ? Number(document.getElementById('af-commission').value)||0 : null,
+    lostReason:   document.getElementById('af-lost-reason').value.trim(),
+    followUpDate: document.getElementById('af-followup').value,
+    notes:        document.getElementById('af-notes').value.trim(),
+    addedDate:    new Date().toISOString(),
+  };
+  if (!call.businessName) { showToast('⚠️ Business name required'); return; }
+  if (id) { const i = d.auditCalls.findIndex(c => c.id === id); if (i > -1) d.auditCalls[i] = call; }
+  else d.auditCalls.push(call);
+  save(d);
+  closeAuditModal();
+  renderAudit();
+  showToast('✅ Audit call saved');
+}
+
+function quickClose(id) {
+  const d = load();
+  const c = (d.auditCalls||[]).find(c => c.id === id);
+  if (c) { editAuditCall(id); document.getElementById('af-status').value = 'closed'; auditStatusChange(); }
+}
+
+function deleteAuditCall(id) {
+  if (!confirm('Delete this audit call?')) return;
+  const d = load();
+  d.auditCalls = (d.auditCalls||[]).filter(c => c.id !== id);
+  save(d); renderAudit(); showToast('Deleted');
+}
+
+function closeAuditModal(e) {
+  if (e && e.target !== document.getElementById('audit-modal')) return;
+  const modal = document.getElementById('audit-modal');
+  modal.style.opacity = '0'; modal.style.pointerEvents = 'none';
+  document.getElementById('audit-modal-card').style.transform = 'translateY(12px)';
 }
 
 // ══════════════════════════════════════════════
@@ -1344,6 +1708,54 @@ function populateDemoData() {
     mk({ businessName:'Argyll Roofers', phone:'01546 334455', website:'argyllroofers.co.uk',
       category:'Roofer', location:'Lochgilphead', reviewCount:4, status:'queued' }),
 
+  ];
+
+  const mka = (o) => ({ id: uid(), addedDate: new Date().toISOString(), ...o });
+  const fmt = (daysAgo) => new Date(Date.now() - daysAgo*86400000).toISOString().slice(0,10);
+
+  d.auditCalls = [
+    mka({ businessName:'Scotroof Solutions', callDate: fmt(5), status:'closed',
+      package:'growth', buildFee:1000, monthlyFee:300, commission:250,
+      notes:'Showed him the live demo — he was speechless. Said "how did you know about my business?" Closed on Growth plan in 18 minutes. Really easy sell once they see the demo. Derek\'s a great client.' }),
+
+    mka({ businessName:'Tay Valley Electricians', callDate: fmt(3), status:'closed',
+      package:'starter', buildFee:700, monthlyFee:200, commission:150,
+      notes:'Mainly sold on AI chat + review automation. He\'s only got 22 reviews and said his competitor has 90+. Felt the urgency. Did have to overcome "I\'ll think about it" — showed him the review gap chart and he signed off.' }),
+
+    mka({ businessName:'SP Rapid Recovery', callDate: fmt(14), status:'closed',
+      package:'growth', buildFee:1000, monthlyFee:300, commission:250,
+      notes:'Existing client — upgraded from Starter. Added dashboard and workflow automation. Upsell took 10 mins on a follow-up call. Starting Google Ads conversation next month.' }),
+
+    mka({ businessName:'West Coast Roofers', callDate: fmt(1), status:'showed',
+      package:'starter', buildFee:null, monthlyFee:null, commission:null,
+      notes:'Good call — demo went down well. Said he wants to check with his accountant about the build fee. Follow up Monday. Strong interest, just needs the green light on budget.' }),
+
+    mka({ businessName:'Loch Lomond Landscaping', callDate: fmt(0), status:'scheduled',
+      package:'', buildFee:null, monthlyFee:null, commission:null,
+      notes:'Call at 3pm today. Build demo before 2:30pm. Owner is Derek, wife handles admin. Pain point: no time to follow up leads, all word of mouth.',
+      followUpDate: fmt(0) }),
+
+    mka({ businessName:'Argyll Builders Ltd', callDate: fmt(-2), status:'scheduled',
+      package:'', buildFee:null, monthlyFee:null, commission:null,
+      notes:'Booked for Thursday 10am. Said biggest issue is invoice chasing and missed calls. Look at workflow automation angle for this one.',
+      followUpDate: fmt(-2) }),
+
+    mka({ businessName:'Capital Pressure Wash', callDate: fmt(-3), status:'scheduled',
+      package:'', buildFee:null, monthlyFee:null, commission:null,
+      notes:'Edinburgh-based, only 3 reviews. Very keen on review automation. Build demo showing competitor review gap — that will close this one.' }),
+
+    mka({ businessName:'Caledonian Fencing Ltd', callDate: fmt(8), status:'no_show',
+      package:'starter', buildFee:null, monthlyFee:null, commission:null,
+      notes:'Didn\'t show. Rang twice, no answer. Rescheduled for next Tuesday — confirmed by text.',
+      followUpDate: fmt(-6) }),
+
+    mka({ businessName:'Dunbartonshire Painters', callDate: fmt(10), status:'lost',
+      package:'starter', buildFee:null, monthlyFee:null, commission:null,
+      lostReason:'Price objection — said £600 too much upfront right now. Offered payment plan but he wasn\'t interested. Follow up in 3 months when cash flow is better.' }),
+
+    mka({ businessName:'Fife Roofing Services', callDate: fmt(12), status:'lost',
+      package:'growth', buildFee:null, monthlyFee:null, commission:null,
+      lostReason:'Already signed with a digital agency in Glasgow last week. Bad timing. Ask again in 6–12 months when the contract ends.' }),
   ];
 
   d.diallerIdx = 0;
