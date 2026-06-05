@@ -1125,9 +1125,191 @@ function esc(s) {
 }
 
 // ══════════════════════════════════════════════
+// DEMO DATA
+// ══════════════════════════════════════════════
+
+function populateDemoData() {
+  const t = new Date().toDateString();
+  const yest = new Date(Date.now() - 86400000).toDateString();
+  const d = defaults();
+
+  const mk = (o) => ({
+    id: uid(), attempts: 0, calledDates: [], notes: '', addedDate: new Date().toISOString(), ...o
+  });
+
+  d.leads = [
+
+    // ── BOOKED (2) ──────────────────────────────
+    mk({ businessName:'Scotroof Solutions', phone:'0141 334 7891', website:'scotroofsolutions.co.uk',
+      category:'Roofer', location:'Glasgow', reviewCount:12,
+      status:'booked', attempts:1, calledDates:[t],
+      notes:'Wife handles admin side. Keen on AI chat for after-hours — loses loads of calls when on rooftops. Demo blew him away. Audit call booked THURSDAY 2pm.' }),
+
+    mk({ businessName:'Tay Valley Electricians', phone:'01382 445522', website:'tayvalleyelectric.co.uk',
+      category:'Electrician', location:'Dundee', reviewCount:22,
+      status:'booked', attempts:1, calledDates:[t],
+      notes:'Said he misses calls constantly when up ladders. Loved the review automation — only 22 reviews, competitor has 80+. Audit call TUESDAY 11am.' }),
+
+    // ── INTERESTED (6) ──────────────────────────
+    mk({ businessName:'West Coast Roofers', phone:'01292 334455', website:'westcoastroofers.co.uk',
+      category:'Roofer', location:'Ayr', reviewCount:7,
+      status:'interested', attempts:2, calledDates:[yest, t],
+      notes:'Very interested in review automation — only 7 reviews, top competitor has 60+. Embarrassed about it. Said call back tomorrow after 2pm to lock in time.' }),
+
+    mk({ businessName:'Alba Electrical Services', phone:'01786 223344', website:'albaelectrical.co.uk',
+      category:'Electrician', location:'Stirling', reviewCount:6,
+      status:'interested', attempts:1, calledDates:[t],
+      notes:'Wants to discuss with business partner first. Said yes in principle. Follow up Friday morning.' }),
+
+    mk({ businessName:'Capital Pressure Wash', phone:'0131 778 9900', website:'capitalpressurewash.co.uk',
+      category:'Pressure Wash', location:'Edinburgh', reviewCount:3,
+      status:'interested', attempts:1, calledDates:[t],
+      notes:'Tiny review count — 3 stars only, knows it\'s hurting him. Review automation sounds ideal. Asked about pricing — said £600 build is fine. Keen.' }),
+
+    mk({ businessName:'Loch Lomond Landscaping', phone:'01389 778899', website:'lochlomondlandscaping.co.uk',
+      category:'Landscaper', location:'Balloch', reviewCount:9,
+      status:'interested', attempts:1, calledDates:[t],
+      notes:'Currently pen and paper for jobs. Loved the dashboard idea. Said "that actually sounds class." Wants a 20-min call.' }),
+
+    mk({ businessName:'Borders Roofing Co', phone:'01721 778833', website:'bordersroofing.co.uk',
+      category:'Roofer', location:'Peebles', reviewCount:4,
+      status:'interested', attempts:2, calledDates:[yest, t],
+      notes:'Asked loads of good questions. Liked that we\'re local Scotland. Said he\'s been looking for something like this. Confirmed happy to do a call.' }),
+
+    mk({ businessName:'Argyll Builders Ltd', phone:'01631 556644', website:'argyllbuilders.co.uk',
+      category:'Builder', location:'Oban', reviewCount:16,
+      status:'interested', attempts:1, calledDates:[t],
+      notes:'Spends loads of time chasing invoices manually — workflow automation really appealed. Wants to see the demo. Schedule audit call.' }),
+
+    // ── NOT INTERESTED (9) ──────────────────────
+    mk({ businessName:'Paisley Paving Pro', phone:'0141 887 2211', website:'paisleypaving.co.uk',
+      category:'Paving', location:'Paisley', reviewCount:44,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Has a nephew who does websites and marketing. Said he\'s sorted.' }),
+
+    mk({ businessName:'Clyde Plumbers', phone:'0141 552 3344', website:'clydeplumbers.co.uk',
+      category:'Plumber', location:'Glasgow', reviewCount:58,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Just signed a 12-month contract with a marketing agency last month. Bad timing.' }),
+
+    mk({ businessName:'Stirling Painters', phone:'01786 334455', website:'stirlingpainters.co.uk',
+      category:'Painter', location:'Stirling', reviewCount:31,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Too busy right now — fully booked until August. Said to call back in September.' }),
+
+    mk({ businessName:'Forth Road Fencing', phone:'01324 667788', website:'forthfencing.co.uk',
+      category:'Fencing', location:'Falkirk', reviewCount:27,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Not the owner — spoke to a labourer who said the boss isn\'t interested in "marketing stuff." Try a direct number next time.' }),
+
+    mk({ businessName:'Caledonian Groundworks', phone:'01738 223344', website:'caledonianground.co.uk',
+      category:'Groundwork', location:'Perth', reviewCount:19,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Happy with current setup, gets all work from word of mouth. Didn\'t want to know.' }),
+
+    mk({ businessName:'Highlands Heating Ltd', phone:'01463 445566', website:'highlandsheating.co.uk',
+      category:'Plumber/Heating', location:'Inverness', reviewCount:41,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Budget too tight right now — just hired two new apprentices. Said maybe in 6 months.' }),
+
+    mk({ businessName:'Fife Roofing Services', phone:'01592 778899', website:'fiferoofing.co.uk',
+      category:'Roofer', location:'Kirkcaldy', reviewCount:13,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Seemed interested then googled us and couldn\'t find much. Need to build authority content.' }),
+
+    mk({ businessName:'Ayrshire Joiners', phone:'01563 334455', website:'ayrshirejoiners.co.uk',
+      category:'Joiner', location:'Kilmarnock', reviewCount:8,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Partner handles all marketing — she said no without really hearing the offer. Try again in a few weeks.' }),
+
+    mk({ businessName:'Renfrewshire Roofers', phone:'0141 887 6655', website:'renfrewshireroofers.co.uk',
+      category:'Roofer', location:'Renfrew', reviewCount:33,
+      status:'not_interested', attempts:1, calledDates:[t],
+      notes:'Disconnected number — remove from sheet.' }),
+
+    // ── NO ANSWER (15) ──────────────────────────
+    mk({ businessName:'Scotts Plumbing & Heating', phone:'0141 552 6677', website:'scottsplumbing.co.uk',
+      category:'Plumber', location:'Glasgow', reviewCount:31, status:'no_answer', attempts:3, calledDates:[yest, yest, t] }),
+
+    mk({ businessName:'Highland Joiners', phone:'0131 445 2233', website:'highlandjoiners.co.uk',
+      category:'Joiner', location:'Edinburgh', reviewCount:8, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+
+    mk({ businessName:'Edinburgh Painters Ltd', phone:'0131 667 8899', website:'edinburghpainters.co.uk',
+      category:'Painter', location:'Edinburgh', reviewCount:14, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Clyde Landscaping Co', phone:'0141 889 4455', website:'clydelandscaping.co.uk',
+      category:'Landscaper', location:'Paisley', reviewCount:23, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+
+    mk({ businessName:'Forth Valley Joiners', phone:'01324 556677', website:'forthvalleyjoiners.co.uk',
+      category:'Joiner', location:'Falkirk', reviewCount:19, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Speyside Groundworks', phone:'01738 445566', website:'speysidegroundworks.co.uk',
+      category:'Groundwork', location:'Perth', reviewCount:11, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+
+    mk({ businessName:'Caledonian Fencing Ltd', phone:'0141 663 7744', website:'caledonianfencing.co.uk',
+      category:'Fencing', location:'Glasgow', reviewCount:5, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Moray Roofers', phone:'01343 556677', website:'morayroofers.co.uk',
+      category:'Roofer', location:'Elgin', reviewCount:6, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Dunbartonshire Painters', phone:'01389 445566', website:'dunbartonpainters.co.uk',
+      category:'Painter', location:'Dumbarton', reviewCount:17, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Tayside Electricians', phone:'01382 334455', website:'taysideelectric.co.uk',
+      category:'Electrician', location:'Dundee', reviewCount:9, status:'no_answer', attempts:3, calledDates:[yest, yest, t] }),
+
+    mk({ businessName:'Galloway Landscaping', phone:'01557 778899', website:'gallowaylandscaping.co.uk',
+      category:'Landscaper', location:'Castle Douglas', reviewCount:4, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Lothian Builders', phone:'0131 556 7788', website:'lothianbuilders.co.uk',
+      category:'Builder', location:'Edinburgh', reviewCount:28, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+
+    mk({ businessName:'Angus Roofing Ltd', phone:'01307 334455', website:'angusroofing.co.uk',
+      category:'Roofer', location:'Forfar', reviewCount:7, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'Perthshire Joiners', phone:'01738 667788', website:'perthshirejoiners.co.uk',
+      category:'Joiner', location:'Perth', reviewCount:11, status:'no_answer', attempts:1, calledDates:[t] }),
+
+    mk({ businessName:'West Lothian Plumbers', phone:'01506 445566', website:'westlothianplumb.co.uk',
+      category:'Plumber', location:'Livingston', reviewCount:15, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+
+    // ── QUEUED - fresh (8) ──────────────────────
+    mk({ businessName:'Dumfries Roofers', phone:'01387 334455', website:'dumfriesroofers.co.uk',
+      category:'Roofer', location:'Dumfries', reviewCount:5, status:'queued' }),
+
+    mk({ businessName:'Ayrshire Electricians', phone:'01294 556677', website:'ayrshireelectric.co.uk',
+      category:'Electrician', location:'Irvine', reviewCount:8, status:'queued' }),
+
+    mk({ businessName:'Borders Landscaping', phone:'01896 778899', website:'borderslandscaping.co.uk',
+      category:'Landscaper', location:'Galashiels', reviewCount:3, status:'queued' }),
+
+    mk({ businessName:'Fife Fencing Co', phone:'01334 445566', website:'fifefencing.co.uk',
+      category:'Fencing', location:'St Andrews', reviewCount:6, status:'queued' }),
+
+    mk({ businessName:'Stirlingshire Painters', phone:'01786 778899', website:'stirlingpainters2.co.uk',
+      category:'Painter', location:'Stirling', reviewCount:12, status:'queued' }),
+
+    mk({ businessName:'Grampian Groundworks', phone:'01224 334455', website:'grampianground.co.uk',
+      category:'Groundwork', location:'Aberdeen', reviewCount:9, status:'queued' }),
+
+    mk({ businessName:'Lanarkshire Builders', phone:'01698 556677', website:'lanarkshirebuilders.co.uk',
+      category:'Builder', location:'Motherwell', reviewCount:21, status:'queued' }),
+
+    mk({ businessName:'Argyll Roofers', phone:'01546 334455', website:'argyllroofers.co.uk',
+      category:'Roofer', location:'Lochgilphead', reviewCount:4, status:'queued' }),
+
+  ];
+
+  d.diallerIdx = 0;
+  save(d);
+}
+
+// ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
 
+const _init = load();
+if (_init.leads.length === 0) populateDemoData();
 renderDashboard();
 </script>
 </body>
