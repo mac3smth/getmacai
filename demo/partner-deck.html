@@ -195,12 +195,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 .svc-icon  { font-size: 22px; margin-bottom: 8px; }
 .svc-name  { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
 .svc-price { font-size: 12px; color: var(--accent); font-weight: 700; }
-.svc-body  {
-  overflow: hidden; max-height: 0; opacity: 0;
-  transition: max-height .3s ease, opacity .3s ease;
-  font-size: 12px; color: var(--muted); line-height: 1.5;
-}
-.svc-card.open .svc-body { max-height: 80px; opacity: 1; margin-top: 8px; }
+.svc-body  { display: none; }
 
 /* ─── Pipeline: step tracker ─── */
 .step-track {
@@ -330,7 +325,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   transition: max-height .35s ease, opacity .35s ease;
   margin-top: 14px; border-top: 1px solid var(--border);
 }
-.price-card.open .price-items { max-height: 200px; opacity: 1; padding-top: 14px; }
+.price-card.open .price-items { max-height: 400px; opacity: 1; padding-top: 14px; }
 .price-item { display: flex; align-items: center; gap: 8px; font-size: 13px; margin-bottom: 7px; }
 .price-item::before { content: "✓"; color: var(--green); font-weight: 700; flex-shrink: 0; }
 .featured-badge {
@@ -414,6 +409,22 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 </div>
 <div id="hint">← → or click arrows to navigate · click cards to expand</div>
 
+<!-- Service detail modal (slide 3) -->
+<div id="svc-modal" onclick="closeSvcModal()"
+  style="position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s;">
+  <div onclick="event.stopPropagation()"
+    style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:420px;width:100%;box-shadow:0 30px 70px rgba(0,0,0,.6);">
+    <div id="sdm-icon" style="font-size:32px;margin-bottom:10px;"></div>
+    <div id="sdm-name" style="font-size:20px;font-weight:900;margin-bottom:4px;"></div>
+    <div id="sdm-price" style="font-size:11px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;"></div>
+    <div id="sdm-body" style="font-size:14px;color:var(--muted);line-height:1.75;"></div>
+    <button onclick="closeSvcModal()"
+      style="margin-top:22px;width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;">
+      Close
+    </button>
+  </div>
+</div>
+
 <div id="deck">
 
 <!-- ════════════════════════════════════ -->
@@ -447,19 +458,19 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
     <p class="lead step" style="margin-bottom:32px;">They're too busy to answer calls, too slow to follow up, and invisible on Google. We fix all of it.</p>
     <div class="g3" style="gap:20px;">
       <div class="stat-card step" onclick="toggleCard(this)">
-        <div class="click-hint">tap to expand</div>
+        <div class="click-hint">tap for detail</div>
         <div class="stat-num" style="color:#ef4444;">31</div>
         <div class="stat-label">missed calls / month (avg)</div>
         <div class="stat-detail">Every missed call is a lost job. A roofer charging £800 per job misses £24,800 in potential revenue monthly — just from unanswered phones.</div>
       </div>
       <div class="stat-card step" onclick="toggleCard(this)">
-        <div class="click-hint">tap to expand</div>
+        <div class="click-hint">tap for detail</div>
         <div class="stat-num" style="color:#00d4ff;">4.2h</div>
         <div class="stat-label">avg response to web enquiry</div>
         <div class="stat-detail">Studies show 78% of customers go with the first business to respond. At 4 hours, they've already booked with a competitor. Our AI responds in under 2 minutes.</div>
       </div>
       <div class="stat-card step" onclick="toggleCard(this)">
-        <div class="click-hint">tap to expand</div>
+        <div class="click-hint">tap for detail</div>
         <div class="stat-num" style="color:#00d4ff;">12</div>
         <div class="stat-label">reviews (top competitor: 89)</div>
         <div class="stat-detail">Google ranks by review volume and recency. A business with 12 reviews is invisible next to one with 89. We automate review requests after every job — most clients add 40+ in 90 days.</div>
@@ -1151,12 +1162,33 @@ function goTo(n, direction) {
   // Auto-reveal all steps on that slide
   const steps = slides[cur].querySelectorAll('.step');
   steps.forEach(s => s.classList.remove('show'));
-  setTimeout(() => {
-    steps.forEach((s, i) => {
-      setTimeout(() => s.classList.add('show'), i * 90);
-    });
-    setSlideStep(cur, steps.length);
-  }, 100);
+
+  if (cur === 3) {
+    // Hard-reset pipeline state before any animation runs
+    slideStep[3] = 0;
+    const det = document.getElementById('pipe-detail');
+    if (det) det.innerHTML = '';
+    // Reset all nodes to base state immediately
+    for (let i = 1; i <= 7; i++) {
+      const sn = document.getElementById('sn' + i);
+      const sc = document.getElementById('sc' + i);
+      if (sn) { sn.classList.remove('active','done'); if (i <= 2) sn.classList.add('yours-idle'); else sn.classList.remove('yours-idle'); }
+      if (sc) sc.classList.remove('lit');
+    }
+    // Reveal steps then show Lead List
+    setTimeout(() => {
+      steps.forEach(s => s.classList.add('show'));
+      setSlideStep(3, 1);
+      lightPipe(1);
+    }, 200);
+  } else {
+    setTimeout(() => {
+      steps.forEach((s, i) => {
+        setTimeout(() => s.classList.add('show'), i * 90);
+      });
+      setSlideStep(cur, steps.length);
+    }, 100);
+  }
 
   // Trigger special animations
   if (cur === 11) setTimeout(animateMrrBars, 400);
@@ -1188,6 +1220,8 @@ function updateUI() {
 }
 
 document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeSvcModal(); return; }
+  if (document.getElementById('svc-modal').style.opacity === '1') return;
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
   if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); prev(); }
 });
@@ -1215,7 +1249,22 @@ setTimeout(() => {
 // ═══════════════════════════════════════════════
 
 function toggleCard(el)    { el.classList.toggle('open'); }
-function toggleSvc(el)     { el.classList.toggle('open'); }
+function toggleSvc(el) {
+  const icon  = el.querySelector('.svc-icon')?.textContent  || '';
+  const name  = el.querySelector('.svc-name')?.textContent  || '';
+  const price = el.querySelector('.svc-price')?.textContent || '';
+  const body  = el.querySelector('.svc-body')?.textContent  || '';
+  document.getElementById('sdm-icon').textContent  = icon;
+  document.getElementById('sdm-name').textContent  = name;
+  document.getElementById('sdm-price').textContent = price;
+  document.getElementById('sdm-body').textContent  = body;
+  const m = document.getElementById('svc-modal');
+  m.style.opacity = '1'; m.style.pointerEvents = 'all';
+}
+function closeSvcModal() {
+  const m = document.getElementById('svc-modal');
+  m.style.opacity = '0'; m.style.pointerEvents = 'none';
+}
 function toggleOutcome(el) { el.classList.toggle('open'); }
 function togglePrice(el)   { el.classList.toggle('open'); }
 
