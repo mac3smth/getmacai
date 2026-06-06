@@ -395,6 +395,108 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
   font-size: 11px; color: var(--muted); font-weight: 500;
   z-index: 100;
 }
+
+/* ═══════════════════════════════════════
+   PREMIUM REFRESH — global upgrades
+═══════════════════════════════════════ */
+
+/* Richer card depth */
+.card {
+  background: linear-gradient(160deg, rgba(255,255,255,.025) 0%, var(--card) 100%);
+  box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 4px 24px rgba(0,0,0,.35);
+}
+
+/* Slide gets subtle radial glow per slide type */
+.slide { background: var(--bg); }
+.slide.active { background: radial-gradient(ellipse 100% 70% at 50% 100%, rgba(0,212,255,.025) 0%, var(--bg) 60%); }
+
+/* Sharper logo */
+#logo { font-size: 15px; letter-spacing: .06em; }
+
+/* Cleaner progress */
+#progress { height: 2px; box-shadow: 0 0 8px rgba(0,212,255,.5); }
+
+/* Refined nav buttons */
+.nav-btn { width: 34px; height: 34px; border-radius: 8px; font-size: 14px; }
+
+/* Better eyebrow */
+.eyebrow { letter-spacing: .14em; font-size: 10px; }
+
+/* Tighter section titles */
+h2.section-title { letter-spacing: -.025em; }
+
+/* ═══════════════════════════════════════
+   NEW SLIDE STYLES
+═══════════════════════════════════════ */
+
+/* ── AI Trend chart ── */
+.chart-outer { position: relative; width: 100%; }
+.chart-svg { width: 100%; overflow: visible; display: block; }
+.chart-year { font-size: 11px; fill: var(--muted); font-weight: 600; font-family: 'Inter', sans-serif; }
+.chart-now-label { font-size: 12px; fill: var(--accent); font-weight: 800; font-family: 'Inter', sans-serif; }
+#chart-line { stroke-dasharray: 1000; stroke-dashoffset: 1000; transition: stroke-dashoffset 2s cubic-bezier(.4,0,.2,1); }
+#chart-area { opacity: 0; transition: opacity 1s ease 1s; }
+#chart-now-dot circle:first-child { animation: none; }
+.chart-animated #chart-line  { stroke-dashoffset: 0; }
+.chart-animated #chart-area  { opacity: 1; }
+
+/* Stat pills */
+.stat-pill {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 18px; text-align: center; flex: 1;
+}
+.stat-pill .sp-val { font-size: 26px; font-weight: 900; color: var(--accent); line-height: 1; }
+.stat-pill .sp-lbl { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.4; }
+
+/* ── Industry cards ── */
+.ind-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 20px; cursor: pointer; transition: all .2s;
+}
+.ind-card:hover { border-color: rgba(0,212,255,.35); transform: translateY(-2px); }
+.ind-card.open  { border-color: rgba(0,212,255,.4); background: rgba(0,212,255,.03); }
+.ind-icon  { font-size: 28px; margin-bottom: 10px; }
+.ind-name  { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+.ind-hook  { font-size: 12px; color: var(--accent); font-weight: 700; margin-bottom: 8px; line-height: 1.4; }
+.ind-body  {
+  overflow: hidden; max-height: 0; opacity: 0;
+  transition: max-height .35s ease, opacity .35s ease;
+}
+.ind-card.open .ind-body { max-height: 200px; opacity: 1; margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+.ind-problem { font-size: 12px; color: var(--muted); line-height: 1.6; margin-bottom: 8px; }
+.ind-services { display: flex; flex-wrap: wrap; gap: 5px; }
+.ind-tag { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 20px; background: rgba(0,212,255,.08); color: var(--accent); border: 1px solid rgba(0,212,255,.15); }
+
+/* ── Offer architecture ── */
+.tier-col {
+  flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 18px 14px; min-width: 120px;
+}
+.tier-col.featured { border-color: rgba(0,212,255,.4); background: rgba(0,212,255,.04); }
+.tier-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; color: var(--muted); margin-bottom: 8px; }
+.tier-price { font-size: 18px; font-weight: 900; margin-bottom: 4px; line-height: 1.1; }
+.tier-mo    { font-size: 11px; color: var(--accent); font-weight: 700; margin-bottom: 12px; }
+.tier-item  { font-size: 11px; color: var(--muted); line-height: 1.5; padding: 3px 0; border-bottom: 1px solid rgba(31,31,31,.5); }
+.tier-item:last-child { border: none; }
+.tier-arrow { font-size: 20px; color: var(--border); align-self: center; flex-shrink: 0; padding: 0 4px; }
+
+/* ── Awareness stages ── */
+.awareness-stage {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 14px;
+  flex: 1; position: relative;
+}
+.awareness-stage.current { border-color: rgba(0,212,255,.5); background: rgba(0,212,255,.05); }
+.awareness-stage.current::before {
+  content: 'THEY ARE HERE'; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--accent); color: #000; font-size: 9px; font-weight: 900; padding: 3px 10px;
+  border-radius: 20px; letter-spacing: .07em; white-space: nowrap;
+}
+.aw-num  { font-size: 28px; font-weight: 900; color: var(--muted); margin-bottom: 6px; }
+.aw-name { font-size: 14px; font-weight: 800; margin-bottom: 6px; }
+.aw-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+.aw-arrow { font-size: 22px; color: var(--border); align-self: center; flex-shrink: 0; padding: 0 6px; }
 </style>
 </head>
 <body>
@@ -403,7 +505,7 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
 <div id="slide-label">Partner Briefing</div>
 <div id="progress"></div>
 <div id="nav">
-  <span id="slide-counter">1 / 14</span>
+  <span id="slide-counter">1 / 19</span>
   <button class="nav-btn" onclick="prev()" title="Previous">←</button>
   <button class="nav-btn" onclick="next()" title="Next">→</button>
 </div>
@@ -446,6 +548,378 @@ p.lead { font-size: clamp(15px, 1.8vw, 19px); color: var(--muted); line-height: 
     <span style="color:var(--accent);font-weight:800;">Recurring Revenue</span>
   </div>
   <div style="position:absolute;bottom:48px;font-size:12px;color:var(--muted);">Mac Smith · getmacai.app</div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- NEW SLIDE: WHY NOW                  -->
+<!-- ════════════════════════════════════ -->
+<div class="slide" id="sn-whynow" data-label="Why Now">
+  <div style="width:100%;max-width:900px;">
+    <div class="step" style="margin-bottom:20px;">
+      <div class="eyebrow">The Moment</div>
+      <h2 class="section-title" style="margin-top:8px;">Business owners are <span class="accent">actively searching for AI.</span><br>The demand already exists.</h2>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:32px;align-items:start;">
+
+      <!-- Left: stats + context -->
+      <div>
+        <div style="display:flex;flex-direction:column;gap:12px;" class="step">
+          <div class="stat-pill" style="border-color:rgba(0,212,255,.25);">
+            <div class="sp-val">6×</div>
+            <div class="sp-lbl">Search growth for<br>"AI for small business"<br>since 2022</div>
+          </div>
+          <div class="stat-pill">
+            <div class="sp-val">77%</div>
+            <div class="sp-lbl">of SME owners want to<br>automate repetitive tasks</div>
+          </div>
+          <div class="stat-pill" style="border-color:rgba(34,197,94,.2);">
+            <div class="sp-val" style="color:var(--green);">11%</div>
+            <div class="sp-lbl">have actually<br>implemented AI tools</div>
+          </div>
+        </div>
+        <div class="step" style="margin-top:14px;padding:12px 16px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.15);border-radius:10px;font-size:13px;line-height:1.65;">
+          <strong style="color:var(--accent);">The gap is the opportunity.</strong> 77% want it. 11% have it. We're in the business of closing that gap — one business at a time.
+        </div>
+      </div>
+
+      <!-- Right: animated trend chart -->
+      <div class="step">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px;">Search Interest — "AI Business Automation" (2019–2024)</div>
+        <div class="chart-outer" id="chart-outer">
+          <svg class="chart-svg" viewBox="0 0 560 195" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="aGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#00d4ff" stop-opacity="0.22"/>
+                <stop offset="100%" stop-color="#00d4ff" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <!-- Grid -->
+            <line x1="0" y1="185" x2="560" y2="185" stroke="#1f1f1f" stroke-width="1"/>
+            <line x1="0" y1="139" x2="560" y2="139" stroke="#1f1f1f" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="93"  x2="560" y2="93"  stroke="#1f1f1f" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="0" y1="47"  x2="560" y2="47"  stroke="#1f1f1f" stroke-width="1" stroke-dasharray="4 4"/>
+            <!-- Area fill -->
+            <path id="chart-area" d="M0,171 C56,169 56,165 112,162 C168,159 168,153 224,148 C280,143 280,122 336,108 C392,94 392,48 448,28 C504,8 504,4 558,2 L558,185 L0,185 Z" fill="url(#aGrad)"/>
+            <!-- Line -->
+            <path id="chart-line" d="M0,171 C56,169 56,165 112,162 C168,159 168,153 224,148 C280,143 280,122 336,108 C392,94 392,48 448,28 C504,8 504,4 558,2" fill="none" stroke="#00d4ff" stroke-width="2.5" stroke-linecap="round"/>
+            <!-- Data dots -->
+            <circle cx="0"   cy="171" r="3" fill="#00d4ff" opacity=".7"/>
+            <circle cx="112" cy="162" r="3" fill="#00d4ff" opacity=".7"/>
+            <circle cx="224" cy="148" r="3" fill="#00d4ff" opacity=".7"/>
+            <circle cx="336" cy="108" r="3" fill="#00d4ff" opacity=".7"/>
+            <circle cx="448" cy="28"  r="3" fill="#00d4ff" opacity=".7"/>
+            <!-- NOW pulse -->
+            <circle cx="558" cy="2" r="10" fill="#00d4ff" opacity=".12">
+              <animate attributeName="r" values="5;16;5" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values=".2;0;.2" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="558" cy="2" r="4.5" fill="#00d4ff"/>
+            <!-- NOW label -->
+            <text x="558" y="-8" text-anchor="middle" class="chart-now-label">NOW ↑</text>
+            <!-- Vertical dashed line at NOW -->
+            <line x1="558" y1="2" x2="558" y2="185" stroke="#00d4ff" stroke-width="1" stroke-dasharray="3 4" opacity=".3"/>
+            <!-- Year labels -->
+            <text x="0"   y="195" text-anchor="middle" class="chart-year">2019</text>
+            <text x="112" y="195" text-anchor="middle" class="chart-year">2020</text>
+            <text x="224" y="195" text-anchor="middle" class="chart-year">2021</text>
+            <text x="336" y="195" text-anchor="middle" class="chart-year">2022</text>
+            <text x="448" y="195" text-anchor="middle" class="chart-year">2023</text>
+            <text x="558" y="195" text-anchor="middle" class="chart-year" style="fill:#00d4ff;font-weight:800;">2024</text>
+          </svg>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:8px;">Source: Google Trends · normalised to peak interest</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- NEW SLIDE: FULL STACK               -->
+<!-- ════════════════════════════════════ -->
+<div class="slide" id="sn-stack" data-label="What We Can Build">
+  <div style="width:100%;max-width:920px;">
+    <div class="step" style="margin-bottom:18px;">
+      <div class="eyebrow">The Arsenal</div>
+      <h2 class="section-title" style="margin-top:8px;">Everything we can build.<br><span class="accent">No limits on what we'll take on.</span></h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;" class="step">
+
+      <!-- Col 1 -->
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">📥 Capture & Convert</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📵 Missed Call Text-Back</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">⚡ Speed to Lead</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🤖 AI Chat Agent (24/7)</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📞 AI Voice Agent</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🌙 After-Hours Booking</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🔗 Website Lead Forms</div>
+        </div>
+      </div>
+
+      <!-- Col 2 -->
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">⭐ Reputation</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">⭐ Review Automation</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📍 GBP Management</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">💬 Review Responses (AI)</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🔍 Competitor Gap Analysis</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📸 GMB Photo & Posts</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📈 Google/Meta Ads</div>
+        </div>
+      </div>
+
+      <!-- Col 3 -->
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">🔄 Follow-Up & Ops</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📋 Quote Follow-Up Sequence</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🔁 Client Reactivation</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📅 Appointment Reminders</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">💸 Invoice Chasing</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">✅ Job Completion Flows</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📦 Workflow Automation</div>
+        </div>
+      </div>
+
+      <!-- Col 4 -->
+      <div>
+        <div style="font-size:10px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border);">🧠 Intelligence</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🧠 Custom AI Agent</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">📊 Business Dashboard</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">✍️ AI Content Engine</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🌐 Website Build</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">🔗 CRM Integration</div>
+          <div style="font-size:12px;font-weight:600;padding:7px 10px;background:var(--card2);border-radius:6px;">⚙️ Custom Integrations</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" style="margin-top:16px;text-align:center;padding:12px;background:rgba(0,212,255,.05);border:1px solid rgba(0,212,255,.12);border-radius:10px;font-size:13px;color:var(--muted);">
+      If the business has a repetitive communication or operational task — <strong style="color:var(--text);">we can automate it or build an AI to handle it.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- NEW SLIDE: INDUSTRIES               -->
+<!-- ════════════════════════════════════ -->
+<div class="slide" id="sn-industries" data-label="Industries & Problems">
+  <div style="width:100%;max-width:900px;">
+    <div class="step" style="margin-bottom:18px;">
+      <div class="eyebrow">Niche Strategy</div>
+      <h2 class="section-title" style="margin-top:8px;">Sell the problem.<br><span class="accent">Not the service.</span></h2>
+      <p style="font-size:14px;color:var(--muted);margin-top:8px;">Every industry has different pain points. Same core stack — different packaging. Tap each to see the problem and the play.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;" class="step">
+
+      <div class="ind-card" onclick="this.classList.toggle('open')">
+        <div class="ind-icon">💉</div>
+        <div class="ind-name">Aesthetic Clinics & Beauty</div>
+        <div class="ind-hook">"1 recovered evening enquiry/week = £10k+ extra revenue/year"</div>
+        <div style="font-size:11px;color:var(--muted);">Tap to see the play →</div>
+        <div class="ind-body">
+          <div class="ind-problem"><strong style="color:var(--text);">Pain:</strong> Enquiries arrive at 10pm and get no reply. Dormant client list that nobody reactivates. Losing on Google reviews to the clinic down the road. Manual booking management.</div>
+          <div class="ind-services">
+            <span class="ind-tag">After-hours AI chat</span><span class="ind-tag">Review automation</span><span class="ind-tag">Client reactivation</span><span class="ind-tag">Speed to lead</span><span class="ind-tag">GBP management</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ind-card" onclick="this.classList.toggle('open')">
+        <div class="ind-icon">🔧</div>
+        <div class="ind-name">Emergency Trades</div>
+        <div class="ind-hook">"Missing 3 emergency calls/week at £300 = £46k/year gone"</div>
+        <div style="font-size:11px;color:var(--muted);">Tap to see the play →</div>
+        <div class="ind-body">
+          <div class="ind-problem"><strong style="color:var(--text);">Pain:</strong> They miss calls constantly when on site. Quotes are sent once and never followed up. Low reviews vs competitors. The first business to respond wins the job — and it's rarely them.</div>
+          <div class="ind-services">
+            <span class="ind-tag">Missed call text-back</span><span class="ind-tag">Quote follow-up</span><span class="ind-tag">Review automation</span><span class="ind-tag">GBP management</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ind-card" onclick="this.classList.toggle('open')">
+        <div class="ind-icon">🏠</div>
+        <div class="ind-name">Estate & Letting Agents</div>
+        <div class="ind-hook">"First agent to respond wins 78% of viewings"</div>
+        <div style="font-size:11px;color:var(--muted);">Tap to see the play →</div>
+        <div class="ind-body">
+          <div class="ind-problem"><strong style="color:var(--text);">Pain:</strong> Viewing enquiries come in overnight and go cold by morning. Leads aren't nurtured past the first contact. No automated follow-up system. Response time is the single biggest differentiator.</div>
+          <div class="ind-services">
+            <span class="ind-tag">Speed to lead</span><span class="ind-tag">AI chat agent</span><span class="ind-tag">Lead follow-up sequences</span><span class="ind-tag">Review automation</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ind-card" onclick="this.classList.toggle('open')">
+        <div class="ind-icon">💪</div>
+        <div class="ind-name">Health, Fitness & Wellness</div>
+        <div class="ind-hook">"20% of revenue is sitting dormant in your past client list"</div>
+        <div style="font-size:11px;color:var(--muted);">Tap to see the play →</div>
+        <div class="ind-body">
+          <div class="ind-problem"><strong style="color:var(--text);">Pain:</strong> No-shows eat revenue. Past clients are never reactivated. Enquiries from social don't get followed up properly. Manual booking management takes hours of admin every week.</div>
+          <div class="ind-services">
+            <span class="ind-tag">Client reactivation</span><span class="ind-tag">Reminder sequences</span><span class="ind-tag">AI booking assistant</span><span class="ind-tag">Review automation</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="step" style="margin-top:16px;padding:12px 16px;background:rgba(0,212,255,.04);border:1px solid rgba(0,212,255,.12);border-radius:10px;font-size:13px;color:var(--muted);text-align:center;">
+      Same core stack. Different problem. Different hook. <strong style="color:var(--text);">Pick the industry, find the biggest pain, build the offer around it.</strong>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- NEW SLIDE: OFFER ARCHITECTURE       -->
+<!-- ════════════════════════════════════ -->
+<div class="slide" id="sn-offer" data-label="Offer Architecture">
+  <div style="width:100%;max-width:920px;">
+    <div class="step" style="margin-bottom:18px;">
+      <div class="eyebrow">The Offer</div>
+      <h2 class="section-title" style="margin-top:8px;">Tiered pricing.<br><span class="accent">Free hooks. Upsells. Recurring.</span></h2>
+    </div>
+
+    <div style="display:flex;gap:8px;align-items:stretch;width:100%;" class="step">
+
+      <!-- Free Hook -->
+      <div class="tier-col" style="border-color:rgba(167,139,250,.3);background:rgba(167,139,250,.04);flex:0.8;">
+        <div class="tier-label" style="color:#a78bfa;">🎁 Free Hook</div>
+        <div class="tier-price" style="font-size:14px;color:#a78bfa;">Get in the room</div>
+        <div class="tier-mo" style="color:#a78bfa;">No cost to them</div>
+        <div class="tier-item">Personalised audit page</div>
+        <div class="tier-item">GBP audit report</div>
+        <div class="tier-item">Competitor review gap</div>
+        <div class="tier-item">Free website (if needed)</div>
+        <div class="tier-item">"3 things hurting you"</div>
+      </div>
+
+      <div class="tier-arrow">→</div>
+
+      <!-- Tier 1 -->
+      <div class="tier-col">
+        <div class="tier-label">Tier 1 — Entry</div>
+        <div class="tier-price">£600–800</div>
+        <div class="tier-mo">+ £200/mo</div>
+        <div class="tier-item">Missed call text-back</div>
+        <div class="tier-item">Review automation</div>
+        <div class="tier-item">Quote follow-up (3-step)</div>
+        <div class="tier-item">GBP management</div>
+        <div class="tier-item">Monthly report</div>
+      </div>
+
+      <div class="tier-arrow">→</div>
+
+      <!-- Tier 2 -->
+      <div class="tier-col featured">
+        <div class="tier-label" style="color:var(--accent);">★ Tier 2 — Growth</div>
+        <div class="tier-price" style="color:var(--accent);">£1,000–1,200</div>
+        <div class="tier-mo">+ £300/mo</div>
+        <div class="tier-item">Everything in Tier 1</div>
+        <div class="tier-item">AI Chat Agent (24/7)</div>
+        <div class="tier-item">Speed to Lead</div>
+        <div class="tier-item">Live Dashboard</div>
+        <div class="tier-item">Calendar integration</div>
+      </div>
+
+      <div class="tier-arrow">→</div>
+
+      <!-- Tier 3 -->
+      <div class="tier-col">
+        <div class="tier-label">Tier 3 — Full Stack</div>
+        <div class="tier-price">£1,500+</div>
+        <div class="tier-mo">+ £400/mo</div>
+        <div class="tier-item">Everything in Tier 2</div>
+        <div class="tier-item">AI Voice Agent</div>
+        <div class="tier-item">Ads management</div>
+        <div class="tier-item">Custom AI Agent</div>
+        <div class="tier-item">Website build</div>
+      </div>
+
+      <div class="tier-arrow">→</div>
+
+      <!-- Upsells -->
+      <div class="tier-col" style="border-color:rgba(34,197,94,.3);background:rgba(34,197,94,.04);flex:0.8;">
+        <div class="tier-label" style="color:var(--green);">📈 Upsells</div>
+        <div class="tier-price" style="font-size:14px;color:var(--green);">Month 2+</div>
+        <div class="tier-mo" style="color:var(--green);">Recurring add-ons</div>
+        <div class="tier-item">Reactivation campaigns</div>
+        <div class="tier-item">Content engine</div>
+        <div class="tier-item">Advanced AI agents</div>
+        <div class="tier-item">White-label</div>
+        <div class="tier-item">Custom integrations</div>
+      </div>
+
+    </div>
+
+    <div class="step" style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+      <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--muted);">No contracts — stays because it works</span>
+      <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--muted);">Flat fee — no hourly or % of revenue</span>
+      <span style="background:var(--card);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--muted);">Every client starts on Tier 1, upsells over time</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════ -->
+<!-- NEW SLIDE: THE PLAY                 -->
+<!-- ════════════════════════════════════ -->
+<div class="slide" id="sn-play" data-label="The Play">
+  <div style="width:100%;max-width:860px;">
+    <div class="step" style="margin-bottom:20px;">
+      <div class="eyebrow">The Positioning</div>
+      <h2 class="section-title" style="margin-top:8px;">They're already sold on AI.<br><span class="accent">You just need to be in the room.</span></h2>
+    </div>
+
+    <!-- Awareness ladder -->
+    <div style="display:flex;gap:10px;align-items:stretch;margin-bottom:24px;" class="step">
+      <div class="awareness-stage">
+        <div class="aw-num">①</div>
+        <div class="aw-name">Problem Aware</div>
+        <div class="aw-desc">"I'm losing jobs to missed calls. My quotes go cold. I have no reviews."</div>
+        <div style="margin-top:10px;"><span class="badge badge-green">✓ They know this</span></div>
+      </div>
+      <div class="aw-arrow">→</div>
+      <div class="awareness-stage current">
+        <div class="aw-num" style="color:var(--accent);">②</div>
+        <div class="aw-name" style="color:var(--accent);">Solution Aware</div>
+        <div class="aw-desc">"I've heard about AI and automation. I know something like this exists. I just haven't found the right person."</div>
+        <div style="margin-top:10px;"><span class="badge badge-blue">→ They are here</span></div>
+      </div>
+      <div class="aw-arrow">→</div>
+      <div class="awareness-stage">
+        <div class="aw-num">③</div>
+        <div class="aw-name">Product Aware</div>
+        <div class="aw-desc">"I know Mac AI. I've seen the demo. I know exactly what it does for my business."</div>
+        <div style="margin-top:10px;"><span class="badge badge-orange">← Your job</span></div>
+      </div>
+    </div>
+
+    <!-- The insight cards -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;" class="step">
+      <div class="card" style="border-color:rgba(0,212,255,.2);">
+        <div style="font-size:20px;margin-bottom:8px;">🎯</div>
+        <div style="font-weight:800;font-size:14px;margin-bottom:6px;">No convincing needed</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">They already believe in AI. You don't educate them on why. You show them what it looks like for their specific business.</div>
+      </div>
+      <div class="card" style="border-color:rgba(0,212,255,.2);">
+        <div style="font-size:20px;margin-bottom:8px;">🖥️</div>
+        <div style="font-weight:800;font-size:14px;margin-bottom:6px;">The demo does the selling</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">When they see a page built for their business before the call even starts — that's the moment. The close happens there, not at the pitch.</div>
+      </div>
+      <div class="card" style="border-color:rgba(0,212,255,.2);">
+        <div style="font-size:20px;margin-bottom:8px;">📍</div>
+        <div style="font-weight:800;font-size:14px;margin-bottom:6px;">Scotland is wide open</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">Most AI agencies target London. The Central Belt is full of business owners who've been meaning to sort their automation for months. Nobody has shown up yet.</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- ════════════════════════════════════ -->
@@ -1163,9 +1637,9 @@ function goTo(n, direction) {
   const steps = slides[cur].querySelectorAll('.step');
   steps.forEach(s => s.classList.remove('show'));
 
-  if (cur === 3) {
+  if (cur === 8) {
     // Hard-reset pipeline state before any animation runs
-    slideStep[3] = 0;
+    slideStep[8] = 0;
     const det = document.getElementById('pipe-detail');
     if (det) det.innerHTML = '';
     // Reset all nodes to base state immediately
@@ -1178,7 +1652,7 @@ function goTo(n, direction) {
     // Reveal steps then show Lead List
     setTimeout(() => {
       steps.forEach(s => s.classList.add('show'));
-      setSlideStep(3, 1);
+      setSlideStep(8, 1);
       lightPipe(1);
     }, 200);
   } else {
@@ -1191,14 +1665,15 @@ function goTo(n, direction) {
   }
 
   // Trigger special animations
-  if (cur === 11) setTimeout(animateMrrBars, 400);
+  if (cur === 1)  setTimeout(animateAIChart, 300);
+  if (cur === 16) setTimeout(animateMrrBars, 400);
 
   updateUI();
 }
 
 function next() {
   const si = cur;
-  if (si === 3) {
+  if (si === 8) {
     const cs = getSlideStep(si);
     if (cs < 7) { lightPipe(cs + 1); setSlideStep(si, cs + 1); return; }
   }
@@ -1206,9 +1681,9 @@ function next() {
 }
 
 function prev() {
-  if (cur === 3) {
-    const cs = getSlideStep(3);
-    if (cs > 0) { lightPipe(cs - 1); setSlideStep(3, cs - 1); return; }
+  if (cur === 8) {
+    const cs = getSlideStep(8);
+    if (cs > 0) { lightPipe(cs - 1); setSlideStep(8, cs - 1); return; }
   }
   goTo(cur - 1);
 }
@@ -1411,14 +1886,31 @@ function lightPipe(step) {
 }
 
 function jumpPipe(step) {
-  if (cur !== 3) return;
+  if (cur !== 8) return;
   lightPipe(step);
-  setSlideStep(3, step);
+  setSlideStep(8, step);
 }
 
 // ═══════════════════════════════════════════════
 // MRR BAR ANIMATION
 // ═══════════════════════════════════════════════
+
+function animateAIChart() {
+  const outer = document.getElementById('chart-outer');
+  if (!outer) return;
+  outer.classList.add('chart-animated');
+  // Calculate actual path length and animate
+  const line = document.getElementById('chart-line');
+  if (line) {
+    const len = line.getTotalLength ? line.getTotalLength() : 1000;
+    line.style.strokeDasharray = len;
+    line.style.strokeDashoffset = len;
+    // Force reflow then animate
+    line.getBoundingClientRect();
+    line.style.transition = 'stroke-dashoffset 2s cubic-bezier(.4,0,.2,1)';
+    line.style.strokeDashoffset = '0';
+  }
+}
 
 function animateMrrBars() {
   document.querySelectorAll('.mrr-bar').forEach(bar => {
