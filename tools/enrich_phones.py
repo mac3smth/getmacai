@@ -24,8 +24,8 @@ import os
 import sys
 
 # ── Config ────────────────────────────────────────────────────────────────────
-INPUT_FILE  = os.path.join(os.path.dirname(__file__),
-    '../../../Library/Application Support/Claude/local-agent-mode-sessions/'
+INPUT_FILE  = os.path.expanduser(
+    '~/Library/Application Support/Claude/local-agent-mode-sessions/'
     'd3a234f2-9241-4942-9e28-d6aa00579122/35e1ed45-3cfc-4860-a0a2-358126ce639f/'
     'agent/local_ditto_35e1ed45-3cfc-4860-a0a2-358126ce639f/outputs/'
     'Get_Mac_AI_Scotland_Leads_200.xlsx')
@@ -58,7 +58,7 @@ def clean_phone(raw: str) -> str:
         num = '0' + num[3:]
     return num
 
-def find_phone_on_page(url: str) -> str | None:
+def find_phone_on_page(url: str):
     """Try to find a UK phone number on a given URL. Returns first found or None."""
     try:
         resp = requests.get(url, timeout=TIMEOUT, headers=HEADERS, allow_redirects=True)
@@ -93,7 +93,7 @@ def find_phone_on_page(url: str) -> str | None:
     return None
 
 
-def find_phone_for_lead(website_url: str, business_name: str) -> tuple[str | None, str]:
+def find_phone_for_lead(website_url: str, business_name: str):
     """
     Try the main URL, then /contact and /contact-us pages.
     Returns (phone_or_None, status_string)

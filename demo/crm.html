@@ -8,9 +8,9 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#080808;--card:#0f0f0f;--card2:#141414;--border:#1f1f1f;
-  --accent:#00d4ff;--text:#f1f5f9;--muted:#64748b;
-  --green:#22c55e;--red:#ef4444;--orange:#f97316;--purple:#a78bfa;
+  --bg:#f1f5f9;--card:#ffffff;--card2:#f8fafc;--border:#e2e8f0;
+  --accent:#0891b2;--accent-glow:rgba(8,145,178,.15);--text:#0f172a;--muted:#64748b;
+  --green:#16a34a;--red:#dc2626;--orange:#d97706;--purple:#7c3aed;
 }
 html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
 .hidden{display:none!important;}
@@ -36,7 +36,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 #app{display:flex;flex-direction:column;height:100vh;}
 .view{flex:1;overflow-y:auto;padding:28px 24px;}
 .view::-webkit-scrollbar{width:5px;}
-.view::-webkit-scrollbar-thumb{background:#2a2a2a;border-radius:3px;}
+.view::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
 
 /* ── CARDS ── */
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
@@ -75,7 +75,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .metric-label{font-size:11px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;}
 .metric-sub{font-size:11px;color:var(--muted);}
 
-.progress-bar-wrap{background:#1f1f1f;border-radius:4px;height:8px;overflow:hidden;}
+.progress-bar-wrap{background:var(--card2);border:1px solid var(--border);border-radius:4px;height:8px;overflow:hidden;}
 .progress-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .6s ease;}
 
 .status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:22px;}
@@ -97,7 +97,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
   display:flex;align-items:center;gap:14px;background:var(--card);flex-shrink:0;
 }
 .dial-progress-text{font-size:13px;font-weight:700;white-space:nowrap;}
-.dial-progress-wrap{flex:1;background:#1f1f1f;border-radius:4px;height:6px;overflow:hidden;}
+.dial-progress-wrap{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:4px;height:6px;overflow:hidden;}
 .dial-progress-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .4s ease;}
 .dial-counter{font-size:12px;color:var(--muted);white-space:nowrap;}
 .dial-shortcut-hint{font-size:11px;color:var(--muted);flex-shrink:0;}
@@ -131,12 +131,12 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 
 .notes-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:16px 0 6px;}
 .notes-input{
-  width:100%;background:#141414;border:1px solid var(--border);border-radius:8px;
+  width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;
   padding:10px 12px;color:var(--text);font-size:13px;font-family:inherit;resize:none;
   outline:none;transition:border-color .15s;min-height:72px;
 }
-.notes-input:focus{border-color:rgba(0,212,255,.4);}
-.notes-input::placeholder{color:#3a3a3a;}
+.notes-input:focus{border-color:var(--accent);}
+.notes-input::placeholder{color:#94a3b8;}
 
 .lead-card-footer{padding:16px 24px;border-top:1px solid var(--border);}
 
@@ -165,7 +165,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 /* Keyboard hints */
 .key-hints{display:flex;gap:12px;justify-content:center;margin-top:10px;}
 .key-hint{font-size:11px;color:var(--muted);display:flex;align-items:center;gap:4px;}
-.key{background:#1a1a1a;border:1px solid #2a2a2a;border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;}
+.key{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:1px 6px;font-size:10px;font-weight:700;}
 
 /* Outcome flash */
 .outcome-flash{
@@ -260,7 +260,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .note-modal-text{font-size:14px;line-height:1.75;color:var(--text);white-space:pre-wrap;}
 .attempts-badge{
   font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;
-  background:#1a1a1a;border:1px solid var(--border);color:var(--muted);
+  background:var(--card2);border:1px solid var(--border);color:var(--muted);
 }
 
 /* Interested action row */
@@ -287,20 +287,20 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .col-map-row{display:flex;flex-direction:column;gap:4px;}
 .col-map-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
 .col-map-select{
-  background:#141414;border:1px solid var(--border);border-radius:7px;
+  background:var(--card2);border:1px solid var(--border);border-radius:7px;
   padding:8px 10px;color:var(--text);font-size:13px;font-family:inherit;outline:none;
 }
-.col-map-select:focus{border-color:rgba(0,212,255,.4);}
+.col-map-select:focus{border-color:var(--accent);}
 
 .preview-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
 .preview-table th{padding:7px 10px;border-bottom:1px solid var(--border);text-align:left;color:var(--muted);font-weight:600;}
-.preview-table td{padding:7px 10px;border-bottom:1px solid rgba(31,31,31,.5);}
+.preview-table td{padding:7px 10px;border-bottom:1px solid var(--border);}
 
 /* ── TOAST ── */
 #toast{
   position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-  background:#1a1a1a;border:1px solid var(--border);border-radius:10px;
-  padding:10px 20px;font-size:13px;font-weight:600;color:var(--text);
+  background:var(--text);border:1px solid var(--border);border-radius:10px;
+  padding:10px 20px;font-size:13px;font-weight:600;color:var(--card);
   opacity:0;transition:all .25s;z-index:1000;pointer-events:none;white-space:nowrap;
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -320,10 +320,155 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .row{display:flex;gap:12px;align-items:center;}
 .spacer{flex:1;}
 
-select option{background:#141414;}
+select option{background:var(--card);}
+input[type="text"],input[type="password"],input[type="email"],input[type="search"],textarea,select{
+  color-scheme:light;
+}
+
+/* ════════════════════════════════════════════════
+   LOGIN SCREEN
+════════════════════════════════════════════════ */
+#login-screen{
+  position:fixed;inset:0;z-index:9999;
+  background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0c1a2e 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Inter',sans-serif;
+}
+#login-screen.hidden{display:none!important;}
+.login-wrap{width:100%;max-width:400px;padding:24px;}
+.login-logo{
+  font-size:22px;font-weight:900;color:#00d4ff;letter-spacing:.05em;
+  text-align:center;margin-bottom:4px;
+}
+.login-logo span{color:#f1f5f9;font-weight:400;}
+.login-tagline{font-size:12px;color:#64748b;text-align:center;margin-bottom:36px;letter-spacing:.04em;}
+.login-heading{font-size:14px;font-weight:700;color:#94a3b8;text-align:center;margin-bottom:18px;text-transform:uppercase;letter-spacing:.08em;}
+.profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
+.profile-btn{
+  background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);border-radius:14px;
+  padding:22px 16px;cursor:pointer;transition:all .2s;text-align:center;color:#f1f5f9;
+}
+.profile-btn:hover{background:rgba(0,212,255,.08);border-color:rgba(0,212,255,.35);transform:translateY(-2px);}
+.profile-btn:active{transform:translateY(0);}
+.profile-avatar{font-size:32px;margin-bottom:10px;}
+.profile-name{font-size:15px;font-weight:800;margin-bottom:3px;}
+.profile-role{font-size:11px;color:#64748b;font-weight:600;text-transform:uppercase;letter-spacing:.06em;}
+.profile-tag{
+  display:inline-block;margin-top:7px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+}
+.profile-tag-admin{background:rgba(124,58,237,.2);color:#a78bfa;border:1px solid rgba(124,58,237,.3);}
+.profile-tag-rep{background:rgba(0,212,255,.1);color:#00d4ff;border:1px solid rgba(0,212,255,.25);}
+
+#login-step-2{animation:slideUp .2s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.selected-user-label{
+  text-align:center;font-size:14px;color:#94a3b8;margin-bottom:18px;
+}
+.selected-user-label strong{color:#f1f5f9;}
+.pin-input{
+  width:100%;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);
+  border-radius:10px;padding:14px 16px;color:#f1f5f9;font-size:18px;font-family:inherit;
+  outline:none;text-align:center;letter-spacing:.3em;transition:border-color .15s;
+  margin-bottom:12px;
+}
+.pin-input:focus{border-color:rgba(0,212,255,.5);}
+.pin-input::placeholder{letter-spacing:0;font-size:14px;color:#475569;}
+.pin-error{
+  font-size:12px;color:#f87171;text-align:center;margin-bottom:10px;font-weight:600;
+}
+.login-btn{
+  width:100%;padding:14px;border-radius:10px;font-size:15px;font-weight:800;
+  cursor:pointer;border:none;background:#0891b2;color:#fff;transition:all .15s;margin-bottom:10px;
+}
+.login-btn:hover{background:#0e7490;transform:translateY(-1px);}
+.login-back{
+  width:100%;padding:10px;border-radius:10px;font-size:13px;font-weight:600;
+  cursor:pointer;border:1.5px solid rgba(255,255,255,.1);background:transparent;
+  color:#64748b;transition:all .15s;
+}
+.login-back:hover{border-color:rgba(255,255,255,.2);color:#94a3b8;}
+.login-footer{margin-top:24px;text-align:center;font-size:11px;color:#334155;}
+
+/* ── User pill in topbar ── */
+#user-pill{
+  display:flex;align-items:center;gap:8px;
+  background:var(--card2);border:1px solid var(--border);border-radius:20px;
+  padding:5px 12px 5px 8px;font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .15s;
+}
+#user-pill:hover{border-color:var(--accent);}
+.user-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.user-dot-admin{background:#7c3aed;}
+.user-dot-rep{background:var(--accent);}
+
+/* ── Team stats card (admin dashboard) ── */
+#team-stats-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:20px 22px;margin-bottom:22px;
+}
+.team-header{
+  display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;
+}
+.team-header-title{font-size:14px;font-weight:800;}
+.team-header-badge{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;
+  background:rgba(124,58,237,.1);color:#7c3aed;border:1px solid rgba(124,58,237,.2);
+  padding:3px 9px;border-radius:20px;
+}
+.team-row{
+  display:grid;grid-template-columns:1fr 1fr;gap:12px;
+}
+.team-user-block{
+  background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;
+}
+.team-user-name{font-size:13px;font-weight:800;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.team-user-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.team-stat{font-size:12px;color:var(--muted);}
+.team-stat strong{display:block;font-size:18px;font-weight:900;color:var(--text);line-height:1;}
 </style>
 </head>
 <body>
+
+<!-- ══════════════════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-wrap">
+    <div class="login-logo">MAC AI <span>CRM</span></div>
+    <div class="login-tagline">Aesthetic Clinics · Scotland</div>
+
+    <!-- Step 1: pick profile -->
+    <div id="login-step-1">
+      <div class="login-heading">Who's dialling today?</div>
+      <div class="profile-grid">
+        <button class="profile-btn" onclick="selectProfile('admin')">
+          <div class="profile-avatar">👑</div>
+          <div class="profile-name">Mac Smith</div>
+          <div class="profile-role">Admin</div>
+          <div class="profile-tag profile-tag-admin">Full Access</div>
+        </button>
+        <button class="profile-btn" onclick="selectProfile('rep')">
+          <div class="profile-avatar">📞</div>
+          <div class="profile-name" id="rep-display-name">Sales Rep</div>
+          <div class="profile-role">Dialler</div>
+          <div class="profile-tag profile-tag-rep">Dialler View</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: PIN entry -->
+    <div id="login-step-2" class="hidden">
+      <div class="selected-user-label">Signing in as <strong id="sel-profile-name"></strong></div>
+      <input type="password" class="pin-input" id="pin-field" placeholder="Enter PIN"
+             maxlength="8" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="pin-error hidden" id="pin-error">Incorrect PIN — try again</div>
+      <button class="login-btn" onclick="doLogin()">Sign In →</button>
+      <button class="login-back" onclick="backToProfiles()">← Back</button>
+    </div>
+
+    <div class="login-footer">Mac AI · Powered by Claude · Scotland 🏴󠁧󠁢󠁳󠁣󠁴󠁿</div>
+  </div>
+</div>
 
 <div id="app">
 
@@ -337,7 +482,13 @@ select option{background:#141414;}
     <button class="tab" onclick="switchView('audit')" id="tab-audit">📅 Audit Calls</button>
     <button class="tab" onclick="switchView('import')" id="tab-import">Import Leads</button>
   </div>
-  <div class="topbar-right" id="queue-count">— leads in queue</div>
+  <div class="topbar-right" style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:12px;color:var(--muted);" id="queue-count"></span>
+    <div id="user-pill" onclick="logout()" title="Click to sign out">
+      <div class="user-dot" id="user-dot"></div>
+      <span id="user-pill-name">—</span>
+    </div>
+  </div>
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -445,6 +596,15 @@ select option{background:#141414;}
     </div>
   </div>
 
+  <!-- Team stats — admin only -->
+  <div id="team-stats-card" class="hidden" style="margin-top:22px;">
+    <div class="team-header">
+      <div class="team-header-title">👥 Team Activity Today</div>
+      <div class="team-header-badge">Admin View</div>
+    </div>
+    <div class="team-row" id="team-row"></div>
+  </div>
+
 </div>
 
 <!-- ══════════════════════════════════════════════
@@ -492,7 +652,7 @@ select option{background:#141414;}
     <button class="filter-tab" onclick="filterPipeline('archived')" data-filter="archived">Archived</button>
     <div class="spacer"></div>
     <input id="search-input" placeholder="Search business…" oninput="renderPipeline()"
-      style="background:#141414;border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-size:13px;outline:none;width:180px;">
+      style="background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:6px 12px;color:var(--text);font-size:13px;outline:none;width:180px;">
   </div>
 
   <div class="card" style="padding:0;overflow:hidden;">
@@ -670,12 +830,12 @@ select option{background:#141414;}
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Business Name</label>
         <input id="af-biz" placeholder="e.g. Scotroof Solutions"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Call Date</label>
         <input type="date" id="af-date"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
       </div>
     </div>
 
@@ -683,7 +843,7 @@ select option{background:#141414;}
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Status</label>
         <select id="af-status" onchange="auditStatusChange()"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
           <option value="scheduled">📅 Scheduled</option>
           <option value="showed">✅ Showed Up</option>
           <option value="no_show">👻 No Show</option>
@@ -694,7 +854,7 @@ select option{background:#141414;}
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Package Pitched</label>
         <select id="af-package"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
           <option value="">— Not yet pitched —</option>
           <option value="starter">Starter</option>
           <option value="growth">Growth</option>
@@ -709,17 +869,17 @@ select option{background:#141414;}
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Build Fee (£)</label>
         <input type="number" id="af-build" placeholder="e.g. 800"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Monthly Fee (£)</label>
         <input type="number" id="af-monthly" placeholder="e.g. 300"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
       </div>
       <div>
         <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Commission (£)</label>
         <input type="number" id="af-commission" placeholder="e.g. 200"
-          style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+          style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
       </div>
     </div>
 
@@ -727,19 +887,19 @@ select option{background:#141414;}
     <div id="af-lost-field" style="display:none;margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Reason Lost</label>
       <input id="af-lost-reason" placeholder="e.g. Too expensive, going with another agency…"
-        style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+        style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
     </div>
 
     <div style="margin-bottom:14px;">
       <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Follow-up Date</label>
       <input type="date" id="af-followup"
-        style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
+        style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;">
     </div>
 
     <div style="margin-bottom:20px;">
       <label style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:5px;">Call Notes</label>
       <textarea id="af-notes" rows="4" placeholder="How did the call go? What did they say? Any objections? Next steps…"
-        style="width:100%;background:#141414;border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;resize:vertical;"></textarea>
+        style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;resize:vertical;"></textarea>
     </div>
 
     <div style="display:flex;gap:10px;">
@@ -915,6 +1075,16 @@ function renderDashboard() {
   ].map(([k,v]) => `<div style="display:flex;justify-content:space-between;font-size:13px;">
     <span style="color:var(--muted);">${k}</span><span style="font-weight:700;">${v}</span>
   </div>`).join('');
+
+  // Update coaching tip to mention aesthetics niche
+  if (m.dialled >= 10) {
+    if (m.interestRate < 15) {
+      document.getElementById('coaching-text').textContent = 'Getting pickups but low interest (' + m.interestRate + '%). Lead with the review gap earlier: "Most clinics we speak to have 10–30 reviews while their top competitor has 80+. That gap is costing them bookings every week..."';
+    }
+  }
+
+  // Team stats (admin only)
+  renderTeamStats();
 }
 
 // ══════════════════════════════════════════════
@@ -1045,11 +1215,12 @@ function logOutcome(outcome) {
   // Save notes
   if (notesField) lead.notes = notesField.value;
 
-  // Record call date
+  // Record call date + user
   if (!lead.calledDates) lead.calledDates = [];
   if (!lead.calledDates.includes(today())) lead.calledDates.push(today());
   lead.attempts = (lead.attempts || 0) + 1;
   lead.lastCalledDate = new Date().toISOString();
+  lead.dialledByUser = getCurrentUserKey();
 
   // Update status
   if (outcome === 'no_answer') {
@@ -1913,12 +2084,173 @@ function populateDemoData() {
 }
 
 // ══════════════════════════════════════════════
+// LOGIN SYSTEM
+// ══════════════════════════════════════════════
+
+const USERS = {
+  admin: {
+    displayName: 'Mac Smith',
+    role: 'admin',
+    pin: '1234',
+    emoji: '👑',
+    dotClass: 'user-dot-admin'
+  },
+  rep: {
+    displayName: 'Callum Ross',   // ← Change rep name here
+    role: 'rep',
+    pin: '5678',                   // ← Change rep PIN here
+    emoji: '📞',
+    dotClass: 'user-dot-rep'
+  }
+};
+
+// Current session (survives page reload within same tab via sessionStorage)
+let currentUser = null;
+
+function initLogin() {
+  // Update rep name on login screen
+  document.getElementById('rep-display-name').textContent = USERS.rep.displayName;
+
+  // Check if already logged in this session
+  const saved = sessionStorage.getItem('macai_user');
+  if (saved && USERS[saved]) {
+    applySession(saved);
+    return;
+  }
+  // Show login screen
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('app').style.display = 'none';
+}
+
+let selectedProfile = null;
+
+function selectProfile(key) {
+  selectedProfile = key;
+  document.getElementById('sel-profile-name').textContent = USERS[key].displayName;
+  document.getElementById('login-step-1').classList.add('hidden');
+  document.getElementById('login-step-2').classList.remove('hidden');
+  document.getElementById('pin-error').classList.add('hidden');
+  document.getElementById('pin-field').value = '';
+  setTimeout(() => document.getElementById('pin-field').focus(), 100);
+}
+
+function backToProfiles() {
+  document.getElementById('login-step-2').classList.add('hidden');
+  document.getElementById('login-step-1').classList.remove('hidden');
+  selectedProfile = null;
+}
+
+function doLogin() {
+  const pin = document.getElementById('pin-field').value;
+  const user = USERS[selectedProfile];
+  if (!user) return;
+
+  if (pin === user.pin) {
+    sessionStorage.setItem('macai_user', selectedProfile);
+    applySession(selectedProfile);
+  } else {
+    document.getElementById('pin-error').classList.remove('hidden');
+    document.getElementById('pin-field').value = '';
+    document.getElementById('pin-field').focus();
+  }
+}
+
+function applySession(key) {
+  currentUser = key;
+  const user = USERS[key];
+
+  // Hide login, show app
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').style.display = '';
+
+  // Update user pill in topbar
+  document.getElementById('user-pill-name').textContent = user.displayName;
+  const dot = document.getElementById('user-dot');
+  dot.className = 'user-dot ' + user.dotClass;
+
+  // Role-based tab visibility
+  const isAdmin = user.role === 'admin';
+  document.getElementById('tab-dashboard').style.display = isAdmin ? '' : 'none';
+  document.getElementById('tab-audit').style.display    = isAdmin ? '' : 'none';
+  document.getElementById('tab-import').style.display   = isAdmin ? '' : 'none';
+
+  // Show team stats on admin dashboard
+  if (isAdmin) {
+    document.getElementById('team-stats-card').classList.remove('hidden');
+  }
+
+  // Start at dialler for reps, dashboard for admin
+  const _d = load();
+  if (_d.leads.length === 0) populateDemoData();
+
+  if (!isAdmin) {
+    switchView('dialler');
+  } else {
+    renderDashboard();
+    switchView('dashboard');
+  }
+}
+
+function logout() {
+  if (!confirm('Sign out of Mac AI CRM?')) return;
+  sessionStorage.removeItem('macai_user');
+  currentUser = null;
+  location.reload();
+}
+
+// ── Tag dials with current user ──
+function getCurrentUserKey() {
+  return currentUser || 'admin';
+}
+
+// ── Team stats render (admin only) ──
+function renderTeamStats() {
+  if (!currentUser || USERS[currentUser].role !== 'admin') return;
+  const d = load();
+  const t = today();
+
+  function statsFor(userKey) {
+    // Dials tagged to this user today
+    const myDials = d.leads.filter(l =>
+      l.calledDates && l.calledDates.includes(t) &&
+      (l.dialledByUser === userKey || (userKey === 'admin' && !l.dialledByUser))
+    );
+    const interested = myDials.filter(l => l.status === 'interested' || l.status === 'booked');
+    const notInterested = myDials.filter(l => l.status === 'not_interested');
+    const noAnswer = myDials.filter(l => l.status === 'no_answer');
+    return { dials: myDials.length, interested: interested.length, notInterested: notInterested.length, noAnswer: noAnswer.length };
+  }
+
+  const adminStats = statsFor('admin');
+  const repStats   = statsFor('rep');
+
+  function userBlock(key, stats) {
+    const u = USERS[key];
+    return `
+      <div class="team-user-block">
+        <div class="team-user-name">
+          <div class="user-dot ${u.dotClass}"></div>
+          ${u.displayName}
+          <span style="font-size:10px;font-weight:600;color:var(--muted);margin-left:auto;">${u.role === 'admin' ? 'Admin' : 'Dialler'}</span>
+        </div>
+        <div class="team-user-stats">
+          <div class="team-stat"><strong style="color:var(--accent);">${stats.dials}</strong>Dialled</div>
+          <div class="team-stat"><strong style="color:var(--green);">${stats.interested}</strong>Interested</div>
+          <div class="team-stat"><strong style="color:var(--muted);">${stats.noAnswer}</strong>No Answer</div>
+          <div class="team-stat"><strong style="color:var(--red);">${stats.notInterested}</strong>Not Int.</div>
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('team-row').innerHTML =
+    userBlock('admin', adminStats) + userBlock('rep', repStats);
+}
+
+// ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
 
-const _init = load();
-if (_init.leads.length === 0) populateDemoData();
-renderDashboard();
+initLogin();
 </script>
 </body>
 </html>
