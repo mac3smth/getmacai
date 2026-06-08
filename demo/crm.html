@@ -182,6 +182,37 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
   text-align:center;padding:60px 24px;max-width:480px;margin:0 auto;
 }
 
+/* Pre-Call Intel card */
+.pre-call-intel{
+  background:rgba(0,212,255,.03);
+  border:1px solid rgba(0,212,255,.15);
+  border-radius:10px;padding:14px 16px;margin-bottom:16px;
+}
+.intel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.intel-title{
+  font-size:10px;font-weight:800;color:var(--accent);
+  text-transform:uppercase;letter-spacing:.1em;
+}
+.intel-stats{display:flex;gap:14px;margin-bottom:10px;}
+.intel-stat{font-size:12px;color:var(--muted);}
+.intel-stat strong{color:var(--text);font-weight:700;}
+.intel-gmb{
+  font-size:12px;color:rgba(241,245,249,.7);line-height:1.55;
+  margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);
+}
+.intel-angle{
+  background:rgba(247,179,22,.05);border:1px solid rgba(247,179,22,.2);
+  border-radius:7px;padding:10px 12px;
+}
+.angle-label{
+  font-size:9px;font-weight:800;color:var(--orange);text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:4px;display:block;
+}
+.angle-text{font-size:12px;color:var(--text);line-height:1.55;}
+.badge-high{background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);}
+.badge-med{background:rgba(247,179,22,.12);color:var(--orange);border:1px solid rgba(247,179,22,.25);}
+.badge-low{background:rgba(100,116,139,.1);color:var(--muted);border:1px solid rgba(100,116,139,.2);}
+
 /* ════════════════════════════════════════════════
    PIPELINE VIEW
 ════════════════════════════════════════════════ */
@@ -944,7 +975,22 @@ function renderDialler() {
         ${lead.website ? `<div class="lead-detail-row">🌐 <a href="${esc(lead.website.startsWith('http') ? lead.website : 'https://'+lead.website)}" target="_blank">${esc(lead.website)}</a></div>` : ''}
         ${lead.ownerName ? `<div class="lead-detail-row">👤 ${esc(lead.ownerName)}</div>` : ''}
 
-        <div class="notes-label">Notes</div>
+        ${(lead.gmbNotes || lead.salesNotes || lead.rating != null || lead.priority) ? `
+        <div class="pre-call-intel">
+          <div class="intel-header">
+            <span class="intel-title">📋 Pre-Call Intel</span>
+            ${lead.priority ? `<span class="badge badge-${lead.priority === 'HIGH' ? 'high' : lead.priority === 'MED' ? 'med' : 'low'}" style="font-size:10px;padding:2px 8px;">${esc(lead.priority)}</span>` : ''}
+          </div>
+          <div class="intel-stats">
+            ${lead.reviewCount != null ? `<span class="intel-stat">⭐ <strong>${lead.reviewCount}</strong> reviews</span>` : ''}
+            ${lead.rating ? `<span class="intel-stat">🏅 <strong>${esc(lead.rating)}★</strong></span>` : ''}
+            ${lead.website ? `<span class="intel-stat">🌐 <strong>Has website</strong></span>` : `<span class="intel-stat" style="color:var(--red);">⚠️ <strong>No website</strong></span>`}
+          </div>
+          ${lead.gmbNotes ? `<div class="intel-gmb">${esc(lead.gmbNotes)}</div>` : ''}
+          ${lead.salesNotes ? `<div class="intel-angle"><span class="angle-label">💡 Your Angle</span><span class="angle-text">${esc(lead.salesNotes)}</span></div>` : ''}
+        </div>` : ''}
+
+        <div class="notes-label">Call Notes</div>
         <textarea class="notes-input" id="notes-field" placeholder="Add notes about this call…" onchange="saveNotes('${lead.id}', this.value)">${esc(lead.notes || '')}</textarea>
       </div>
 
@@ -1174,13 +1220,17 @@ function parseCSVLine(line) {
 }
 
 const fieldMap = [
-  { key:'businessName', label:'Business Name', patterns:['business','company','name','organisation'] },
-  { key:'phone',        label:'Phone',          patterns:['phone','tel','mobile','number','contact'] },
-  { key:'website',      label:'Website',        patterns:['website','url','web','site'] },
-  { key:'ownerName',    label:'Owner Name',     patterns:['owner','contact person','first name','person'] },
-  { key:'category',     label:'Category',       patterns:['category','type','niche','industry','trade'] },
-  { key:'location',     label:'Location / Area',patterns:['location','area','city','town','place'] },
-  { key:'reviewCount',  label:'Review Count',   patterns:['review','rating','google','star'] },
+  { key:'businessName', label:'Business Name',    patterns:['business','company','name','organisation'] },
+  { key:'phone',        label:'Phone',             patterns:['phone','tel','mobile','number','contact'] },
+  { key:'website',      label:'Website',           patterns:['website','url','web','site'] },
+  { key:'ownerName',    label:'Owner Name',        patterns:['owner','contact person','first name','person'] },
+  { key:'category',     label:'Category',          patterns:['category','type','niche','industry','trade'] },
+  { key:'location',     label:'Location / Area',   patterns:['location','area','city','town','place','address'] },
+  { key:'reviewCount',  label:'Review Count',      patterns:['google review','review count','reviews'] },
+  { key:'rating',       label:'Star Rating',       patterns:['rating','stars','score'] },
+  { key:'gmbNotes',     label:'GMB / Business Notes', patterns:['gmb','activity','business notes','about'] },
+  { key:'salesNotes',   label:'Sales Angle / Notes',  patterns:['sales','pitch','angle','notes'] },
+  { key:'priority',     label:'Priority',          patterns:['priority','tier','rank'] },
 ];
 
 function autoMatch(header) {
@@ -1550,163 +1600,263 @@ function populateDemoData() {
   d.leads = [
 
     // ── BOOKED (2) ──────────────────────────────
-    mk({ businessName:'Scotroof Solutions', phone:'0141 334 7891', website:'scotroofsolutions.co.uk',
-      category:'Roofer', location:'Glasgow', reviewCount:12,
+    mk({ businessName:'J.Rodger Aesthetics', phone:'01355 224 899', website:'jrodgeraesthetics.co.uk',
+      category:'Aesthetics', location:'East Kilbride', reviewCount:30, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Nurse-led clinic. Botox, fillers, skin boosters. Professional website.',
+      salesNotes:'30 reviews but markets as premium. Show them their competitor (55 reviews) — that contrast will land.',
       status:'booked', attempts:1, calledDates:[t],
-      notes:'Wife handles admin side. Keen on AI chat for after-hours — loses loads of calls when on rooftops. Demo blew him away. Audit call booked THURSDAY 2pm.' }),
+      notes:'Spoke to Sarah, practice manager. Loved the review automation idea — she said getting Google reviews is always an afterthought. Audit call booked THURSDAY 11am.' }),
 
-    mk({ businessName:'Tay Valley Electricians', phone:'01382 445522', website:'tayvalleyelectric.co.uk',
-      category:'Electrician', location:'Dundee', reviewCount:22,
+    mk({ businessName:'Prestige Aesthetics', phone:'01324 881 442', website:'prestigeaesthetic.com',
+      category:'Aesthetics', location:'Falkirk', reviewCount:30, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Premier aesthetics clinic in Falkirk. Anti-wrinkle, fillers, skin treatments.',
+      salesNotes:'Claims "premier" but only 30 reviews. Use that contrast — the brand promise doesn\'t match the Google presence.',
       status:'booked', attempts:1, calledDates:[t],
-      notes:'Said he misses calls constantly when up ladders. Loved the review automation — only 22 reviews, competitor has 80+. Audit call TUESDAY 11am.' }),
+      notes:'Owner Emma answered. Immediately got it when I mentioned the "premier" angle. Said nobody had ever framed it like that before. Demo call tomorrow 2pm.' }),
 
-    // ── INTERESTED (6) ──────────────────────────
-    mk({ businessName:'West Coast Roofers', phone:'01292 334455', website:'westcoastroofers.co.uk',
-      category:'Roofer', location:'Ayr', reviewCount:7,
+    // ── INTERESTED (5) ──────────────────────────
+    mk({ businessName:'Clinica Medica', phone:'0141 339 7124', website:'clinicamedica.co.uk',
+      category:'Aesthetics', location:'Glasgow', reviewCount:30, rating:'4.7', priority:'HIGH',
+      gmbNotes:'Medical cosmetic surgery. Botox, fillers, rhinoplasty, thread lifts. Medical-grade positioning.',
+      salesNotes:'Medical clinic — pitch AI to handle non-medical inquiry overflow. Doctors shouldn\'t be answering "how much is Botox" questions.',
       status:'interested', attempts:2, calledDates:[yest, t],
-      notes:'Very interested in review automation — only 7 reviews, top competitor has 60+. Embarrassed about it. Said call back tomorrow after 2pm to lock in time.' }),
+      notes:'Dr Ahmed very receptive. Said front desk gets swamped with basic inquiries. Wants to see a live demo. Sending calendar link.' }),
 
-    mk({ businessName:'Alba Electrical Services', phone:'01786 223344', website:'albaelectrical.co.uk',
-      category:'Electrician', location:'Stirling', reviewCount:6,
+    mk({ businessName:'Sana Aesthetics', phone:'0141 632 4490', website:'sanaaesthetics.co.uk',
+      category:'Aesthetics', location:'Glasgow', reviewCount:32, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Botox, peels, dermaplaning, fillers. Full treatment menu. Active on GMB.',
+      salesNotes:'32 reviews with full menu but limited GMB visibility. AI chat to capture after-hours queries — aesthetics clients browse at 10pm.',
       status:'interested', attempts:1, calledDates:[t],
-      notes:'Wants to discuss with business partner first. Said yes in principle. Follow up Friday morning.' }),
+      notes:'Spoke to owner Lisa. Really liked the after-hours angle — said she loses weekend enquiries all the time. Wants a call back Monday.' }),
 
-    mk({ businessName:'Capital Pressure Wash', phone:'0131 778 9900', website:'capitalpressurewash.co.uk',
-      category:'Pressure Wash', location:'Edinburgh', reviewCount:3,
+    mk({ businessName:'Emerald Facial Aesthetics', phone:'0131 663 8877', website:'emeraldfacialaesthetics.co.uk',
+      category:'Aesthetics', location:'Bonnyrigg', reviewCount:30, rating:'5.0', priority:'HIGH',
+      gmbNotes:'Award-winning nurse-led clinic, Midlothian. Anti-wrinkle, fillers, skin boosters.',
+      salesNotes:'Award-winning and 5 stars but only 30 reviews — that\'s a credibility gap. Pitch: "you\'ve got the best results, now let\'s make sure Google knows it."',
       status:'interested', attempts:1, calledDates:[t],
-      notes:'Tiny review count — 3 stars only, knows it\'s hurting him. Review automation sounds ideal. Asked about pricing — said £600 build is fine. Keen.' }),
+      notes:'Asked loads of good questions. Very professional, clearly takes her business seriously. Said she\'s been thinking about something like this. Send proposal by EOD.' }),
 
-    mk({ businessName:'Loch Lomond Landscaping', phone:'01389 778899', website:'lochlomondlandscaping.co.uk',
-      category:'Landscaper', location:'Balloch', reviewCount:9,
-      status:'interested', attempts:1, calledDates:[t],
-      notes:'Currently pen and paper for jobs. Loved the dashboard idea. Said "that actually sounds class." Wants a 20-min call.' }),
-
-    mk({ businessName:'Borders Roofing Co', phone:'01721 778833', website:'bordersroofing.co.uk',
-      category:'Roofer', location:'Peebles', reviewCount:4,
+    mk({ businessName:'CKB Skin Clinic', phone:'0141 636 5512', website:'',
+      category:'Aesthetics', location:'Glasgow (Shawlands)', reviewCount:34, rating:'5.0', priority:'HIGH',
+      gmbNotes:'5-star skin clinic. No website — Treatwell listing only. Shawlands area.',
+      salesNotes:'34 reviews and 5 stars but NO website. "Your competitors show up on Google, you\'re invisible outside Treatwell." Website + AI chat bundle.',
       status:'interested', attempts:2, calledDates:[yest, t],
-      notes:'Asked loads of good questions. Liked that we\'re local Scotland. Said he\'s been looking for something like this. Confirmed happy to do a call.' }),
+      notes:'Owner Carrie was embarrassed about the no-website thing. Said she\'s been meaning to sort it for 2 years. Wants pricing on website + AI package.' }),
 
-    mk({ businessName:'Argyll Builders Ltd', phone:'01631 556644', website:'argyllbuilders.co.uk',
-      category:'Builder', location:'Oban', reviewCount:16,
+    mk({ businessName:'Dr Nicola Willis Aesthetics', phone:'07710 433362', website:'drnicolawillis.com',
+      category:'Aesthetics', location:'Ayrshire', reviewCount:30, rating:'4.9', priority:'HIGH',
+      gmbNotes:'Specialist aesthetics — botox, fillers, thread lift, neck lift. Medical doctor positioning.',
+      salesNotes:'Specialist positioning but low GMB visibility for the services she offers. Speed-to-lead agent for consultation bookings — patients Google at night.',
       status:'interested', attempts:1, calledDates:[t],
-      notes:'Spends loads of time chasing invoices manually — workflow automation really appealed. Wants to see the demo. Schedule audit call.' }),
+      notes:'Very interested in the consultation booking bot. Said she loses 3-4 enquiries a week from people who don\'t leave a message. Will confirm audit call by WhatsApp.' }),
 
-    // ── NOT INTERESTED (9) ──────────────────────
-    mk({ businessName:'Paisley Paving Pro', phone:'0141 887 2211', website:'paisleypaving.co.uk',
-      category:'Paving', location:'Paisley', reviewCount:44,
+    // ── NOT INTERESTED (7) ──────────────────────
+    mk({ businessName:'The Glow Studio', phone:'0131 225 9988', website:'theglowstudio.co.uk',
+      category:'Aesthetics', location:'Edinburgh', reviewCount:87, rating:'4.9', priority:'LOW',
+      gmbNotes:'Established Edinburgh studio. Very active on Instagram. 87 reviews.',
+      salesNotes:'Already doing well digitally — angle would be efficiency (save staff time) not growth.',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Has a nephew who does websites and marketing. Said he\'s sorted.' }),
+      notes:'Already has a full-time social media manager and uses Cliniko for bookings. Said they\'re all sorted. Fair enough — good intel for objection handling.' }),
 
-    mk({ businessName:'Clyde Plumbers', phone:'0141 552 3344', website:'clydeplumbers.co.uk',
-      category:'Plumber', location:'Glasgow', reviewCount:58,
+    mk({ businessName:'Skin & Tonic Aesthetics', phone:'0141 424 7722', website:'skinandtonic.co.uk',
+      category:'Aesthetics', location:'Glasgow', reviewCount:44, rating:'4.7', priority:'MED',
+      gmbNotes:'Combined beauty and aesthetics. Established client base.',
+      salesNotes:'Mid-review count. Review automation + speed-to-lead pitch.',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Just signed a 12-month contract with a marketing agency last month. Bad timing.' }),
+      notes:'Just signed up with another agency two weeks ago. Bad timing — add to follow-up list for 6 months.' }),
 
-    mk({ businessName:'Stirling Painters', phone:'01786 334455', website:'stirlingpainters.co.uk',
-      category:'Painter', location:'Stirling', reviewCount:31,
+    mk({ businessName:'Bare Aesthetics', phone:'07896 445511', website:'bareaesthetics.co.uk',
+      category:'Aesthetics', location:'Paisley', reviewCount:21, rating:'4.6', priority:'HIGH',
+      gmbNotes:'Anti-wrinkle and filler specialist. Mobile and clinic-based.',
+      salesNotes:'21 reviews — competitor in Paisley has 60+. Classic review gap pitch.',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Too busy right now — fully booked until August. Said to call back in September.' }),
+      notes:'Practitioner herself answered — said she\'s a sole trader and doesn\'t have budget right now. Try again in 3 months.' }),
 
-    mk({ businessName:'Forth Road Fencing', phone:'01324 667788', website:'forthfencing.co.uk',
-      category:'Fencing', location:'Falkirk', reviewCount:27,
+    mk({ businessName:'Ayrshire Aesthetics Centre', phone:'01294 312 887', website:'ayrshireaesthetics.co.uk',
+      category:'Aesthetics', location:'Irvine', reviewCount:55, rating:'4.8', priority:'MED',
+      gmbNotes:'Multi-practitioner clinic. Botox, fillers, skin rejuvenation.',
+      salesNotes:'Established clinic — pitch operational efficiency and staff time savings.',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Not the owner — spoke to a labourer who said the boss isn\'t interested in "marketing stuff." Try a direct number next time.' }),
+      notes:'Practice manager said they have a strict IT policy and need director approval for any software. Send email to follow up.' }),
 
-    mk({ businessName:'Caledonian Groundworks', phone:'01738 223344', website:'caledonianground.co.uk',
-      category:'Groundwork', location:'Perth', reviewCount:19,
+    mk({ businessName:'Glow Republic', phone:'0131 557 3304', website:'glowrepublic.co.uk',
+      category:'Aesthetics', location:'Edinburgh', reviewCount:19, rating:'4.5', priority:'HIGH',
+      gmbNotes:'City centre Edinburgh. Aesthetics and beauty combined. Young brand.',
+      salesNotes:'19 reviews in city centre — massively underselling themselves. Full package pitch: website, AI chat, review automation.',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Happy with current setup, gets all work from word of mouth. Didn\'t want to know.' }),
+      notes:'Owner said she\'s only been open 8 months and doesn\'t have budget yet. Totally understandable. Follow up in January.' }),
 
-    mk({ businessName:'Highlands Heating Ltd', phone:'01463 445566', website:'highlandsheating.co.uk',
-      category:'Plumber/Heating', location:'Inverness', reviewCount:41,
+    mk({ businessName:'Pure Aesthetics Dundee', phone:'01382 226 644', website:'pureaestheticsdundee.co.uk',
+      category:'Aesthetics', location:'Dundee', reviewCount:38, rating:'4.7', priority:'MED',
+      gmbNotes:'Established Dundee clinic. Botox, dermal fillers, skin treatments.',
+      salesNotes:'38 reviews but posting inconsistently on GMB. Review velocity automation pitch.',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Budget too tight right now — just hired two new apprentices. Said maybe in 6 months.' }),
+      notes:'Seemed interested then mentioned they\'d been burned by a marketing agency before. Said they\'re wary. Need social proof — case study would close this.' }),
 
-    mk({ businessName:'Fife Roofing Services', phone:'01592 778899', website:'fiferoofing.co.uk',
-      category:'Roofer', location:'Kirkcaldy', reviewCount:13,
+    mk({ businessName:'The Aesthetic Room', phone:'01786 462 199', website:'theaestheticroom.co.uk',
+      category:'Aesthetics', location:'Stirling', reviewCount:12, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Nurse-led. Injectables and skin treatments. Stirling town centre.',
+      salesNotes:'12 reviews — strong quality but low volume. Pitch: "your results are getting 5 stars, your profile isn\'t showing it."',
       status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Seemed interested then googled us and couldn\'t find much. Need to build authority content.' }),
+      notes:'Nurse practitioner said her husband manages the business side and he wasn\'t there. Said to call back Monday morning.' }),
 
-    mk({ businessName:'Ayrshire Joiners', phone:'01563 334455', website:'ayrshirejoiners.co.uk',
-      category:'Joiner', location:'Kilmarnock', reviewCount:8,
-      status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Partner handles all marketing — she said no without really hearing the offer. Try again in a few weeks.' }),
+    // ── NO ANSWER (13) ──────────────────────────
+    mk({ businessName:'Aveda Aesthetics Glasgow', phone:'0141 339 2211', website:'avedaaesthetics.co.uk',
+      category:'Aesthetics', location:'Glasgow (West End)', reviewCount:28, rating:'4.7', priority:'HIGH',
+      gmbNotes:'West End Glasgow. Botox, fillers, fat dissolving, skin boosters.',
+      salesNotes:'28 reviews in affluent West End — massive underrepresentation. Wealthy demographic = higher LTV clients. Speed-to-lead + reviews.',
+      status:'no_answer', attempts:2, calledDates:[yest, t] }),
 
-    mk({ businessName:'Renfrewshire Roofers', phone:'0141 887 6655', website:'renfrewshireroofers.co.uk',
-      category:'Roofer', location:'Renfrew', reviewCount:33,
-      status:'not_interested', attempts:1, calledDates:[t],
-      notes:'Disconnected number — remove from sheet.' }),
+    mk({ businessName:'Define Aesthetics', phone:'0131 226 4433', website:'defineaesthetics.co.uk',
+      category:'Aesthetics', location:'Edinburgh', reviewCount:17, rating:'4.9', priority:'HIGH',
+      gmbNotes:'Specialist anti-ageing clinic. Premium positioning.',
+      salesNotes:'4.9 stars and only 17 reviews — someone\'s not asking. Automated review follow-up after every appointment.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    // ── NO ANSWER (15) ──────────────────────────
-    mk({ businessName:'Scotts Plumbing & Heating', phone:'0141 552 6677', website:'scottsplumbing.co.uk',
-      category:'Plumber', location:'Glasgow', reviewCount:31, status:'no_answer', attempts:3, calledDates:[yest, yest, t] }),
+    mk({ businessName:'The Skin Lab Aberdeen', phone:'01224 641 887', website:'theskinlab.co.uk',
+      category:'Aesthetics', location:'Aberdeen', reviewCount:23, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Medical-grade skincare and aesthetics. Aberdeen city centre.',
+      salesNotes:'23 reviews in a city with very few competitors. First-mover advantage — get them before a Glasgow clinic expands north.',
+      status:'no_answer', attempts:2, calledDates:[yest, t] }),
 
-    mk({ businessName:'Highland Joiners', phone:'0131 445 2233', website:'highlandjoiners.co.uk',
-      category:'Joiner', location:'Edinburgh', reviewCount:8, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+    mk({ businessName:'Face & Body Aesthetics', phone:'01698 557 344', website:'faceandbody.co.uk',
+      category:'Aesthetics', location:'Motherwell', reviewCount:9, rating:'4.6', priority:'HIGH',
+      gmbNotes:'Full body and facial aesthetics. Lanarkshire area.',
+      salesNotes:'9 reviews — almost invisible. Zero competition in Motherwell market. Easy growth story.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Edinburgh Painters Ltd', phone:'0131 667 8899', website:'edinburghpainters.co.uk',
-      category:'Painter', location:'Edinburgh', reviewCount:14, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Luxe Aesthetics Inverness', phone:'01463 716 229', website:'luxeaesthetics.co.uk',
+      category:'Aesthetics', location:'Inverness', reviewCount:14, rating:'5.0', priority:'HIGH',
+      gmbNotes:'5-star clinic. Inverness — very limited local competition.',
+      salesNotes:'5.0 stars with 14 reviews. Dominant position if they scale reviews — no real competitor in Inverness. Strong pitch.',
+      status:'no_answer', attempts:3, calledDates:[yest, yest, t] }),
 
-    mk({ businessName:'Clyde Landscaping Co', phone:'0141 889 4455', website:'clydelandscaping.co.uk',
-      category:'Landscaper', location:'Paisley', reviewCount:23, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+    mk({ businessName:'Clarity Skin & Aesthetics', phone:'01563 522 778', website:'clarityskin.co.uk',
+      category:'Aesthetics', location:'Kilmarnock', reviewCount:11, rating:'4.7', priority:'HIGH',
+      gmbNotes:'Anti-wrinkle, fillers, skin treatments. Ayrshire.',
+      salesNotes:'11 reviews in Kilmarnock — low competition town. Own the market with 50+ reviews.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Forth Valley Joiners', phone:'01324 556677', website:'forthvalleyjoiners.co.uk',
-      category:'Joiner', location:'Falkirk', reviewCount:19, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Nouveau Aesthetics Edinburgh', phone:'0131 447 8812', website:'nouveauaesthetics.co.uk',
+      category:'Aesthetics', location:'Edinburgh (Morningside)', reviewCount:26, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Morningside Edinburgh. Premium clientele. Botox, fillers, Profhilo.',
+      salesNotes:'Affluent Morningside postcode. 26 reviews is low for the area. Speed-to-lead critical — these clients expect instant response.',
+      status:'no_answer', attempts:2, calledDates:[yest, t] }),
 
-    mk({ businessName:'Speyside Groundworks', phone:'01738 445566', website:'speysidegroundworks.co.uk',
-      category:'Groundwork', location:'Perth', reviewCount:11, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+    mk({ businessName:'Sculpt Aesthetics Dundee', phone:'01382 519 443', website:'sculptaesthetics.co.uk',
+      category:'Aesthetics', location:'Dundee', reviewCount:7, rating:'4.9', priority:'HIGH',
+      gmbNotes:'Body sculpting and injectables specialist. Newer clinic.',
+      salesNotes:'4.9 stars and only 7 reviews — perfect review automation client. The quality is there, just not the volume.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Caledonian Fencing Ltd', phone:'0141 663 7744', website:'caledonianfencing.co.uk',
-      category:'Fencing', location:'Glasgow', reviewCount:5, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Revive Aesthetics Perth', phone:'01738 641 229', website:'reviveaesthetics.co.uk',
+      category:'Aesthetics', location:'Perth', reviewCount:16, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Perth city. Full aesthetics menu. Established 2019.',
+      salesNotes:'16 reviews — Perth has limited competition. Easy to dominate local search with 60+ reviews.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Moray Roofers', phone:'01343 556677', website:'morayroofers.co.uk',
-      category:'Roofer', location:'Elgin', reviewCount:6, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Skinfluence Clinic', phone:'0141 552 9976', website:'skinfluence.co.uk',
+      category:'Aesthetics', location:'Glasgow City Centre', reviewCount:19, rating:'4.7', priority:'HIGH',
+      gmbNotes:'City centre Glasgow. Instagram-heavy brand. Skin and injectables.',
+      salesNotes:'Instagram-forward brand means DM enquiries at all hours — AI inbox agent is perfect. Also 19 reviews in city centre is very low.',
+      status:'no_answer', attempts:2, calledDates:[yest, t] }),
 
-    mk({ businessName:'Dunbartonshire Painters', phone:'01389 445566', website:'dunbartonpainters.co.uk',
-      category:'Painter', location:'Dumbarton', reviewCount:17, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Radiant Beauty Aesthetics', phone:'01506 412 633', website:'radiantbeauty.co.uk',
+      category:'Aesthetics', location:'Livingston', reviewCount:8, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Livingston. Anti-wrinkle and fillers. Reasonable pricing.',
+      salesNotes:'8 reviews. West Lothian — growing area, not many competitors. First to 50 reviews wins the town.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Tayside Electricians', phone:'01382 334455', website:'taysideelectric.co.uk',
-      category:'Electrician', location:'Dundee', reviewCount:9, status:'no_answer', attempts:3, calledDates:[yest, yest, t] }),
+    mk({ businessName:'The Aesthetic Suite Falkirk', phone:'01324 627 449', website:'aestheticsuite.co.uk',
+      category:'Aesthetics', location:'Falkirk', reviewCount:22, rating:'4.7', priority:'HIGH',
+      gmbNotes:'Central Scotland. Botox, fillers, skin treatments. Professional setup.',
+      salesNotes:'22 reviews. Direct competitor to Prestige Aesthetics (30 reviews) in same town — use that rivalry as the hook.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Galloway Landscaping', phone:'01557 778899', website:'gallowaylandscaping.co.uk',
-      category:'Landscaper', location:'Castle Douglas', reviewCount:4, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'LashLux & Aesthetics', phone:'0141 881 4432', website:'lashlux.co.uk',
+      category:'Aesthetics', location:'Paisley', reviewCount:41, rating:'4.6', priority:'MED',
+      gmbNotes:'Combined lash, brow and aesthetics salon. Strong retail following.',
+      salesNotes:'41 reviews — not a priority for reviews but Instagram DM volume will be high. AI Instagram agent pitch.',
+      status:'no_answer', attempts:1, calledDates:[t] }),
 
-    mk({ businessName:'Lothian Builders', phone:'0131 556 7788', website:'lothianbuilders.co.uk',
-      category:'Builder', location:'Edinburgh', reviewCount:28, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+    // ── QUEUED - fresh (13) ──────────────────────
+    mk({ businessName:'MY-RA Aesthetics & Beauty', phone:'0141 423 8817', website:'',
+      category:'Aesthetics', location:'Glasgow (Pollokshields)', reviewCount:0, priority:'HIGH',
+      gmbNotes:'Hair and aesthetics combined. Brand new — no reviews yet. Treatwell only.',
+      salesNotes:'0 reviews and no website. "You\'re invisible on Google right now — let\'s fix that before your competitors notice." Perfect first-mover pitch.',
+      status:'queued' }),
 
-    mk({ businessName:'Angus Roofing Ltd', phone:'01307 334455', website:'angusroofing.co.uk',
-      category:'Roofer', location:'Forfar', reviewCount:7, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Divine Aesthetics & Academy', phone:'0141 248 6614', website:'divineaesthetics.co.uk',
+      category:'Aesthetics', location:'Glasgow City Centre', reviewCount:0, priority:'HIGH',
+      gmbNotes:'Training academy and aesthetics clinic. Blythswood Square Glasgow. Anti-wrinkle + fillers.',
+      salesNotes:'0 reviews with a Blythswood Square address — premium location, zero digital credibility. Easiest pitch on the list.',
+      status:'queued' }),
 
-    mk({ businessName:'Perthshire Joiners', phone:'01738 667788', website:'perthshirejoiners.co.uk',
-      category:'Joiner', location:'Perth', reviewCount:11, status:'no_answer', attempts:1, calledDates:[t] }),
+    mk({ businessName:'Bobo Aesthetics', phone:'0141 221 5543', website:'',
+      category:'Aesthetics', location:'Glasgow City Centre', reviewCount:0, priority:'HIGH',
+      gmbNotes:'Laser, aesthetics and cosmetics. Near Central Station Glasgow. No website.',
+      salesNotes:'0 reviews, no website, Central Station location — completely invisible. Full package: website + AI + reviews. Maximum opportunity.',
+      status:'queued' }),
 
-    mk({ businessName:'West Lothian Plumbers', phone:'01506 445566', website:'westlothianplumb.co.uk',
-      category:'Plumber', location:'Livingston', reviewCount:15, status:'no_answer', attempts:2, calledDates:[yest, t] }),
+    mk({ businessName:'Amour Aesthetics', phone:'0141 880 3312', website:'amouraesthetics.co.uk',
+      category:'Aesthetics', location:'Barrhead', reviewCount:0, priority:'HIGH',
+      gmbNotes:'Second location. Vitamin injections + anti-wrinkle. Barrhead, East Renfrewshire.',
+      salesNotes:'0 reviews at second location. Pitch: unified review strategy across both sites — their main location has reviews, let\'s match it here.',
+      status:'queued' }),
 
-    // ── QUEUED - fresh (8) ──────────────────────
-    mk({ businessName:'Dumfries Roofers', phone:'01387 334455', website:'dumfriesroofers.co.uk',
-      category:'Roofer', location:'Dumfries', reviewCount:5, status:'queued' }),
+    mk({ businessName:'Eden Aesthetics Ayr', phone:'01292 261 774', website:'edenaesthetics.co.uk',
+      category:'Aesthetics', location:'Ayr', reviewCount:6, rating:'4.9', priority:'HIGH',
+      gmbNotes:'Ayrshire aesthetics. Injectable treatments and skin. Small but highly rated.',
+      salesNotes:'4.9 stars with only 6 reviews — the quality is there but no one knows. Automated review request after every appointment = 40-50 reviews inside 3 months.',
+      status:'queued' }),
 
-    mk({ businessName:'Ayrshire Electricians', phone:'01294 556677', website:'ayrshireelectric.co.uk',
-      category:'Electrician', location:'Irvine', reviewCount:8, status:'queued' }),
+    mk({ businessName:'Flawless Aesthetics Stirling', phone:'01786 448 221', website:'flawlessaesthetics.co.uk',
+      category:'Aesthetics', location:'Stirling', reviewCount:13, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Stirling city. Anti-wrinkle, lip fillers, skin boosters.',
+      salesNotes:'13 reviews in Stirling — competitor has 45. The gap is noticeable on Google Maps. Show them the search result side-by-side.',
+      status:'queued' }),
 
-    mk({ businessName:'Borders Landscaping', phone:'01896 778899', website:'borderslandscaping.co.uk',
-      category:'Landscaper', location:'Galashiels', reviewCount:3, status:'queued' }),
+    mk({ businessName:'Glow Aesthetics Kirkcaldy', phone:'01592 644 389', website:'glowaesthetics.co.uk',
+      category:'Aesthetics', location:'Kirkcaldy', reviewCount:5, rating:'4.7', priority:'HIGH',
+      gmbNotes:'Fife aesthetics clinic. Injectable and skin treatments. Newer practice.',
+      salesNotes:'5 reviews and new — they need everything. Start with the review system, then upsell AI chat once trust is established.',
+      status:'queued' }),
 
-    mk({ businessName:'Fife Fencing Co', phone:'01334 445566', website:'fifefencing.co.uk',
-      category:'Fencing', location:'St Andrews', reviewCount:6, status:'queued' }),
+    mk({ businessName:'Purely Aesthetics Hamilton', phone:'01698 284 661', website:'purelyaesthetics.co.uk',
+      category:'Aesthetics', location:'Hamilton', reviewCount:18, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Hamilton, Lanarkshire. Full injectables menu. Good GMB photos.',
+      salesNotes:'18 reviews. South Lanarkshire — growing commuter belt, affluent clients. Review automation + missed call text-back.',
+      status:'queued' }),
 
-    mk({ businessName:'Stirlingshire Painters', phone:'01786 778899', website:'stirlingpainters2.co.uk',
-      category:'Painter', location:'Stirling', reviewCount:12, status:'queued' }),
+    mk({ businessName:'Beautique Aesthetic Clinic', phone:'0131 558 7792', website:'beautique.co.uk',
+      category:'Aesthetics', location:'Edinburgh', reviewCount:24, rating:'4.6', priority:'HIGH',
+      gmbNotes:'Edinburgh New Town area. Aesthetics + beauty combined. Established 4 years.',
+      salesNotes:'24 reviews in New Town — low for 4 years trading. They should have 100+ by now. Review automation to catch up.',
+      status:'queued' }),
 
-    mk({ businessName:'Grampian Groundworks', phone:'01224 334455', website:'grampianground.co.uk',
-      category:'Groundwork', location:'Aberdeen', reviewCount:9, status:'queued' }),
+    mk({ businessName:'Nova Aesthetics Dunfermline', phone:'01383 724 815', website:'novaaesthetics.co.uk',
+      category:'Aesthetics', location:'Dunfermline', reviewCount:9, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Dunfermline, Fife. Botox, fillers, skin. Active on social media.',
+      salesNotes:'9 reviews — social media active but Google presence weak. "Your Instagram followers can\'t find you on Google." Redirect the effort.',
+      status:'queued' }),
 
-    mk({ businessName:'Lanarkshire Builders', phone:'01698 556677', website:'lanarkshirebuilders.co.uk',
-      category:'Builder', location:'Motherwell', reviewCount:21, status:'queued' }),
+    mk({ businessName:'The Skin Edit by Zara', phone:'0141 248 9943', website:'',
+      category:'Aesthetics', location:'Glasgow City Centre', reviewCount:0, priority:'HIGH',
+      gmbNotes:'West Regent Street. Skin boosters, anti-wrinkle. No website, Treatwell only.',
+      salesNotes:'0 reviews, no website, city centre location. Literally starting from zero. Position it as: "you\'ve got a premium location, let\'s give you a premium digital presence to match."',
+      status:'queued' }),
 
-    mk({ businessName:'Argyll Roofers', phone:'01546 334455', website:'argyllroofers.co.uk',
-      category:'Roofer', location:'Lochgilphead', reviewCount:4, status:'queued' }),
+    mk({ businessName:'Kilsyth Aesthetics', phone:'01236 823100', website:'kilsythaesthetics.co.uk',
+      category:'Aesthetics', location:'Kilsyth', reviewCount:10, rating:'4.7', priority:'HIGH',
+      gmbNotes:'North Lanarkshire. Injectable treatments. Small town, loyal clientele.',
+      salesNotes:'10 reviews — small town market but very little competition. 50 reviews = undisputed local authority. Also ideal for missed call text-back (solo practitioner).',
+      status:'queued' }),
+
+    mk({ businessName:'Bishopbriggs Aesthetics Clinic', phone:'0141 762 4834', website:'bishopbriggsaesthetics.co.uk',
+      category:'Aesthetics', location:'Bishopbriggs', reviewCount:12, rating:'4.8', priority:'HIGH',
+      gmbNotes:'Suburban Glasgow. Anti-wrinkle and fillers. Professional setup.',
+      salesNotes:'12 reviews in affluent Bishopbriggs suburb. High-income area = premium clients. Review count doesn\'t reflect the quality. Automation pitch strong here.',
+      status:'queued' }),
 
   ];
 
@@ -1714,48 +1864,48 @@ function populateDemoData() {
   const fmt = (daysAgo) => new Date(Date.now() - daysAgo*86400000).toISOString().slice(0,10);
 
   d.auditCalls = [
-    mka({ businessName:'Scotroof Solutions', callDate: fmt(5), status:'closed',
+    mka({ businessName:'J.Rodger Aesthetics', callDate: fmt(5), status:'closed',
       package:'growth', buildFee:1000, monthlyFee:300, commission:250,
-      notes:'Showed him the live demo — he was speechless. Said "how did you know about my business?" Closed on Growth plan in 18 minutes. Really easy sell once they see the demo. Derek\'s a great client.' }),
+      notes:'Showed Sarah the pre-built demo — she literally said "oh my god, how do you know all that?" Walked through the review gap vs competitor, she was embarrassed. Closed Growth plan in 22 mins. Easy once they see it. Build starts next week.' }),
 
-    mka({ businessName:'Tay Valley Electricians', callDate: fmt(3), status:'closed',
+    mka({ businessName:'Prestige Aesthetics', callDate: fmt(3), status:'closed',
       package:'starter', buildFee:700, monthlyFee:200, commission:150,
-      notes:'Mainly sold on AI chat + review automation. He\'s only got 22 reviews and said his competitor has 90+. Felt the urgency. Did have to overcome "I\'ll think about it" — showed him the review gap chart and he signed off.' }),
+      notes:'Opened with the "premier clinic with 30 reviews" angle — hit a nerve immediately. Emma laughed and said "don\'t remind me." Sold on review automation + AI chat. Took 18 minutes. First payment received.' }),
 
-    mka({ businessName:'SP Rapid Recovery', callDate: fmt(14), status:'closed',
+    mka({ businessName:'Sana Aesthetics', callDate: fmt(12), status:'closed',
       package:'growth', buildFee:1000, monthlyFee:300, commission:250,
-      notes:'Existing client — upgraded from Starter. Added dashboard and workflow automation. Upsell took 10 mins on a follow-up call. Starting Google Ads conversation next month.' }),
+      notes:'Lisa already knew she had a problem — she just needed the solution framed right. After-hours AI agent was the clincher. She said she loses at least 5 enquiries a week from 8pm onwards. Closed same call. Really strong case study material here.' }),
 
-    mka({ businessName:'West Coast Roofers', callDate: fmt(1), status:'showed',
-      package:'starter', buildFee:null, monthlyFee:null, commission:null,
-      notes:'Good call — demo went down well. Said he wants to check with his accountant about the build fee. Follow up Monday. Strong interest, just needs the green light on budget.' }),
+    mka({ businessName:'Clinica Medica', callDate: fmt(1), status:'showed',
+      package:'growth', buildFee:null, monthlyFee:null, commission:null,
+      notes:'Great call. Dr Ahmed very switched on — asked intelligent questions about the AI and how it handles medical disclaimers. Covered that well. He wants to trial with 1 location first. Decision by end of week. Follow up Friday.' }),
 
-    mka({ businessName:'Loch Lomond Landscaping', callDate: fmt(0), status:'scheduled',
+    mka({ businessName:'Emerald Facial Aesthetics', callDate: fmt(0), status:'scheduled',
       package:'', buildFee:null, monthlyFee:null, commission:null,
-      notes:'Call at 3pm today. Build demo before 2:30pm. Owner is Derek, wife handles admin. Pain point: no time to follow up leads, all word of mouth.',
+      notes:'Call at 2pm today. She\'s award-winning so open with recognition — "you clearly deliver incredible results, the question is are enough people finding you?" Build award-angle into the demo.',
       followUpDate: fmt(0) }),
 
-    mka({ businessName:'Argyll Builders Ltd', callDate: fmt(-2), status:'scheduled',
+    mka({ businessName:'CKB Skin Clinic', callDate: fmt(-2), status:'scheduled',
       package:'', buildFee:null, monthlyFee:null, commission:null,
-      notes:'Booked for Thursday 10am. Said biggest issue is invoice chasing and missed calls. Look at workflow automation angle for this one.',
+      notes:'Thursday 11am. Carrie is embarrassed about no website — lead with empathy not pressure. Focus on the opportunity not the problem. Website + AI package pitch. She\'s a yes waiting to happen.',
       followUpDate: fmt(-2) }),
 
-    mka({ businessName:'Capital Pressure Wash', callDate: fmt(-3), status:'scheduled',
+    mka({ businessName:'Dr Nicola Willis Aesthetics', callDate: fmt(-4), status:'scheduled',
       package:'', buildFee:null, monthlyFee:null, commission:null,
-      notes:'Edinburgh-based, only 3 reviews. Very keen on review automation. Build demo showing competitor review gap — that will close this one.' }),
+      notes:'Friday afternoon. Medical doctor — be professional, data-led. Show the missed enquiry stats. She specifically mentioned losing consultation requests. Lead with that number.' }),
 
-    mka({ businessName:'Caledonian Fencing Ltd', callDate: fmt(8), status:'no_show',
+    mka({ businessName:'Define Aesthetics', callDate: fmt(8), status:'no_show',
       package:'starter', buildFee:null, monthlyFee:null, commission:null,
-      notes:'Didn\'t show. Rang twice, no answer. Rescheduled for next Tuesday — confirmed by text.',
+      notes:'No show. Called twice, went to voicemail. Sent follow-up text. Edinburgh — try calling between 10am-12pm on a Tuesday when they\'re less likely to be with clients.',
       followUpDate: fmt(-6) }),
 
-    mka({ businessName:'Dunbartonshire Painters', callDate: fmt(10), status:'lost',
+    mka({ businessName:'Glow Republic', callDate: fmt(11), status:'lost',
       package:'starter', buildFee:null, monthlyFee:null, commission:null,
-      lostReason:'Price objection — said £600 too much upfront right now. Offered payment plan but he wasn\'t interested. Follow up in 3 months when cash flow is better.' }),
+      lostReason:'Only open 8 months, no budget. Not a lost cause — add to follow-up list for January. She was very receptive to the concept, just genuinely can\'t afford it yet. Put a reminder in.' }),
 
-    mka({ businessName:'Fife Roofing Services', callDate: fmt(12), status:'lost',
+    mka({ businessName:'Skin & Tonic Aesthetics', callDate: fmt(14), status:'lost',
       package:'growth', buildFee:null, monthlyFee:null, commission:null,
-      lostReason:'Already signed with a digital agency in Glasgow last week. Bad timing. Ask again in 6–12 months when the contract ends.' }),
+      lostReason:'Signed with another agency 2 weeks before we called. Poor timing — they were actively looking and we missed them. Follow up when their contract ends (likely 12 months). Add to calendar.' }),
   ];
 
   d.diallerIdx = 0;
