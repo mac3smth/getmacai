@@ -440,6 +440,61 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
 .team-user-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .team-stat{font-size:12px;color:var(--muted);}
 .team-stat strong{display:block;font-size:18px;font-weight:900;color:var(--text);line-height:1;}
+
+/* ════════════════════════════════════════════════
+   MOBILE / IPHONE
+════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* Topbar */
+  #topbar{padding:0 12px;height:48px;flex-wrap:wrap;}
+  .logo{font-size:12px;}
+  .nav-tabs{gap:1px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+  .nav-tabs::-webkit-scrollbar{display:none;}
+  .tab{padding:6px 11px;font-size:12px;white-space:nowrap;}
+  .topbar-right{font-size:11px;gap:6px;}
+  .user-pill{padding:4px 8px;font-size:11px;}
+  #fb-dot-label{display:none;}
+
+  /* Views */
+  .view{padding:16px 12px;}
+
+  /* Dashboard cards */
+  .stats-grid{grid-template-columns:1fr 1fr!important;}
+  .section-header{flex-direction:column;align-items:flex-start;gap:10px;}
+  .section-header .row{flex-wrap:wrap;gap:6px;}
+
+  /* Dialler */
+  .dialler-top{padding:8px 12px;gap:8px;flex-wrap:wrap;}
+  .dial-shortcut-hint{display:none;}
+  .dialler-body{padding:12px;}
+  .lead-card{max-height:calc(100vh - 90px);border-radius:12px;}
+  .lead-biz-name{font-size:18px;}
+  .phone-display{font-size:26px;margin:10px 0 4px;}
+  .lead-card-body{padding:14px 16px;}
+  .lead-card-footer{padding:12px 16px;}
+  .outcome-row-top{gap:8px;}
+  .outcome-btn{padding:11px 8px;font-size:13px;}
+  .btn-interested{padding:14px;font-size:15px;}
+  .key-hints{display:none;}
+  .pre-call-intel{padding:11px 12px;}
+  .intel-stats{flex-wrap:wrap;gap:8px;}
+
+  /* Pipeline table → horizontal scroll */
+  #view-pipeline .card{overflow-x:auto;}
+  .leads-table{min-width:700px;}
+  .td-notes{max-width:120px;}
+
+  /* Login */
+  .login-wrap{padding:20px 16px;}
+  .profile-grid{gap:10px;}
+  .profile-btn{padding:16px 12px;}
+  .profile-avatar{font-size:28px;}
+  .profile-name{font-size:14px;}
+
+  /* Team stats */
+  .team-row{grid-template-columns:1fr;}
+  .team-user-stats{grid-template-columns:repeat(4,1fr);}
+}
 </style>
 </head>
 <body>
@@ -457,16 +512,14 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
       <div class="login-heading">Who's dialling today?</div>
       <div class="profile-grid">
         <button class="profile-btn" onclick="selectProfile('admin')">
-          <div class="profile-avatar">👑</div>
+          <div class="profile-avatar">🦍</div>
           <div class="profile-name">Mac Smith</div>
           <div class="profile-role">Admin</div>
-          <div class="profile-tag profile-tag-admin">Full Access</div>
         </button>
         <button class="profile-btn" onclick="selectProfile('rep')">
-          <div class="profile-avatar">📞</div>
+          <div class="profile-avatar">🦍</div>
           <div class="profile-name" id="rep-display-name">Sales Rep</div>
           <div class="profile-role">Dialler</div>
-          <div class="profile-tag profile-tag-rep">Dialler View</div>
         </button>
       </div>
     </div>
@@ -1162,7 +1215,7 @@ function renderDialler() {
         <a class="phone-display" href="tel:${esc(lead.phone)}">${esc(lead.phone)}</a>
         <div class="phone-label">Tap to call · or copy and dial</div>
 
-        ${lead.website ? `<div class="lead-detail-row">🌐 <a href="${esc(lead.website.startsWith('http') ? lead.website : 'https://'+lead.website)}" target="_blank">${esc(lead.website)}</a></div>` : ''}
+        ${validUrl(lead.website) ? `<div class="lead-detail-row">🌐 ${siteLink(lead.website, esc(lead.website), 'color:var(--text);text-decoration:none;')}</div>` : ''}
         ${lead.ownerName ? `<div class="lead-detail-row">👤 ${esc(lead.ownerName)}</div>` : ''}
 
         ${(lead.gmbNotes || lead.salesNotes || lead.rating != null || lead.priority) ? `
@@ -1174,7 +1227,7 @@ function renderDialler() {
           <div class="intel-stats">
             ${lead.reviewCount != null ? `<span class="intel-stat">⭐ <strong>${lead.reviewCount}</strong> reviews</span>` : ''}
             ${lead.rating ? `<span class="intel-stat">🏅 <strong>${esc(lead.rating)}★</strong></span>` : ''}
-            ${lead.website ? `<span class="intel-stat">🌐 <a href="${lead.website.startsWith('http') ? esc(lead.website) : 'https://'+esc(lead.website)}" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:none;">View website ↗</a></span>` : `<span class="intel-stat" style="color:var(--red);">⚠️ <strong>No website</strong></span>`}
+            ${validUrl(lead.website) ? `<span class="intel-stat">🌐 ${siteLink(lead.website, 'View website ↗', 'color:var(--accent);font-weight:700;text-decoration:none;')}</span>` : `<span class="intel-stat" style="color:var(--red);">⚠️ <strong>No website</strong></span>`}
           </div>
           ${lead.gmbNotes ? `<div class="intel-gmb">${esc(lead.gmbNotes)}</div>` : ''}
           ${lead.salesNotes ? `<div class="intel-angle"><span class="angle-label">💡 Your Angle</span><span class="angle-text">${esc(lead.salesNotes)}</span></div>` : ''}
@@ -1314,7 +1367,7 @@ function renderPipeline() {
       <td class="td-name">${esc(l.businessName)}<br><span style="font-size:11px;color:var(--muted);font-weight:400;">${esc(l.location||'')}</span></td>
       <td><span class="badge badge-muted" style="font-size:10px;">${esc(l.category||'—')}</span></td>
       <td class="td-phone"><a href="tel:${esc(l.phone)}">${esc(l.phone)}</a></td>
-      <td>${l.website ? `<a href="${l.website.startsWith('http') ? esc(l.website) : 'https://'+esc(l.website)}" target="_blank" style="color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;">🌐 Open ↗</a>` : '<span style="color:var(--muted);font-size:12px;">—</span>'}</td>
+      <td>${validUrl(l.website) ? siteLink(l.website, '🌐 Open ↗', 'color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;') : '<span style="color:var(--muted);font-size:12px;">—</span>'}</td>
       <td style="color:var(--muted);">${l.reviewCount != null ? '⭐ '+l.reviewCount : '—'}</td>
       <td><span class="attempts-badge">${l.attempts||0}×</span></td>
       <td>${statusBadge[l.status]||''}</td>
@@ -1595,6 +1648,19 @@ document.addEventListener('keydown', e => {
 
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function validUrl(s) {
+  if (!s) return null;
+  const t = s.trim();
+  // Reject non-URL values like "Treatwell only", "No website found", "Yes", "No", etc.
+  if (!t.includes('.') || t.includes(' ') || t.length < 5) return null;
+  if (/^(yes|no|n\/a|treatwell|booksy|fresha)/i.test(t)) return null;
+  return t.startsWith('http') ? t : 'https://' + t;
+}
+function siteLink(url, label, style) {
+  const href = validUrl(url);
+  if (!href) return '';
+  return `<a href="${esc(href)}" target="_blank" rel="noopener" ${style ? 'style="'+style+'"' : ''}>${label}</a>`;
 }
 
 // ══════════════════════════════════════════════
@@ -2181,15 +2247,15 @@ const USERS = {
   admin: {
     displayName: 'Mac Smith',
     role: 'admin',
-    pin: '1234',
-    emoji: '👑',
+    pin: '1212',
+    emoji: '🦍',
     dotClass: 'user-dot-admin'
   },
   rep: {
-    displayName: 'Ben Bergson',    // ← Change rep name here
+    displayName: 'Ben Bergson',
     role: 'rep',
-    pin: '5678',                   // ← Change rep PIN here
-    emoji: '📞',
+    pin: '5678',
+    emoji: '🦍',
     dotClass: 'user-dot-rep'
   }
 };
