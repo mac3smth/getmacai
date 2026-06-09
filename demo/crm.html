@@ -389,6 +389,45 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
 .login-back:hover{border-color:rgba(255,255,255,.2);color:#94a3b8;}
 .login-footer{margin-top:24px;text-align:center;font-size:11px;color:#334155;}
 
+/* ── Firebase sync badge ── */
+#fb-badge{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:700;color:var(--muted);
+  background:var(--card2);border:1px solid var(--border);border-radius:20px;
+  padding:4px 10px;cursor:default;transition:all .15s;
+}
+#fb-badge.clickable{cursor:pointer;}
+#fb-badge.clickable:hover{border-color:var(--accent);color:var(--text);}
+.fb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#64748b;transition:background .3s;}
+
+/* ── Firebase setup modal ── */
+#fb-modal{
+  position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:800;
+  display:flex;align-items:center;justify-content:center;padding:24px;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+#fb-modal.open{opacity:1;pointer-events:all;}
+.fb-modal-card{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:30px;max-width:560px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.2);
+}
+.fb-step{
+  display:flex;gap:12px;margin-bottom:16px;
+  font-size:13px;color:var(--text);line-height:1.6;
+}
+.fb-step-num{
+  width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
+  font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
+}
+.fb-config-input{
+  width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;
+  padding:12px 14px;color:var(--text);font-size:12px;font-family:'Courier New',monospace;
+  outline:none;resize:vertical;min-height:120px;transition:border-color .15s;
+  margin-bottom:12px;
+}
+.fb-config-input:focus{border-color:var(--accent);}
+.fb-config-input::placeholder{color:#94a3b8;font-family:'Inter',sans-serif;font-size:13px;}
+
 /* ── User pill in topbar ── */
 #user-pill{
   display:flex;align-items:center;gap:8px;
@@ -470,6 +509,43 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     FIREBASE SETUP MODAL
+══════════════════════════════════════════════ -->
+<div id="fb-modal" onclick="closeFbModal(event)">
+  <div class="fb-modal-card" onclick="event.stopPropagation()">
+    <div style="font-size:18px;font-weight:900;margin-bottom:6px;">🔥 Connect Firebase Sync</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">One-time setup — takes 5 minutes. Both you and Ben will see the same live data.</div>
+
+    <div class="fb-step"><div class="fb-step-num">1</div><div>Go to <strong>console.firebase.google.com</strong> → <em>Add project</em> → name it <strong>Mac AI CRM</strong> → Continue (disable Analytics) → Create project</div></div>
+    <div class="fb-step"><div class="fb-step-num">2</div><div>In the left menu → <em>Build</em> → <em>Realtime Database</em> → <em>Create database</em> → Choose <strong>Europe West</strong> → Start in <strong>Test mode</strong> → Enable</div></div>
+    <div class="fb-step"><div class="fb-step-num">3</div><div>In Project Overview → click the web icon <strong>&lt;/&gt;</strong> → Register app → Skip hosting → copy the <code>firebaseConfig</code> object shown</div></div>
+    <div class="fb-step"><div class="fb-step-num">4</div><div>Paste the entire config object below (the <code>{ apiKey: "...", databaseURL: "...", ... }</code> part):</div></div>
+
+    <textarea class="fb-config-input" id="fb-config-input"
+      placeholder='Paste your firebaseConfig here, e.g.:
+{
+  "apiKey": "AIzaSy...",
+  "authDomain": "macai-crm.firebaseapp.com",
+  "databaseURL": "https://macai-crm-default-rtdb.europe-west1.firebasedatabase.app",
+  "projectId": "macai-crm",
+  "storageBucket": "macai-crm.appspot.com",
+  "messagingSenderId": "123456789",
+  "appId": "1:123:web:abc123"
+}'></textarea>
+
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" style="flex:1;" onclick="saveFbConfig()">🔥 Connect & Sync</button>
+      <button class="btn btn-ghost" onclick="closeFbModal()">Cancel</button>
+    </div>
+    <div id="fb-modal-error" style="color:var(--red);font-size:12px;margin-top:10px;display:none;"></div>
+
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+      <div style="font-size:11px;color:var(--muted);">Already connected? <button onclick="disconnectFirebase()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;font-weight:600;">Disconnect Firebase</button></div>
+    </div>
+  </div>
+</div>
+
 <div id="app">
 
 <!-- TOP BAR -->
@@ -482,8 +558,12 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
     <button class="tab" onclick="switchView('audit')" id="tab-audit">📅 Audit Calls</button>
     <button class="tab" onclick="switchView('import')" id="tab-import">Import Leads</button>
   </div>
-  <div class="topbar-right" style="display:flex;align-items:center;gap:10px;">
+  <div class="topbar-right" style="display:flex;align-items:center;gap:8px;">
     <span style="font-size:12px;color:var(--muted);" id="queue-count"></span>
+    <div id="fb-badge" title="Firebase sync status">
+      <div class="fb-dot" id="fb-dot"></div>
+      <span id="fb-label">Local</span>
+    </div>
     <div id="user-pill" onclick="logout()" title="Click to sign out">
       <div class="user-dot" id="user-dot"></div>
       <span id="user-pill-name">—</span>
@@ -502,6 +582,7 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
       <div class="section-sub" id="dash-date"></div>
     </div>
     <div class="row">
+      <button class="btn btn-ghost" id="fb-setup-btn" onclick="openFbModal()" style="font-size:12px;padding:7px 14px;display:none;">🔥 Setup Firebase</button>
       <button class="btn btn-ghost" onclick="resetDay()" style="font-size:12px;padding:7px 14px;">Reset Day</button>
       <button class="btn btn-primary" onclick="switchView('dialler')" style="display:flex;align-items:center;gap:6px;">
         📞 Start Dialling
@@ -937,7 +1018,7 @@ function defaults() {
   return { leads: [], auditCalls: [], diallerIdx: 0, settings: { maxAttempts: 5, dailyGoal: 100 } };
 }
 
-function save(d) { localStorage.setItem(STORE, JSON.stringify(d)); }
+function save(d) { saveAndSync(d); }
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 
@@ -2084,6 +2165,161 @@ function populateDemoData() {
 }
 
 // ══════════════════════════════════════════════
+// FIREBASE SYNC ENGINE
+// ══════════════════════════════════════════════
+
+const FB_CONFIG_KEY = 'macai_firebase_config';
+let _db            = null;
+let _fbRef         = null;
+let _fbConnected   = false;
+let _skipNextSnap  = false;   // prevent echo when we just wrote
+
+function getFbConfig() {
+  try { return JSON.parse(localStorage.getItem(FB_CONFIG_KEY)); } catch { return null; }
+}
+
+function setFbDot(status) {
+  const colors = { online:'#22c55e', offline:'#94a3b8', connecting:'#f97316', error:'#dc2626' };
+  const labels = { online:'Synced ✓', offline:'Local only', connecting:'Connecting…', error:'Sync error' };
+  const dot   = document.getElementById('fb-dot');
+  const label = document.getElementById('fb-label');
+  if (dot)   dot.style.background = colors[status] || '#94a3b8';
+  if (label) label.textContent    = labels[status] || 'Local';
+  // Make badge clickable for admin to open setup
+  const badge = document.getElementById('fb-badge');
+  if (badge && currentUser === 'admin') {
+    badge.classList.add('clickable');
+    badge.title = status === 'online' ? 'Firebase connected — click to manage' : 'Click to set up Firebase sync';
+    badge.onclick = openFbModal;
+  }
+}
+
+function loadFirebaseSDKs() {
+  return new Promise((resolve, reject) => {
+    if (window.firebase) { resolve(); return; }
+    const s1 = document.createElement('script');
+    s1.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
+      s2.onload = resolve;
+      s2.onerror = () => reject(new Error('Failed to load Firebase DB SDK'));
+      document.head.appendChild(s2);
+    };
+    s1.onerror = () => reject(new Error('Failed to load Firebase App SDK'));
+    document.head.appendChild(s1);
+  });
+}
+
+async function initFirebase() {
+  const cfg = getFbConfig();
+  if (!cfg || !cfg.databaseURL) {
+    setFbDot('offline');
+    return;
+  }
+  setFbDot('connecting');
+  try {
+    await loadFirebaseSDKs();
+
+    // Prevent double-init if already initialized
+    if (!window._fbInitialized) {
+      firebase.initializeApp(cfg);
+      window._fbInitialized = true;
+    }
+    _db    = firebase.database();
+    _fbRef = _db.ref('macai_crm_v3');
+
+    // Real-time listener — updates every connected client
+    _fbRef.on('value', snapshot => {
+      if (_skipNextSnap) { _skipNextSnap = false; return; }
+      const remote = snapshot.val();
+      if (!remote) return;
+      // Only apply if it's genuinely different (avoid unnecessary re-renders)
+      const localStr = localStorage.getItem(STORE);
+      const remoteStr = JSON.stringify(remote);
+      if (localStr !== remoteStr) {
+        localStorage.setItem(STORE, remoteStr);
+        // Re-render current view
+        if (currentView === 'dashboard') renderDashboard();
+        else if (currentView === 'dialler')   renderDialler();
+        else if (currentView === 'pipeline')  renderPipeline();
+        else if (currentView === 'audit')     renderAudit();
+      }
+    });
+
+    // Connection state
+    _db.ref('.info/connected').on('value', snap => {
+      _fbConnected = snap.val() === true;
+      setFbDot(_fbConnected ? 'online' : 'connecting');
+    });
+
+    // Initial sync: push local data to Firebase if Firebase is empty
+    const snap = await _fbRef.once('value');
+    const remote = snap.val();
+    const local  = load();
+    if (!remote || (local.leads.length > (remote.leads?.length || 0))) {
+      _skipNextSnap = true;
+      await _fbRef.set(local);
+    } else if (remote.leads?.length > local.leads.length) {
+      localStorage.setItem(STORE, JSON.stringify(remote));
+      showToast('☁️ Leads synced from Firebase');
+    }
+
+    setFbDot('online');
+  } catch (err) {
+    console.error('Firebase error:', err);
+    setFbDot('error');
+  }
+}
+
+// Modified save — write to localStorage + push to Firebase
+function saveAndSync(d) {
+  localStorage.setItem(STORE, JSON.stringify(d));
+  if (_fbRef && _fbConnected) {
+    _skipNextSnap = true;
+    _fbRef.set(d).catch(() => { _skipNextSnap = false; });
+  }
+}
+
+// Firebase setup modal helpers
+function openFbModal() {
+  const cfg = getFbConfig();
+  if (cfg) document.getElementById('fb-config-input').value = JSON.stringify(cfg, null, 2);
+  document.getElementById('fb-modal').classList.add('open');
+}
+function closeFbModal(e) {
+  if (e && e.target !== document.getElementById('fb-modal')) return;
+  document.getElementById('fb-modal').classList.remove('open');
+}
+function disconnectFirebase() {
+  if (!confirm('Disconnect Firebase? The CRM will switch to local-only mode.')) return;
+  localStorage.removeItem(FB_CONFIG_KEY);
+  location.reload();
+}
+async function saveFbConfig() {
+  const raw = document.getElementById('fb-config-input').value.trim();
+  const errEl = document.getElementById('fb-modal-error');
+  errEl.style.display = 'none';
+  try {
+    // Accept both raw JS object (with unquoted keys) and proper JSON
+    const cleaned = raw
+      .replace(/^\s*const\s+\w+\s*=\s*/, '')   // remove "const firebaseConfig ="
+      .replace(/;$/, '')                         // remove trailing semicolon
+      .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')  // quote keys
+      .replace(/'/g, '"');                       // single → double quotes
+    const cfg = JSON.parse(cleaned);
+    if (!cfg.databaseURL) throw new Error('databaseURL is missing from the config');
+    localStorage.setItem(FB_CONFIG_KEY, JSON.stringify(cfg));
+    showToast('🔥 Firebase config saved — connecting…');
+    document.getElementById('fb-modal').classList.remove('open');
+    await initFirebase();
+  } catch (err) {
+    errEl.textContent = '⚠️ ' + err.message + ' — check the config and try again';
+    errEl.style.display = 'block';
+  }
+}
+
+// ══════════════════════════════════════════════
 // LOGIN SYSTEM
 // ══════════════════════════════════════════════
 
@@ -2096,7 +2332,7 @@ const USERS = {
     dotClass: 'user-dot-admin'
   },
   rep: {
-    displayName: 'Callum Ross',   // ← Change rep name here
+    displayName: 'Ben Bergson',    // ← Change rep name here
     role: 'rep',
     pin: '5678',                   // ← Change rep PIN here
     emoji: '📞',
@@ -2168,15 +2404,15 @@ function applySession(key) {
   const dot = document.getElementById('user-dot');
   dot.className = 'user-dot ' + user.dotClass;
 
-  // Role-based tab visibility
+  // Role-based tab visibility — rep sees all tabs except Import
   const isAdmin = user.role === 'admin';
-  document.getElementById('tab-dashboard').style.display = isAdmin ? '' : 'none';
-  document.getElementById('tab-audit').style.display    = isAdmin ? '' : 'none';
-  document.getElementById('tab-import').style.display   = isAdmin ? '' : 'none';
+  document.getElementById('tab-import').style.display = isAdmin ? '' : 'none';
 
-  // Show team stats on admin dashboard
+  // Show team stats + Firebase button on admin dashboard
   if (isAdmin) {
     document.getElementById('team-stats-card').classList.remove('hidden');
+    const fbBtn = document.getElementById('fb-setup-btn');
+    if (fbBtn) fbBtn.style.display = '';
   }
 
   // Start at dialler for reps, dashboard for admin
@@ -2251,6 +2487,8 @@ function renderTeamStats() {
 // ══════════════════════════════════════════════
 
 initLogin();
+// Firebase starts in background — doesn't block the login screen
+initFirebase();
 </script>
 </body>
 </html>
