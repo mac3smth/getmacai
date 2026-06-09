@@ -107,7 +107,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .lead-card{
   width:100%;max-width:640px;background:var(--card);border:1px solid var(--border);
   border-radius:16px;overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.4);
+  box-shadow:0 4px 24px rgba(0,0,0,.08);
+  display:flex;flex-direction:column;max-height:calc(100vh - 110px);
 }
 .lead-card-header{
   padding:20px 24px 16px;border-bottom:1px solid var(--border);
@@ -115,7 +116,9 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .lead-biz-name{font-size:22px;font-weight:900;margin-bottom:6px;}
 .lead-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 
-.lead-card-body{padding:20px 24px;}
+.lead-card-body{padding:20px 24px;overflow-y:auto;flex:1;}
+.lead-card-body::-webkit-scrollbar{width:4px;}
+.lead-card-body::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:2px;}
 
 .phone-display{
   font-size:32px;font-weight:900;color:var(--accent);letter-spacing:.02em;
@@ -138,7 +141,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .notes-input:focus{border-color:var(--accent);}
 .notes-input::placeholder{color:#94a3b8;}
 
-.lead-card-footer{padding:16px 24px;border-top:1px solid var(--border);}
+.lead-card-footer{padding:16px 24px;border-top:1px solid var(--border);flex-shrink:0;}
 
 /* Outcome buttons */
 .outcome-row-top{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
@@ -197,8 +200,8 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .intel-stat{font-size:12px;color:var(--muted);}
 .intel-stat strong{color:var(--text);font-weight:700;}
 .intel-gmb{
-  font-size:12px;color:rgba(241,245,249,.7);line-height:1.55;
-  margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.05);
+  font-size:12px;color:var(--muted);line-height:1.55;
+  margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);
 }
 .intel-angle{
   background:rgba(247,179,22,.05);border:1px solid rgba(247,179,22,.2);
@@ -678,6 +681,7 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
           <th>Business</th>
           <th>Category</th>
           <th>Phone</th>
+          <th>Website</th>
           <th>Reviews</th>
           <th>Attempts</th>
           <th>Status</th>
@@ -1170,7 +1174,7 @@ function renderDialler() {
           <div class="intel-stats">
             ${lead.reviewCount != null ? `<span class="intel-stat">⭐ <strong>${lead.reviewCount}</strong> reviews</span>` : ''}
             ${lead.rating ? `<span class="intel-stat">🏅 <strong>${esc(lead.rating)}★</strong></span>` : ''}
-            ${lead.website ? `<span class="intel-stat">🌐 <strong>Has website</strong></span>` : `<span class="intel-stat" style="color:var(--red);">⚠️ <strong>No website</strong></span>`}
+            ${lead.website ? `<span class="intel-stat">🌐 <a href="${lead.website.startsWith('http') ? esc(lead.website) : 'https://'+esc(lead.website)}" target="_blank" style="color:var(--accent);font-weight:700;text-decoration:none;">View website ↗</a></span>` : `<span class="intel-stat" style="color:var(--red);">⚠️ <strong>No website</strong></span>`}
           </div>
           ${lead.gmbNotes ? `<div class="intel-gmb">${esc(lead.gmbNotes)}</div>` : ''}
           ${lead.salesNotes ? `<div class="intel-angle"><span class="angle-label">💡 Your Angle</span><span class="angle-text">${esc(lead.salesNotes)}</span></div>` : ''}
@@ -1310,6 +1314,7 @@ function renderPipeline() {
       <td class="td-name">${esc(l.businessName)}<br><span style="font-size:11px;color:var(--muted);font-weight:400;">${esc(l.location||'')}</span></td>
       <td><span class="badge badge-muted" style="font-size:10px;">${esc(l.category||'—')}</span></td>
       <td class="td-phone"><a href="tel:${esc(l.phone)}">${esc(l.phone)}</a></td>
+      <td>${l.website ? `<a href="${l.website.startsWith('http') ? esc(l.website) : 'https://'+esc(l.website)}" target="_blank" style="color:var(--accent);font-size:12px;font-weight:600;text-decoration:none;white-space:nowrap;">🌐 Open ↗</a>` : '<span style="color:var(--muted);font-size:12px;">—</span>'}</td>
       <td style="color:var(--muted);">${l.reviewCount != null ? '⭐ '+l.reviewCount : '—'}</td>
       <td><span class="attempts-badge">${l.attempts||0}×</span></td>
       <td>${statusBadge[l.status]||''}</td>
