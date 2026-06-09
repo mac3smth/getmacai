@@ -400,33 +400,6 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
 #fb-badge.clickable:hover{border-color:var(--accent);color:var(--text);}
 .fb-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#64748b;transition:background .3s;}
 
-/* ── Firebase setup modal ── */
-#fb-modal{
-  position:fixed;inset:0;background:rgba(15,23,42,.7);z-index:800;
-  display:flex;align-items:center;justify-content:center;padding:24px;
-  opacity:0;pointer-events:none;transition:opacity .2s;
-}
-#fb-modal.open{opacity:1;pointer-events:all;}
-.fb-modal-card{
-  background:var(--card);border:1px solid var(--border);border-radius:16px;
-  padding:30px;max-width:560px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,.2);
-}
-.fb-step{
-  display:flex;gap:12px;margin-bottom:16px;
-  font-size:13px;color:var(--text);line-height:1.6;
-}
-.fb-step-num{
-  width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
-  font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;
-}
-.fb-config-input{
-  width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:10px;
-  padding:12px 14px;color:var(--text);font-size:12px;font-family:'Courier New',monospace;
-  outline:none;resize:vertical;min-height:120px;transition:border-color .15s;
-  margin-bottom:12px;
-}
-.fb-config-input:focus{border-color:var(--accent);}
-.fb-config-input::placeholder{color:#94a3b8;font-family:'Inter',sans-serif;font-size:13px;}
 
 /* ── User pill in topbar ── */
 #user-pill{
@@ -509,43 +482,6 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     FIREBASE SETUP MODAL
-══════════════════════════════════════════════ -->
-<div id="fb-modal" onclick="closeFbModal(event)">
-  <div class="fb-modal-card" onclick="event.stopPropagation()">
-    <div style="font-size:18px;font-weight:900;margin-bottom:6px;">🔥 Connect Firebase Sync</div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:22px;">One-time setup — takes 5 minutes. Both you and Ben will see the same live data.</div>
-
-    <div class="fb-step"><div class="fb-step-num">1</div><div>Go to <strong>console.firebase.google.com</strong> → <em>Add project</em> → name it <strong>Mac AI CRM</strong> → Continue (disable Analytics) → Create project</div></div>
-    <div class="fb-step"><div class="fb-step-num">2</div><div>In the left menu → <em>Build</em> → <em>Realtime Database</em> → <em>Create database</em> → Choose <strong>Europe West</strong> → Start in <strong>Test mode</strong> → Enable</div></div>
-    <div class="fb-step"><div class="fb-step-num">3</div><div>In Project Overview → click the web icon <strong>&lt;/&gt;</strong> → Register app → Skip hosting → copy the <code>firebaseConfig</code> object shown</div></div>
-    <div class="fb-step"><div class="fb-step-num">4</div><div>Paste the entire config object below (the <code>{ apiKey: "...", databaseURL: "...", ... }</code> part):</div></div>
-
-    <textarea class="fb-config-input" id="fb-config-input"
-      placeholder='Paste your firebaseConfig here, e.g.:
-{
-  "apiKey": "AIzaSy...",
-  "authDomain": "macai-crm.firebaseapp.com",
-  "databaseURL": "https://macai-crm-default-rtdb.europe-west1.firebasedatabase.app",
-  "projectId": "macai-crm",
-  "storageBucket": "macai-crm.appspot.com",
-  "messagingSenderId": "123456789",
-  "appId": "1:123:web:abc123"
-}'></textarea>
-
-    <div style="display:flex;gap:10px;">
-      <button class="btn btn-primary" style="flex:1;" onclick="saveFbConfig()">🔥 Connect & Sync</button>
-      <button class="btn btn-ghost" onclick="closeFbModal()">Cancel</button>
-    </div>
-    <div id="fb-modal-error" style="color:var(--red);font-size:12px;margin-top:10px;display:none;"></div>
-
-    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-      <div style="font-size:11px;color:var(--muted);">Already connected? <button onclick="disconnectFirebase()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:11px;font-weight:600;">Disconnect Firebase</button></div>
-    </div>
-  </div>
-</div>
-
 <div id="app">
 
 <!-- TOP BAR -->
@@ -582,7 +518,6 @@ input[type="text"],input[type="password"],input[type="email"],input[type="search
       <div class="section-sub" id="dash-date"></div>
     </div>
     <div class="row">
-      <button class="btn btn-ghost" id="fb-setup-btn" onclick="openFbModal()" style="font-size:12px;padding:7px 14px;display:none;">🔥 Setup Firebase</button>
       <button class="btn btn-ghost" onclick="resetDay()" style="font-size:12px;padding:7px 14px;">Reset Day</button>
       <button class="btn btn-primary" onclick="switchView('dialler')" style="display:flex;align-items:center;gap:6px;">
         📞 Start Dialling
@@ -2166,156 +2101,70 @@ function populateDemoData() {
 
 // ══════════════════════════════════════════════
 // FIREBASE SYNC ENGINE
+// Config is baked in — module script below does the init.
+// This section just exposes the hooks the module calls.
 // ══════════════════════════════════════════════
 
-const FB_CONFIG_KEY = 'macai_firebase_config';
-let _db            = null;
-let _fbRef         = null;
-let _fbConnected   = false;
-let _skipNextSnap  = false;   // prevent echo when we just wrote
-
-function getFbConfig() {
-  try { return JSON.parse(localStorage.getItem(FB_CONFIG_KEY)); } catch { return null; }
-}
+let _fbSaveFn     = null;   // set by module when ready
+let _skipNextSnap = false;  // prevent echo when we just wrote
 
 function setFbDot(status) {
-  const colors = { online:'#22c55e', offline:'#94a3b8', connecting:'#f97316', error:'#dc2626' };
-  const labels = { online:'Synced ✓', offline:'Local only', connecting:'Connecting…', error:'Sync error' };
+  const colors = { online:'#22c55e', connecting:'#f97316', error:'#dc2626' };
+  const labels = { online:'Synced ✓', connecting:'Connecting…', error:'Sync error' };
   const dot   = document.getElementById('fb-dot');
   const label = document.getElementById('fb-label');
   if (dot)   dot.style.background = colors[status] || '#94a3b8';
-  if (label) label.textContent    = labels[status] || 'Local';
-  // Make badge clickable for admin to open setup
-  const badge = document.getElementById('fb-badge');
-  if (badge && currentUser === 'admin') {
-    badge.classList.add('clickable');
-    badge.title = status === 'online' ? 'Firebase connected — click to manage' : 'Click to set up Firebase sync';
-    badge.onclick = openFbModal;
-  }
+  if (label) label.textContent    = labels[status] || 'Connecting…';
 }
 
-function loadFirebaseSDKs() {
-  return new Promise((resolve, reject) => {
-    if (window.firebase) { resolve(); return; }
-    const s1 = document.createElement('script');
-    s1.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js';
-    s1.onload = () => {
-      const s2 = document.createElement('script');
-      s2.src = 'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js';
-      s2.onload = resolve;
-      s2.onerror = () => reject(new Error('Failed to load Firebase DB SDK'));
-      document.head.appendChild(s2);
-    };
-    s1.onerror = () => reject(new Error('Failed to load Firebase App SDK'));
-    document.head.appendChild(s1);
-  });
-}
-
-async function initFirebase() {
-  const cfg = getFbConfig();
-  if (!cfg || !cfg.databaseURL) {
-    setFbDot('offline');
-    return;
-  }
+// Called by the Firebase module once the SDK is ready
+window.onFirebaseReady = function(saveFn, listenFn, getOnceFn) {
+  _fbSaveFn = saveFn;
   setFbDot('connecting');
-  try {
-    await loadFirebaseSDKs();
 
-    // Prevent double-init if already initialized
-    if (!window._fbInitialized) {
-      firebase.initializeApp(cfg);
-      window._fbInitialized = true;
+  // ── Real-time listener: updates all connected clients instantly ──
+  listenFn(snapshot => {
+    const remote = snapshot.val();
+    if (!remote) return;
+
+    if (_skipNextSnap) { _skipNextSnap = false; return; }
+
+    const localStr  = localStorage.getItem(STORE);
+    const remoteStr = JSON.stringify(remote);
+    if (localStr !== remoteStr) {
+      localStorage.setItem(STORE, remoteStr);
+      if (currentView === 'dashboard') renderDashboard();
+      else if (currentView === 'dialler')   renderDialler();
+      else if (currentView === 'pipeline')  renderPipeline();
+      else if (currentView === 'audit')     renderAudit();
     }
-    _db    = firebase.database();
-    _fbRef = _db.ref('macai_crm_v3');
+    setFbDot('online');
+  });
 
-    // Real-time listener — updates every connected client
-    _fbRef.on('value', snapshot => {
-      if (_skipNextSnap) { _skipNextSnap = false; return; }
-      const remote = snapshot.val();
-      if (!remote) return;
-      // Only apply if it's genuinely different (avoid unnecessary re-renders)
-      const localStr = localStorage.getItem(STORE);
-      const remoteStr = JSON.stringify(remote);
-      if (localStr !== remoteStr) {
-        localStorage.setItem(STORE, remoteStr);
-        // Re-render current view
-        if (currentView === 'dashboard') renderDashboard();
-        else if (currentView === 'dialler')   renderDialler();
-        else if (currentView === 'pipeline')  renderPipeline();
-        else if (currentView === 'audit')     renderAudit();
-      }
-    });
-
-    // Connection state
-    _db.ref('.info/connected').on('value', snap => {
-      _fbConnected = snap.val() === true;
-      setFbDot(_fbConnected ? 'online' : 'connecting');
-    });
-
-    // Initial sync: push local data to Firebase if Firebase is empty
-    const snap = await _fbRef.once('value');
-    const remote = snap.val();
+  // ── Initial merge: push local leads up if Firebase is empty ──
+  getOnceFn().then(snapshot => {
+    const remote = snapshot.val();
     const local  = load();
     if (!remote || (local.leads.length > (remote.leads?.length || 0))) {
       _skipNextSnap = true;
-      await _fbRef.set(local);
-    } else if (remote.leads?.length > local.leads.length) {
+      saveFn(local);
+    } else if ((remote.leads?.length || 0) > local.leads.length) {
       localStorage.setItem(STORE, JSON.stringify(remote));
-      showToast('☁️ Leads synced from Firebase');
+      showToast('☁️ Synced latest leads from Firebase');
+      if (currentView === 'dashboard') renderDashboard();
     }
-
-    setFbDot('online');
-  } catch (err) {
-    console.error('Firebase error:', err);
+  }).catch(err => {
+    console.error('Firebase initial sync error:', err);
     setFbDot('error');
-  }
-}
+  });
+};
 
-// Modified save — write to localStorage + push to Firebase
+// save() → localStorage immediately + push to Firebase
 function saveAndSync(d) {
   localStorage.setItem(STORE, JSON.stringify(d));
-  if (_fbRef && _fbConnected) {
+  if (_fbSaveFn) {
     _skipNextSnap = true;
-    _fbRef.set(d).catch(() => { _skipNextSnap = false; });
-  }
-}
-
-// Firebase setup modal helpers
-function openFbModal() {
-  const cfg = getFbConfig();
-  if (cfg) document.getElementById('fb-config-input').value = JSON.stringify(cfg, null, 2);
-  document.getElementById('fb-modal').classList.add('open');
-}
-function closeFbModal(e) {
-  if (e && e.target !== document.getElementById('fb-modal')) return;
-  document.getElementById('fb-modal').classList.remove('open');
-}
-function disconnectFirebase() {
-  if (!confirm('Disconnect Firebase? The CRM will switch to local-only mode.')) return;
-  localStorage.removeItem(FB_CONFIG_KEY);
-  location.reload();
-}
-async function saveFbConfig() {
-  const raw = document.getElementById('fb-config-input').value.trim();
-  const errEl = document.getElementById('fb-modal-error');
-  errEl.style.display = 'none';
-  try {
-    // Accept both raw JS object (with unquoted keys) and proper JSON
-    const cleaned = raw
-      .replace(/^\s*const\s+\w+\s*=\s*/, '')   // remove "const firebaseConfig ="
-      .replace(/;$/, '')                         // remove trailing semicolon
-      .replace(/(['"])?([a-zA-Z0-9_]+)(['"])?\s*:/g, '"$2":')  // quote keys
-      .replace(/'/g, '"');                       // single → double quotes
-    const cfg = JSON.parse(cleaned);
-    if (!cfg.databaseURL) throw new Error('databaseURL is missing from the config');
-    localStorage.setItem(FB_CONFIG_KEY, JSON.stringify(cfg));
-    showToast('🔥 Firebase config saved — connecting…');
-    document.getElementById('fb-modal').classList.remove('open');
-    await initFirebase();
-  } catch (err) {
-    errEl.textContent = '⚠️ ' + err.message + ' — check the config and try again';
-    errEl.style.display = 'block';
+    _fbSaveFn(d).catch(() => { _skipNextSnap = false; });
   }
 }
 
@@ -2408,11 +2257,9 @@ function applySession(key) {
   const isAdmin = user.role === 'admin';
   document.getElementById('tab-import').style.display = isAdmin ? '' : 'none';
 
-  // Show team stats + Firebase button on admin dashboard
+  // Show team stats on admin dashboard
   if (isAdmin) {
     document.getElementById('team-stats-card').classList.remove('hidden');
-    const fbBtn = document.getElementById('fb-setup-btn');
-    if (fbBtn) fbBtn.style.display = '';
   }
 
   // Start at dialler for reps, dashboard for admin
@@ -2487,8 +2334,40 @@ function renderTeamStats() {
 // ══════════════════════════════════════════════
 
 initLogin();
-// Firebase starts in background — doesn't block the login screen
-initFirebase();
+// Firebase module (below) initialises automatically and calls window.onFirebaseReady
+</script>
+
+<!-- ══════════════════════════════════════════════
+     FIREBASE v12 — Modular SDK
+     Config is hardcoded. Module runs after main script,
+     then calls window.onFirebaseReady to wire up sync.
+══════════════════════════════════════════════ -->
+<script type="module">
+import { initializeApp }                    from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, get } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyCdL2laSJpFDQRDbNw2x0g-U_GTIhPorfw",
+  authDomain:        "mac-ai-crm.firebaseapp.com",
+  databaseURL:       "https://mac-ai-crm-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId:         "mac-ai-crm",
+  storageBucket:     "mac-ai-crm.firebasestorage.app",
+  messagingSenderId: "794837487958",
+  appId:             "1:794837487958:web:f3379d1d0111d3fa84c6f7"
+};
+
+const app   = initializeApp(firebaseConfig);
+const db    = getDatabase(app);
+const dbRef = ref(db, 'macai_crm_v3');
+
+// Expose to the main script via the callback it registered
+if (typeof window.onFirebaseReady === 'function') {
+  window.onFirebaseReady(
+    (data)  => set(dbRef, data),           // saveFn
+    (cb)    => onValue(dbRef, cb),         // listenFn
+    ()      => get(dbRef)                  // getOnceFn
+  );
+}
 </script>
 </body>
 </html>
